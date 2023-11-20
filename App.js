@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
 
 export default function App() {
-  const [userInfo, setUserInfo] = useState(true)
+  const [userInfo, setUserInfo] = useState(false)
   return (
     // <Provider store={store}>
       <View style={styles.container}>

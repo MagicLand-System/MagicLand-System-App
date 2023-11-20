@@ -11,7 +11,7 @@ export default function MainButton(props) {
     }
     return (
         <TouchableOpacity onPress={props.onPress} style={styles.btn} disabled={props.disabled}>
-            <Text style={styles.btnText}>{props.text}</Text>
+            <Text style={styles.btnText}>{props.title}</Text>
         </TouchableOpacity>
     )
 }
