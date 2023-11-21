@@ -1,6 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase.config";
 
 const URL = "https://magic-land-system.azurewebsites.net";
 
@@ -15,15 +15,11 @@ instance.interceptors.response.use(
   (res) => {
     return res;
   },
-  (err) => {
+  async (err) => {
     if (err.response) {
       if (err.response.status === 401) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Hãy đăng nhập để tiếp tục!',
-        }).then(async () => {
-          await AsyncStorage.removeItem('accessToken');
-        })
+        alert('Hãy đăng nhập để tiếp tục!')
+        await signOut(auth)
       }
     }
     return Promise.reject(err);

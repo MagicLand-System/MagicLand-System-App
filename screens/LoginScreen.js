@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import PhoneInput from 'react-native-phone-input'
 import OTPTextInput from 'react-native-otp-textinput'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { checkExist } from "../api/auth";
+import { authUser, checkExist } from "../api/auth";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Inter_400Regular } from '@expo-google-fonts/inter';
 import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
@@ -30,16 +30,18 @@ export default function LoginScreen() {
 
   const login = async () => {
     try {
+      setErrorMessage('')
       setLoading(true)
       const response = await checkExist({ phone: phoneNumber })
       if (response.status === 200) {
         const phoneProvider = new PhoneAuthProvider(auth);
         const verificationId = await phoneProvider.verifyPhoneNumber(
           phoneNumber,
-          recaptchaVerifier?.current
+          recaptchaVerifier.current
         );
         setVerificationId(verificationId)
         setLoading(false)
+        setErrorMessage('')
         setShowOtp(true)
       }
     } catch (error) {
@@ -53,16 +55,16 @@ export default function LoginScreen() {
 
   const verifyOtp = async () => {
     try {
+      setErrorMessage('')
       setLoading(true)
       const credential = PhoneAuthProvider.credential(verificationId, otp);
       await signInWithCredential(auth, credential);
-
       const data = await authUser({ phone: phoneNumber })
       const accessToken = data.accessToken;
       await AsyncStorage.setItem('accessToken', accessToken)
-      Alert.alert("Đăng nhập thành công")
-
+      setLoading(false)
     } catch (error) {
+      console.log(error)
       setErrorMessage("Xác thực OTP không thành công")
       setLoading(false)
     }
@@ -73,7 +75,13 @@ export default function LoginScreen() {
   }
   if (loading) {
     return (
-      <ActivityIndicator size={"large"} />
+      <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
+        <FirebaseRecaptchaVerifierModal
+          ref={recaptchaVerifier}
+          firebaseConfig={firebaseConfig}
+        />
+        <ActivityIndicator size={"large"} />
+      </View>
     )
   }
   return (
@@ -96,7 +104,11 @@ export default function LoginScreen() {
             flagStyle={{ width: 50, height: 30 }}
           />
           <View style={styles.buttonView}>
-            <MainButton onPress={login} title="Gửi OTP" />
+            {phoneNumber === '' ? (
+              <MainButton onPress={login} title="Gửi OTP" disabled={true} />
+            ) : (
+              <MainButton onPress={login} title="Gửi OTP" />
+            )}
             <View style={styles.navigationView}>
               <Text style={styles.navigationText}>Chưa có tài khoản</Text>
               <TouchableOpacity
@@ -115,14 +127,28 @@ export default function LoginScreen() {
       ) : (
         <>
           <Text style={styles.title}>Xác thực OTP</Text>
-          <TextInput
-            placeholder="Confirmation Code"
-            onChangeText={setOtp}
+          <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 16, margin: 20, marginBottom: 40 }}>Chúng tôi đã gửi một mã xác thực đến số điện thoại {phoneNumber.substring(0, 6)}*****:</Text>
+          <OTPTextInput
+            handleTextChange={setOtp}
             keyboardType="number-pad"
-            style={styles.textInput}
+            inputCount={6}
+            tintColor='#f2c955'
+            textInputStyle={styles.otpInput}
           />
+          <View style={styles.navigationView}>
+            <Text style={styles.navigationText}>Chưa nhận được mã</Text>
+            <TouchableOpacity
+              onPress={login}
+            >
+              <Text style={styles.navigationButtonText}>Gửi lại</Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.buttonView}>
-            <MainButton onPress={verifyOtp} title="Xác thực" />
+            {otp === '' ? (
+              <MainButton onPress={verifyOtp} title="Xác thực" disabled={true} />
+            ) : (
+              <MainButton onPress={verifyOtp} title="Xác thực" />
+            )}
             {errorMessage !== '' && (
               <View style={styles.errorMessage}>
                 <Text style={styles.errorText}>{errorMessage}</Text>
@@ -142,6 +168,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+  },
+  otpInput: {
+    borderWidth: 1,
+    borderRadius: 5,
   },
   title: {
     color: '#3A0CA3',
@@ -178,6 +208,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 20,
     marginRight: 20,
+    marginTop: 20,
   },
   errorText: {
     fontFamily: 'Inter_400Regular',
