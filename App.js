@@ -1,22 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
-// import { store } from './store/store';
+import { store } from './store/store';
 import StackNavigator from './navigation/StackNavigator';
-import StackNavigatorLogin from './navigation/StackNavigatorLogin';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState } from 'react';
 
 export default function App() {
-  const [userInfo, setUserInfo] = useState(true)
   return (
-    // <Provider store={store}>
+    <Provider store={store}>
       <View style={styles.container}>
         <NavigationContainer>
-          {userInfo ? <StackNavigator /> : <StackNavigatorLogin/>}
+          <StackNavigator />
         </NavigationContainer>
       </View>
-    // </Provider>
+    </Provider>
   );
 }
 
