@@ -13,7 +13,6 @@ export const authUser = async ({ phone }) => {
     return response.data;
 };
 export const register = async (credential) => {
-    console.log("Register")
     const response = await instance.post("/api/v1/users/register", credential);
     return response.data;
 };

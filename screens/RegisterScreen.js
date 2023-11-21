@@ -59,7 +59,7 @@ export default function RegisterScreen() {
       const credential = PhoneAuthProvider.credential(verificationId, otp);
       await signInWithCredential(auth, credential);
       setLoading(false)
-      navigation.navigate('FillInfoScreen', { phone: phoneNumber })
+      navigation.navigate('FillInfo', { phone: phoneNumber })
     } catch (error) {
       console.log(error)
       setErrorMessage("Xác thực OTP không thành công")
