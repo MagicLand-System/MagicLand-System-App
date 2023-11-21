@@ -12,6 +12,8 @@ import { authUser, checkExist } from "../api/auth";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Inter_400Regular } from '@expo-google-fonts/inter';
 import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
+import { useDispatch } from "react-redux";
+import { fetchUser } from "../store/features/authSlice";
 
 export default function LoginScreen() {
   const recaptchaVerifier = useRef(null);
@@ -27,6 +29,7 @@ export default function LoginScreen() {
     Inter_400Regular,
     Baloo2_700Bold,
   })
+  const dispatch = useDispatch()
 
   const login = async () => {
     try {
@@ -62,7 +65,8 @@ export default function LoginScreen() {
       const data = await authUser({ phone: phoneNumber })
       const accessToken = data.accessToken;
       await AsyncStorage.setItem('accessToken', accessToken)
-      setLoading(false)
+        .then(setLoading(false))
+        .then(dispatch(fetchUser()))
     } catch (error) {
       console.log(error)
       setErrorMessage("Xác thực OTP không thành công")
