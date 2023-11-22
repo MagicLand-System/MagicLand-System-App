@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, StyleSheet, Alert, ActivityIndicator, Button, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { View, Text, Image, TextInput, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import React, { useState } from "react";
 import MainButton from "../components/MainButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -10,7 +10,6 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { CheckBox } from "@rneui/themed";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { format } from "date-fns";
 
 export default function FillInfoScreen() {
   const routes = useRoute();
@@ -57,7 +56,7 @@ export default function FillInfoScreen() {
           const data = await register({ ...values, phone, gender, dateOfBirth: dateOfBirth.toISOString() })
           if (data) {
             setLoading(true)
-            alert("Đăng kí thành công")
+            Alert.alert("Đăng kí thành công")
             navigation.navigate('Login')
           }
         }}
@@ -102,7 +101,7 @@ export default function FillInfoScreen() {
             </View>
             <View style={{ width: '75%', marginTop: 0 }}>
               <Text style={{ width: '100%', color: '#c0c0c0', fontSize: 16, fontFamily: 'Inter_400Regular', marginBottom: 5 }}>Ngày sinh</Text>
-              <View style={{width: '100%', alignItems: 'center', paddingTop: 5, marginBottom: 5}}>
+              <View style={{ width: '100%', alignItems: 'center', paddingTop: 5, marginBottom: 5 }}>
                 <DateTimePicker
                   value={dateOfBirth}
                   maximumDate={new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate())}
@@ -185,7 +184,7 @@ export default function FillInfoScreen() {
                 <Text style={{ fontSize: 12, color: 'red' }}>{errors.street}</Text>
               }
             </View>
-            <MainButton onPress={handleSubmit} disabled={!isValid} title="Xác nhận" />
+            <MainButton onPress={handleSubmit} title="Xác nhận" />
           </>
         )}
       </Formik>

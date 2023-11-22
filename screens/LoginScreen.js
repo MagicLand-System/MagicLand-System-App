@@ -65,8 +65,9 @@ export default function LoginScreen() {
       const data = await authUser({ phone: phoneNumber })
       const accessToken = data.accessToken;
       await AsyncStorage.setItem('accessToken', accessToken)
-        .then(setLoading(false))
         .then(dispatch(fetchUser()))
+        .then(setLoading(false))
+        .then(Alert.alert('Đăng nhập thành công'))
     } catch (error) {
       console.log(error)
       setErrorMessage("Xác thực OTP không thành công")
@@ -148,7 +149,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
-            {otp === '' ? (
+            {otp.length < 6 ? (
               <MainButton onPress={verifyOtp} title="Xác thực" disabled={true} />
             ) : (
               <MainButton onPress={verifyOtp} title="Xác thực" />

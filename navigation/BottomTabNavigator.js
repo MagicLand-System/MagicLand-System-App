@@ -6,6 +6,7 @@ import DocumentScreen from '../screens/DocumentScreen';
 import ScanScreen from '../screens/ScanScreen';
 import ScheduleScreen from '../screens/ScheduleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import StudentScreen from '../screens/StudentScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,7 +23,7 @@ const BottomTabNavigator = () => {
                 tabBarActiveTintColor: '#F2C955',
                 headerShown: false,
             }} />
-            <Tab.Screen name="Document" component={DocumentScreen} options={{
+            <Tab.Screen name="Document" component={StudentScreen} options={{
                 tabBarIcon: ({ focused }) => {
                     let icon = focused == true ? require('./../assets/images/document_active_icon.png') : require('./../assets/images/document_icon.png');
                     return <Image source={icon} style={styles.tabIcon} />

@@ -141,7 +141,7 @@ export default function RegisterScreen() {
             </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
-            {otp === '' ? (
+            {otp.length < 6 ? (
               <MainButton onPress={verifyOtp} title="Xác thực" disabled={true} />
             ) : (
               <MainButton onPress={verifyOtp} title="Xác thực" />
