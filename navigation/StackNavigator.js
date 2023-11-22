@@ -10,6 +10,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import FillInfoScreen from '../screens/FillInfoScreen';
 import { fetchUser } from '../store/features/authSlice';
 import { ActivityIndicator, View } from 'react-native';
+import AddStudentScreen from '../screens/AddStudentScreen';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
@@ -23,10 +24,12 @@ const StackNavigator = () => {
             const accessToken = await AsyncStorage.getItem('accessToken');
             if (accessToken) {
                 setAccessToken(accessToken)
+                setLoading(false)
+            } else {
+                setLoading(false)
             }
         } catch (error) {
             console.log(error)
-        } finally {
             setLoading(false)
         }
     }
@@ -46,11 +49,16 @@ const StackNavigator = () => {
     return (
         //Screen màn hình chính
         <Stack.Navigator initialRouteName='Started'>
-            {user ? (<Stack.Screen
-                name="Root"
-                component={BottomTabNavigator}
-                options={{ headerShown: false }}
-            />) : (
+            {user ? (
+                <>
+                    <Stack.Screen
+                        name="Root"
+                        component={BottomTabNavigator}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name="AddStudent" component={AddStudentScreen} />
+                </>
+            ) : (
                 <>
                     <Stack.Screen name="Started" component={StartedScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
