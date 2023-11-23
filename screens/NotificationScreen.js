@@ -1,10 +1,10 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function ScheduleScreen() {
+export default function NotificationScreen() {
   return (
     <View>
-      <Text>ScheduleScreen</Text>
+      <Text>NotificationScreen</Text>
     </View>
   )
 }

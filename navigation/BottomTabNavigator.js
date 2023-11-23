@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image, StyleSheet } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import ScanScreen from '../screens/ScanScreen';
-import ScheduleScreen from '../screens/ScheduleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import StudentScreen from '../screens/StudentScreen';
 
@@ -16,12 +15,20 @@ import ClassConfirmScreen from '../screens/ClassConfirmScreen';
 import RegisterConfirmScreen from '../screens/RegisterConfirmScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import CartScreen from '../screens/CartScreen';
+import NotificationScreen from '../screens/NotificationScreen';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator
+            screenOptions={{
+                tabBarStyle: styles.tabNavigator,
+                tabBarInactiveTintColor: '#484C52',
+                tabBarActiveTintColor: '#83A2FF',
+                headerShown: false,
+            }}
+        >
             <Tab.Screen name="Home" component={HomeScreen} options={{
                 tabBarIcon: ({ focused }) => {
                     let icon = focused == true ? require('./../assets/images/home_active_icon.png') : require('./../assets/images/home_icon.png');
@@ -32,12 +39,12 @@ const BottomTabNavigator = () => {
                 tabBarActiveTintColor: '#F2C955',
                 headerShown: false,
             }} />
-            <Tab.Screen name="Document" component={StudentScreen} options={{
+            <Tab.Screen name="Student" component={StudentScreen} options={{
                 tabBarIcon: ({ focused }) => {
-                    let icon = focused == true ? require('./../assets/images/document_active_icon.png') : require('./../assets/images/document_icon.png');
+                    let icon = focused == true ? require('./../assets/images/student_active_icon.png') : require('./../assets/images/student_icon.png');
                     return <Image source={icon} style={styles.tabIcon} />
                 },
-                tabBarLabel: 'Tài liệu',
+                tabBarLabel: 'Học viên',
                 tabBarInactiveTintColor: '#484C52',
                 tabBarActiveTintColor: '#F2C955',
                 headerShown: false,
@@ -52,12 +59,12 @@ const BottomTabNavigator = () => {
                 tabBarActiveTintColor: '#F2C955',
                 headerShown: false,
             }} />
-            <Tab.Screen name="Schedule" component={ScheduleScreen} options={{
+            <Tab.Screen name="Notification" component={NotificationScreen} options={{
                 tabBarIcon: ({ focused }) => {
-                    let icon = focused == true ? require('./../assets/images/schedule_active_icon.png') : require('./../assets/images/schedule_icon.png');
+                    let icon = focused == true ? require('./../assets/images/notification_active_icon.png') : require('./../assets/images/notification_icon.png');
                     return <Image source={icon} style={styles.tabIcon} />
                 },
-                tabBarLabel: 'Lịch học',
+                tabBarLabel: 'Thông báo',
                 tabBarInactiveTintColor: '#484C52',
                 tabBarActiveTintColor: '#F2C955',
                 headerShown: false,
