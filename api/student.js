@@ -7,3 +7,12 @@ export const getStudents = async () => {
     const response = await api.get("/api/v1/students/currentuser");
     return response.data;
 };
+export const getClasses = async ({ id, status }) => {
+    const response = await api.get("/api/v1/students/getclass", {
+        params: {
+            studentId: id,
+            status: status,
+        }
+    });
+    return response.data;
+};

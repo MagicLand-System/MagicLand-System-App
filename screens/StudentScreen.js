@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { Avatar } from '@rneui/themed';
 import MainButton from '../components/MainButton';
@@ -46,14 +46,14 @@ export default function StudentScreen() {
         <ScrollView style={styles.container}>
             <Text style={styles.title}>Danh sách học viên</Text>
             {students.length > 0 ? students.map((student) => (
-                <View key={student.id} style={styles.student}>
+                <TouchableOpacity key={student.id} style={styles.student} onPress={() => { navigation.navigate('StudentMenu', { student }) }}>
                     <Avatar size={80} rounded source={{ uri: student.avatarImage }} />
                     <View style={{ marginLeft: 16 }}>
                         <Text style={styles.studentName}>{student.fullName}</Text>
                         <Text style={styles.studentDetail}>Tuổi: {new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear()}</Text>
                         <Text style={styles.studentDetail}>Giới tính: {student.gender}</Text>
                     </View>
-                </View>
+                </TouchableOpacity>
             )) : (
                 <Text style={styles.studentName}>Danh sách học viên trống</Text>
             )}
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: "Baloo2_700Bold",
         marginBottom: 20,
-        marginTop: 100,
+        marginTop: 60,
     },
     student: {
         flexDirection: 'row',
