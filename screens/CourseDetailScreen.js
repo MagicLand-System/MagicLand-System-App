@@ -115,8 +115,15 @@ export default function CourseDetailScreen({ route, navigation }) {
                                                 <Text style={styles.descrip}>
                                                     {" " + item?.detail}
                                                 </Text>
+                                                {
+                                                    !course?.courseFeture[key + 1] &&
+                                                    <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, detail: false }) }}>
+                                                        <Text style={styles.viewDetail}>
+                                                            Thu gọn
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                }
                                             </Text>
-
                                         </View>
                                     </View>
                                 )
@@ -125,12 +132,18 @@ export default function CourseDetailScreen({ route, navigation }) {
                     <Text style={{ ...styles.title, marginTop: 20 }}>
                         {`Chi Tiết Khóa Học   `}
                         {
-                            !viewDetail?.course &&
-                            <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, course: true }) }}>
-                                <Text style={styles.viewDetail}>
-                                    Xem Chi Tiết
-                                </Text>
-                            </TouchableOpacity>
+                            !viewDetail?.course ?
+                                <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, course: true }) }}>
+                                    <Text style={styles.viewDetail}>
+                                        Xem Chi Tiết
+                                    </Text>
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, course: false }) }}>
+                                    <Text style={styles.viewDetail}>
+                                        Thu gọn
+                                    </Text>
+                                </TouchableOpacity>
                         }
                     </Text>
                     {
@@ -168,7 +181,7 @@ export default function CourseDetailScreen({ route, navigation }) {
                         {`Các Lớp Thuộc Khóa Học:   `}
                         <TouchableOpacity onPress={() => { navigation.navigate("ClassScreen", { course: course }) }}>
                             <Text style={styles.viewDetail}>
-                                Xem cất cả
+                                Xem tất cả
                             </Text>
                         </TouchableOpacity>
                     </Text>
