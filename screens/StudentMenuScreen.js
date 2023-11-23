@@ -11,7 +11,7 @@ export default function StudentMenuScreen() {
     const navigation = useNavigation()
     return (
         <View style={styles.container}>
-            <View style={styles.student} onPress={() => { navigation.navigate('StudentMenu', { student }) }}>
+            <View style={styles.student}>
                 <Avatar size={60} rounded source={{ uri: student.avatarImage }} />
                 <View style={{ marginLeft: 16 }}>
                     <Text style={styles.studentName}>{student.fullName}</Text>
