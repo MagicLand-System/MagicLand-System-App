@@ -11,25 +11,25 @@ import FillInfoScreen from '../screens/FillInfoScreen';
 import { fetchUser } from '../store/features/authSlice';
 import { ActivityIndicator, View } from 'react-native';
 import AddStudentScreen from '../screens/AddStudentScreen';
+import StudentMenuScreen from '../screens/StudentMenuScreen';
+import StudentClassScreen from '../screens/StudentClassScreen';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
     const [loading, setLoading] = useState(false)
     const dispatch = useDispatch();
+    const [accessToken, setAccessToken] = useState(null)
     const user = useSelector(userSelector);
-    const [accessToken, setAccessToken] = useState('')
     const fetchToken = async () => {
+        setLoading(true)
         try {
-            setLoading(true)
             const accessToken = await AsyncStorage.getItem('accessToken');
             if (accessToken) {
                 setAccessToken(accessToken)
-                setLoading(false)
-            } else {
-                setLoading(false)
             }
         } catch (error) {
             console.log(error)
+        } finally {
             setLoading(false)
         }
     }
@@ -56,7 +56,9 @@ const StackNavigator = () => {
                         component={BottomTabNavigator}
                         options={{ headerShown: false }}
                     />
-                    <Stack.Screen name="AddStudent" component={AddStudentScreen} />
+                    <Stack.Screen name="AddStudent" component={AddStudentScreen} options={{ headerTitle: 'Thêm học viên' }} />
+                    <Stack.Screen name="StudentMenu" component={StudentMenuScreen} options={{ headerTitle: 'Học viên' }} />
+                    <Stack.Screen name="StudentClass" component={StudentClassScreen} options={{ headerTitle: 'Lớp học' }} />
                 </>
             ) : (
                 <>
