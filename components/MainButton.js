@@ -10,8 +10,8 @@ export default function MainButton(props) {
         return null
     }
     return (
-        <TouchableOpacity onPress={props.onPress} style={[styles.btn, props.disabled && styles.disabledBtn]} disabled={props.disabled}>
-            <Text style={[styles.btnText, props.disabled && styles.disabledBtnText]}>{props.title}</Text>
+        <TouchableOpacity onPress={props.onPress} style={styles.btn} disabled={props.disabled}>
+            <Text style={styles.btnText}>{props.text}</Text>
         </TouchableOpacity>
     )
 }
@@ -24,12 +24,6 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         paddingVertical: 15,
         alignSelf: 'center',
-    },
-    disabledBtn: {
-        backgroundColor: '#f9e4aa'
-    },
-    disabledBtnText: {
-        color: '#808080'
     },
     btnText: {
         fontSize: 18,
