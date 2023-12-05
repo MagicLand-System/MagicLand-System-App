@@ -1,24 +1,177 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, ScrollView, StyleSheet } from 'react-native'
 import React, { useState, useEffect, useContext } from "react";
-import { useFocusEffect } from '@react-navigation/native';
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import Header from '../components/header/Header';
+import FavoriteHeader from '../components/header/FavoriteHeader';
 
-import { formatPrice } from '../util/util';
+import { formatPrice, getIndexById } from '../util/util';
+import CourseCard from '../components/CourseCard';
 
-const studentListDefault = [
+const courseDetail = [
     {
-        name: "Lê Bảo Ngọc",
-        age: "10",
-        check: true,
+        id: 0,
+        name: "Toán Tư Duy Cho Bé (Cơ Bản)",
+        regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
+        introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
+        vietType: "toán",
+        type: "math",
+        img: require("../assets/home/cardImage/homeCardMathImg.png"),
+        registerAmount: 1,
+        rateValue: 4.5,
+        rateCount: 8,
+        coursePrice: 200000,
+        favorite: true,
         choose: false,
+        courseFeture: [
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+        ],
+        courseDetail: [
+            {
+                name: "Tên KH",
+                detail: "Toán Tư Duy Cho Bé"
+            },
+            {
+                name: "Điều kiện tham gia",
+                detail: "Đã hoàn thành khóa học Math001"
+            },
+            {
+                name: "Độ tuổi",
+                detail: "Từ 7 tuổi"
+            },
+            {
+                name: "Loại Hình",
+                detail: "Tiếng Anh"
+            },
+            {
+                name: "Hình Thức",
+                detail: "Lớp học"
+            },
+            {
+                name: "Số buổi",
+                detail: "4 buổi / khóa"
+            },
+        ],
     },
     {
-        name: "Trần Hữu Nghĩa",
-        age: "11",
-        check: true,
+        id: 1,
+        name: "Vẽ Cùng Bé",
+        regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
+        introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
+        vietType: "toán",
+        type: "art",
+        img: require("../assets/home/cardImage/homeCardDrawImg.png"),
+        registerAmount: 1,
+        rateValue: 4.5,
+        rateCount: 8,
+        coursePrice: 200000,
+        favorite: true,
         choose: false,
+        courseFeture: [
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+        ],
+        courseDetail: [
+            {
+                name: "Tên KH",
+                detail: "Toán Tư Duy Cho Bé"
+            },
+            {
+                name: "Điều kiện tham gia",
+                detail: "Đã hoàn thành khóa học Math001"
+            },
+            {
+                name: "Độ tuổi",
+                detail: "Từ 7 tuổi"
+            },
+            {
+                name: "Loại Hình",
+                detail: "Tiếng Anh"
+            },
+            {
+                name: "Hình Thức",
+                detail: "Lớp học"
+            },
+            {
+                name: "Số buổi",
+                detail: "4 buổi / khóa"
+            },
+        ],
+    },
+    {
+        id: 2,
+        name: "Vẽ Cùng Bé 2",
+        regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
+        introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
+        vietType: "toán",
+        type: "art",
+        img: require("../assets/home/cardImage/homeCardDrawImg.png"),
+        registerAmount: 1,
+        rateValue: 0,
+        rateCount: 0,
+        coursePrice: 200000,
+        favorite: true,
+        choose: false,
+        courseFeture: [
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+            {
+                name: "Phát trển tư duy và kỹ năng",
+                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+            },
+        ],
+        courseDetail: [
+            {
+                name: "Tên KH",
+                detail: "Toán Tư Duy Cho Bé"
+            },
+            {
+                name: "Điều kiện tham gia",
+                detail: "Đã hoàn thành khóa học Math001"
+            },
+            {
+                name: "Độ tuổi",
+                detail: "Từ 7 tuổi"
+            },
+            {
+                name: "Loại Hình",
+                detail: "Tiếng Anh"
+            },
+            {
+                name: "Hình Thức",
+                detail: "Lớp học"
+            },
+            {
+                name: "Số buổi",
+                detail: "4 buổi / khóa"
+            },
+        ],
     },
 ]
 
@@ -27,183 +180,106 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function CartScreen({ navigation }) {
 
-    const [studentList, setStudentList] = useState(studentListDefault)
+    const [choosedList, setChoosedList] = useState([...courseDetail])
+    const [bottomModalVisible, setBottomModalVisible] = useState({ total: false, confirm: false })
 
-    useFocusEffect(
-        React.useCallback(() => {
-            setStudentList(studentListDefault)
-        }, [])
-    );
-
-    const allSelected = () => {
-        const selectedList = studentList.filter(vourcher => vourcher.choose === true);
-        if (selectedList.length === studentList.length) {
-            return true
+    const hanldeChangeStatus = () => {
+        if (bottomModalVisible.total) {
+            hanldeClearChoosed()
+            setBottomModalVisible({ total: false, confirm: false })
         } else {
-            return false
+            setBottomModalVisible({ total: true, confirm: false })
         }
     }
 
-    const handleSelectAll = () => {
-        const updatedList = [...studentList];
-        if (allSelected()) {
-            updatedList.forEach((item) => { item.choose = false })
-        } else {
-            updatedList.forEach((item) => { item.choose = true })
+    const hanldeRegis = () => {
+        const choosesListCount = choosedList.filter(item => item.choose)
+        if (choosesListCount.length !== 0) {
+            setBottomModalVisible({ total: true, confirm: true })
         }
-        setStudentList(updatedList)
     }
 
-    const removeCard = (index) => {
-        const updatedList = [...studentList];
-        updatedList.splice(index, 1);
-        setStudentList(updatedList)
+    const hanldeClearChoosed = () => {
+        const updateList = [...choosedList]
+        updateList.forEach(item => item.choose = false)
+        setChoosedList(updateList)
     }
 
-    const deleteAll = () => {
-        const updatedList = [];
-        setStudentList(updatedList)
+    const handleCancel = () => {
+        hanldeClearChoosed()
+        setBottomModalVisible({ total: false, confirm: false })
     }
 
-    const InforCard = ({ item, index }) => {
-        return (
-            <View style={{ ...styles.flexColumn, position: "relative" }}>
-                <TouchableOpacity
-                    style={{
-                        ...styles.check,
-                        position: "absolute",
-                        top: 0,
-                        backgroundColor: item.choose ? "#3AAC45" : "white",
-                        borderColor: item.choose ? "#3AAC45" : "#000000"
-                    }}
-                    onPress={() => {
-                        setStudentList((prevAgeOption) => {
-                            const updatedList = [...prevAgeOption];
-                            updatedList[index].choose = !updatedList[index].choose;
-                            return updatedList;
-                        });
-                    }}
-                >
-                    {item.choose && <Icon name={"check"} color={"white"} size={22} />}
-                </TouchableOpacity>
-                <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <Text style={styles.cardHeaderText}>
-                            Học Viên:
-                        </Text>
-                        <TouchableOpacity style={styles.closeButton} onPress={() => (removeCard(index))}>
-                            <Icon name={"close"} color={"white"} size={18} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.cardContent}>
-                        <View style={{ ...styles.flexColumn, marginVertical: 10 }}>
-                            <Text style={{ color: "#B8B8D2" }}>Thêm thông tin học viên </Text>
-                            <Text style={{ ...styles.boldText, marginLeft: 5, fontSize: 25, color: "#9B51E0" }}>+</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cardHeader}>
-                        <Text style={styles.cardHeaderText}>
-                            Khóa Học:
-                        </Text>
-                        <TouchableOpacity
-                            style={styles.dropdown}
-                            onPress={() => {
-                                setStudentList((prevAgeOption) => {
-                                    const updatedList = [...prevAgeOption];
-                                    updatedList[index].check = !updatedList[index].check;
-                                    return updatedList;
-                                });
-                            }}
-                        >
-                            {
-                                item?.check ?
-                                    <Icon name={"keyboard-arrow-down"} color={"white"} size={22} />
-                                    :
-                                    <Icon name={"keyboard-arrow-up"} color={"white"} size={22} />
-                            }
-                        </TouchableOpacity>
-                    </View>
-                    {
-                        !item?.check &&
-                        <View style={styles.cardContent}>
-                            <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
-                                <Text>Tên Lớp Học: </Text>
-                                <Text style={{ ...styles.boldText, color: "#3A0CA3", width: "60%" }}>Lớp học Toán Tư Duy cho trẻ mới bắt đầu (Cơ Bản) </Text>
-                            </View>
-                            <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
-                                <Text>Giáo Viên : </Text>
-                                <Text style={{ ...styles.boldText, color: "#3A0CA3", width: "60%" }}>Cô Hà My</Text>
-                            </View>
-                            <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
-                                <Text>Số Buổi: </Text>
-                                <Text style={{ ...styles.boldText, color: "#3A0CA3", width: "60%" }}>4 buổi</Text>
-                            </View>
-                            <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
-                                <Text>Ngày Học:</Text>
-                                <Text style={{ ...styles.boldText, color: "#3A0CA3", width: "60%" }}>8,9,10,11 / 11</Text>
-                            </View>
-                            <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
-                                <Text>Thời Gian: </Text>
-                                <Text style={{ ...styles.boldText, color: "#3A0CA3", width: "60%" }}>18:00 - 20:00</Text>
-                            </View>
-                            <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
-                                <Text>Hình Thức: </Text>
-                                <Text style={{ ...styles.boldText, color: "#3A0CA3", width: "60%" }}>Online</Text>
-                            </View>
-                        </View>
-                    }
-                    <View style={styles.dashLine} />
-                    <View style={{ ...styles.flexColumnBetween, width: "80%", marginVertical: 10 }}>
-                        <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Giá: </Text>
-                        <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{formatPrice(200000)} đ</Text>
-                    </View>
-                </View>
-            </View>
-        )
+    const handleSubmit = () => {
+        // choosedList.forEach(item => console.log(item.choose))
+        navigation.push("RegisterClassScreen", { courseList: choosedList })
+        // hanldeChangeStatus()
+    }
+
+    const hanldeCoursePress = (course) => {
+        if (bottomModalVisible.total && !bottomModalVisible.confirm) {
+            const updateList = [...choosedList]
+            const index = getIndexById(choosedList, course?.id)
+            updateList[index].choose = !updateList[index].choose
+            setChoosedList(updateList)
+        } else {
+            console.log("ada");
+            // navigation.navigate("CourseDetailScreen", { course: course })
+        }
+    }
+
+    const getCountChoosed = () => {
+        const choosesListCount = choosedList.filter(item => item.choose)
+        return choosesListCount.length
     }
 
     return (
         <>
-            <Header navigation={navigation} background={"#F5F5F5"} />
-            <Text style={styles.title}>Giỏ Hàng</Text>
+            <FavoriteHeader navigation={navigation} background={"#FF8F8F"} title={`Khóa Học Bạn Quan Tâm (${choosedList.length})`} type={bottomModalVisible.total} setType={hanldeChangeStatus} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-                {
-                    studentList.length !== 0 &&
-                    <>
-                        <View style={{ ...styles.flexColumn, marginBottom: 20, position: "relative" }}>
-                            <TouchableOpacity style={styles.flexColumn} onPress={handleSelectAll}>
-                                <View style={{ ...styles.check, marginRight: 10, backgroundColor: allSelected() ? "#3AAC45" : "white", borderColor: allSelected() ? "#3AAC45" : "#000000" }}>
-                                    {allSelected() && <Icon name={"check"} color={"white"} size={22} />}
-                                </View>
-                                <Text>
-                                    Chọn Tất Cả
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.bin} onPress={deleteAll}>
-                                <Icon name={"delete"} color={"rgba(136,136,136,0.65)"} size={28} />
-                            </TouchableOpacity>
-                        </View>
-                        {
-                            studentList?.map((item, index) => {
-                                return <InforCard item={item} index={index} key={index} />
-                            })
-                        }
-                        <View style={{ ...styles.flexColumnBetween, paddingBottom: 40, marginTop: 10 }}>
-                            <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Tổng Tiền: </Text>
-                            <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{formatPrice(400000)} đ</Text>
-                        </View>
-                    </>
-                }
+                <View style={styles.cardList}>
+                    {
+                        courseDetail.map((item, index) => {
+                            return (
+                                <CourseCard cardDetail={item} onClick={hanldeCoursePress} choose={choosedList[index].choose} key={index} />
+                            )
+                        })
+                    }
+                </View>
             </ScrollView>
+            {
+                bottomModalVisible.total &&
+                <View style={styles.screenBottom}>
+                    {
+                        bottomModalVisible.confirm ?
+                            <View style={styles.confirmModal}>
+                                <Text style={{ ...styles.modalText, marginBottom: 7 }}>Bạn Đã chọn 2 khóa học</Text>
+                                <Text style={{ ...styles.modalText, marginBottom: 15 }}>Bạn có muốn đăng ký khóa học không?</Text>
+                                <View style={styles.modalButtonView}>
+                                    <TouchableOpacity style={styles.modalButton} onPress={handleCancel}>
+                                        <Text style={styles.modalButtonText}>Bỏ qua</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.modalButton} onPress={handleSubmit}>
+                                        <Text style={{ ...styles.modalButtonText, color: "#C71212" }}>Đăng ký</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            :
+                            <View style={styles.choosingModal}>
+                                <TouchableOpacity style={styles.modalIconView} onPress={hanldeRegis}>
+                                    <Icon name={"book-plus"} color={"#FFFFFF"} size={28} />
+                                    <Text style={styles.modalIconText}>Đăng Ký</Text>
+                                </TouchableOpacity>
+                                <Text style={styles.modalText}>{`Đã chọn ${getCountChoosed()} khóa học`}</Text>
+                                <TouchableOpacity style={styles.modalIconView} onPress={hanldeClearChoosed}>
+                                    <Icon name={"trash-can-outline"} color={"#FFFFFF"} size={28} />
+                                    <Text style={styles.modalIconText}>Thùng rác</Text>
+                                </TouchableOpacity>
+                            </View>
+                    }
+                </View>
+            }
 
-            <View style={styles.buttonContainer}>
-                {
-                    studentList.length !== 0 &&
-                    <TouchableOpacity style={{ ...styles.button, backgroundColor: "#C71212" }}>
-                        <Text style={{ ...styles.boldText, padding: 15, color: "white" }}>Đăng Ký</Text>
-                    </TouchableOpacity>
-                }
-            </View>
         </>
     )
 }
@@ -211,18 +287,9 @@ export default function CartScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
-        padding: 20,
-
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        marginBottom: 79,
-    },
-    title: {
-        width: WIDTH * 0.8,
-        marginHorizontal: WIDTH * 0.1,
-        marginVertical: 20,
-        fontSize: 25,
-        fontWeight: "600"
+        // padding: 20,
+        // borderTopLeftRadius: 30,
+        // borderTopRightRadius: 30,
     },
     flexColumnAround: {
         width: WIDTH,
@@ -247,87 +314,60 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
 
-    dashLine: {
-        width: "90%",
-        height: 1,
-        marginVertical: 10,
-        marginTop: 20,
-        backgroundColor: "#000000"
-    },
-
-    card: {
-        width: WIDTH * 0.8,
-        borderWidth: 1,
-        borderRadius: 10,
-        borderTopWidth: 0,
-        marginBottom: 20,
-        marginHorizontal: WIDTH * 0.1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    cardHeader: {
-        position: "relative",
-        width: "100%",
-        padding: 20,
-        borderWidth: 1,
-        // borderBottomWidth: 0,
-        borderRadius: 10,
-        backgroundColor: "#3A0CA3",
-        justifyContent: "center"
-    },
-    dropdown: {
-        position: "absolute",
-        right: 20,
-        borderWidth: 2,
-        borderColor: "white",
-        borderRadius: 50,
-        backgroundColor: "rgba(54, 56, 83, 0.15)",
-    },
-    cardHeaderText: {
-        color: "white"
-    },
-    cardContent: {
-        width: "90%",
-    },
-
-    check: {
-        width: 25,
-        height: 25,
-        borderWidth: 1,
-        borderColor: "white",
-        borderRadius: 5,
-    },
-
-    closeButton: {
-        position: "absolute",
-        right: 15,
-        borderWidth: 2,
-        borderColor: "white",
-        borderRadius: 15,
-    },
-
-    buttonContainer: {
-        position: "absolute",
-        height: 79,
-        bottom: 0,
-        right: 0,
-        left: 0,
+    cardList: {
         flexDirection: "row",
-        justifyContent: "center",
-        paddingVertical: 15,
-        backgroundColor: "white"
+        flexWrap: "wrap"
     },
-    button: {
-        width: WIDTH * 0.45,
-        borderWidth: 1,
-        borderColor: "#C71212",
-        borderRadius: 10,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "white"
-    },
-    bin:{
+    screenBottom: {
         position: "absolute",
-        right: 10,
-    }
+        paddingBottom: 30,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "#FF8D9D",
+        justifyContent: "flex-start",
+    },
+    choosingModal: {
+        flexDirection: "row",
+        padding: 20,
+        paddingHorizontal: 30,
+        paddingBottom: 0,
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    modalIconView: {
+        justifyContent: 'center',
+        alignItems: "center",
+    },
+    modalIconText: {
+        color: "white",
+        fontSize: 12,
+        marginTop: 5,
+    },
+    modalText: {
+        fontWeight: "700",
+        color: "#ffffff"
+    },
+    confirmModal: {
+        padding: 20,
+        paddingHorizontal: 30,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    modalButtonView: {
+        width: WIDTH * 0.6,
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center",
+    },
+    modalButton: {
+        padding: 15,
+        paddingVertical: 5,
+        borderRadius: 50,
+        backgroundColor: "white",
+    },
+    modalButtonText: {
+        fontWeight: "700",
+        color: "#3D5CFF"
+    },
 });

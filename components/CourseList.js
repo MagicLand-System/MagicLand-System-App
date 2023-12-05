@@ -8,248 +8,248 @@ import { truncateString } from '../util/util';
 
 const WIDTH = Dimensions.get('window').width;
 
-const courseList = [
-    {
-        name: "Khóa học Toán Tư Duy (Nâng cao)",
-        regex: "Từ 3 tuổi",
-        img: courseImageDefault,
-        regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
-        introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
-        sale: 30,
-        courseFeture: [
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-        ],
-        courseDetail: [
-            {
-                name: "Tên KH",
-                detail: "Toán Tư Duy Cho Bé"
-            },
-            {
-                name: "Điều kiện tham gia",
-                detail: "Đã hoàn thành khóa học Math001"
-            },
-            {
-                name: "Độ tuổi",
-                detail: "Từ 7 tuổi"
-            },
-            {
-                name: "Loại Hình",
-                detail: "Tiếng Anh"
-            },
-            {
-                name: "Hình Thức",
-                detail: "Lớp học"
-            },
-            {
-                name: "Số buổi",
-                detail: "4 buổi / khóa"
-            },
-        ],
-    },
-    {
-        name: "Khóa học Kỹ Năng Sống ",
-        regex: "Từ 11 tuổi",
-        img: courseImageDefault,
-        regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
-        introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
-        sale: 0,
-        courseFeture: [
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-        ],
-        courseDetail: [
-            {
-                name: "Tên KH",
-                detail: "Toán Tư Duy Cho Bé"
-            },
-            {
-                name: "Điều kiện tham gia",
-                detail: "Đã hoàn thành khóa học Math001"
-            },
-            {
-                name: "Độ tuổi",
-                detail: "Từ 7 tuổi"
-            },
-            {
-                name: "Loại Hình",
-                detail: "Tiếng Anh"
-            },
-            {
-                name: "Hình Thức",
-                detail: "Lớp học"
-            },
-            {
-                name: "Số buổi",
-                detail: "4 buổi / khóa"
-            },
-        ],
-    },
-    {
-        name: "Khóa học Toán Tư Duy",
-        regex: "Từ 18 tuổi",
-        img: courseImageDefault,
-        regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
-        introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
-        sale: 99,
-        courseFeture: [
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-        ],
-        courseDetail: [
-            {
-                name: "Tên KH",
-                detail: "Toán Tư Duy Cho Bé"
-            },
-            {
-                name: "Điều kiện tham gia",
-                detail: "Đã hoàn thành khóa học Math001"
-            },
-            {
-                name: "Độ tuổi",
-                detail: "Từ 7 tuổi"
-            },
-            {
-                name: "Loại Hình",
-                detail: "Tiếng Anh"
-            },
-            {
-                name: "Hình Thức",
-                detail: "Lớp học"
-            },
-            {
-                name: "Số buổi",
-                detail: "4 buổi / khóa"
-            },
-        ],
-    },
-    {
-        name: "Khóa học Toán Tư Duy",
-        regex: "Từ 18 tuổi",
-        img: courseImageDefault,
-        regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
-        introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
-        sale: 30,
-        courseFeture: [
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-        ],
-        courseDetail: [
-            {
-                name: "Tên KH",
-                detail: "Toán Tư Duy Cho Bé"
-            },
-            {
-                name: "Điều kiện tham gia",
-                detail: "Đã hoàn thành khóa học Math001"
-            },
-            {
-                name: "Độ tuổi",
-                detail: "Từ 7 tuổi"
-            },
-            {
-                name: "Loại Hình",
-                detail: "Tiếng Anh"
-            },
-            {
-                name: "Hình Thức",
-                detail: "Lớp học"
-            },
-            {
-                name: "Số buổi",
-                detail: "4 buổi / khóa"
-            },
-        ],
-    },
-    {
-        name: "Khóa học Toán Tư Duy",
-        regex: "Từ 18 tuổi",
-        img: courseImageDefault,
-        regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
-        introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
-        sale: 45,
-        courseFeture: [
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-            {
-                name: "Phát trển tư duy và kỹ năng",
-                detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
-            },
-        ],
-        courseDetail: [
-            {
-                name: "Tên KH",
-                detail: "Toán Tư Duy Cho Bé"
-            },
-            {
-                name: "Điều kiện tham gia",
-                detail: "Đã hoàn thành khóa học Math001"
-            },
-            {
-                name: "Độ tuổi",
-                detail: "Từ 7 tuổi"
-            },
-            {
-                name: "Loại Hình",
-                detail: "Tiếng Anh"
-            },
-            {
-                name: "Hình Thức",
-                detail: "Lớp học"
-            },
-            {
-                name: "Số buổi",
-                detail: "4 buổi / khóa"
-            },
-        ],
-    },
-]
+// const courseList = [
+//     {
+//         name: "Khóa học Toán Tư Duy (Nâng cao)",
+//         regex: "Từ 3 tuổi",
+//         img: courseImageDefault,
+//         regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
+//         introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
+//         sale: 30,
+//         courseFeture: [
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//         ],
+//         courseDetail: [
+//             {
+//                 name: "Tên KH",
+//                 detail: "Toán Tư Duy Cho Bé"
+//             },
+//             {
+//                 name: "Điều kiện tham gia",
+//                 detail: "Đã hoàn thành khóa học Math001"
+//             },
+//             {
+//                 name: "Độ tuổi",
+//                 detail: "Từ 7 tuổi"
+//             },
+//             {
+//                 name: "Loại Hình",
+//                 detail: "Tiếng Anh"
+//             },
+//             {
+//                 name: "Hình Thức",
+//                 detail: "Lớp học"
+//             },
+//             {
+//                 name: "Số buổi",
+//                 detail: "4 buổi / khóa"
+//             },
+//         ],
+//     },
+//     {
+//         name: "Khóa học Kỹ Năng Sống ",
+//         regex: "Từ 11 tuổi",
+//         img: courseImageDefault,
+//         regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
+//         introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
+//         sale: 0,
+//         courseFeture: [
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//         ],
+//         courseDetail: [
+//             {
+//                 name: "Tên KH",
+//                 detail: "Toán Tư Duy Cho Bé"
+//             },
+//             {
+//                 name: "Điều kiện tham gia",
+//                 detail: "Đã hoàn thành khóa học Math001"
+//             },
+//             {
+//                 name: "Độ tuổi",
+//                 detail: "Từ 7 tuổi"
+//             },
+//             {
+//                 name: "Loại Hình",
+//                 detail: "Tiếng Anh"
+//             },
+//             {
+//                 name: "Hình Thức",
+//                 detail: "Lớp học"
+//             },
+//             {
+//                 name: "Số buổi",
+//                 detail: "4 buổi / khóa"
+//             },
+//         ],
+//     },
+//     {
+//         name: "Khóa học Toán Tư Duy",
+//         regex: "Từ 18 tuổi",
+//         img: courseImageDefault,
+//         regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
+//         introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
+//         sale: 99,
+//         courseFeture: [
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//         ],
+//         courseDetail: [
+//             {
+//                 name: "Tên KH",
+//                 detail: "Toán Tư Duy Cho Bé"
+//             },
+//             {
+//                 name: "Điều kiện tham gia",
+//                 detail: "Đã hoàn thành khóa học Math001"
+//             },
+//             {
+//                 name: "Độ tuổi",
+//                 detail: "Từ 7 tuổi"
+//             },
+//             {
+//                 name: "Loại Hình",
+//                 detail: "Tiếng Anh"
+//             },
+//             {
+//                 name: "Hình Thức",
+//                 detail: "Lớp học"
+//             },
+//             {
+//                 name: "Số buổi",
+//                 detail: "4 buổi / khóa"
+//             },
+//         ],
+//     },
+//     {
+//         name: "Khóa học Toán Tư Duy",
+//         regex: "Từ 18 tuổi",
+//         img: courseImageDefault,
+//         regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
+//         introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
+//         sale: 30,
+//         courseFeture: [
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//         ],
+//         courseDetail: [
+//             {
+//                 name: "Tên KH",
+//                 detail: "Toán Tư Duy Cho Bé"
+//             },
+//             {
+//                 name: "Điều kiện tham gia",
+//                 detail: "Đã hoàn thành khóa học Math001"
+//             },
+//             {
+//                 name: "Độ tuổi",
+//                 detail: "Từ 7 tuổi"
+//             },
+//             {
+//                 name: "Loại Hình",
+//                 detail: "Tiếng Anh"
+//             },
+//             {
+//                 name: "Hình Thức",
+//                 detail: "Lớp học"
+//             },
+//             {
+//                 name: "Số buổi",
+//                 detail: "4 buổi / khóa"
+//             },
+//         ],
+//     },
+//     {
+//         name: "Khóa học Toán Tư Duy",
+//         regex: "Từ 18 tuổi",
+//         img: courseImageDefault,
+//         regexDescrip: "Dành cho bé từ 7 đến 15 tuổi",
+//         introduce: "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai",
+//         sale: 45,
+//         courseFeture: [
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//             {
+//                 name: "Phát trển tư duy và kỹ năng",
+//                 detail: "phát triển trí não và nâng cao các kỹ năng nhận biết với các phép tính toán…"
+//             },
+//         ],
+//         courseDetail: [
+//             {
+//                 name: "Tên KH",
+//                 detail: "Toán Tư Duy Cho Bé"
+//             },
+//             {
+//                 name: "Điều kiện tham gia",
+//                 detail: "Đã hoàn thành khóa học Math001"
+//             },
+//             {
+//                 name: "Độ tuổi",
+//                 detail: "Từ 7 tuổi"
+//             },
+//             {
+//                 name: "Loại Hình",
+//                 detail: "Tiếng Anh"
+//             },
+//             {
+//                 name: "Hình Thức",
+//                 detail: "Lớp học"
+//             },
+//             {
+//                 name: "Số buổi",
+//                 detail: "4 buổi / khóa"
+//             },
+//         ],
+//     },
+// ]
 
 export default function CourseList({ type, size, navigation }) {
 
@@ -405,10 +405,10 @@ const styles = StyleSheet.create({
     },
     frame: {
         position: "absolute",
-        width: WIDTH * 0.065,
+        width: 28,
         height: "50%",
         top: 0,
-        right: 12,
+        right: 10,
     },
     frameTop: {
         width: "100%",

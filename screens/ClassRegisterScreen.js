@@ -3,18 +3,25 @@ import React, { useState, useEffect, useContext } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 import Header from '../components/header/Header';
+import StudentView from '../components/StudentView';
 
 import { formatPrice } from '../util/util';
+import ClassCard from '../components/ClassCard';
+import ChooseClassModal from '../components/modal/ChooseClassModal';
 
 const studentListDefault = [
     {
+        id: 0,
         name: "Lê Bảo Ngọc",
         age: "10",
-        check: false,
+        dob: "2-2-2002",
+        check: true,
     },
     {
+        id: 1,
         name: "Trần Hữu Nghĩa",
         age: "11",
+        dob: "2-2-2003",
         check: false,
     },
 ]
@@ -24,145 +31,160 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function ClassRegisterScreen({ route, navigation }) {
 
-    const [studentList, setStudentList] = useState(studentListDefault)
-    let course = route?.params?.course
-    let classDetail = route?.params?.classDetail
-    let goback = route?.params?.goback
+    const [studentList, setStudentList] = useState([...studentListDefault])
+    const [classList, setClassList] = useState(route?.params?.classList)
+    const [classChoosed, setClassChoosed] = useState(classList?.filter(obj => obj.choose === true)[0])
+    const [modalVisible, setModalVisible] = useState({ classChoose: false })
 
     useEffect(() => {
-        course = route?.params?.course
-        classDetail = route?.params?.classDetail
-        goback = route?.params?.goback
+        setClassList(route?.params?.classList)
         setStudentList(studentListDefault)
-    }, [route?.params?.course, route?.params?.classDetail, route?.params?.goback])
-
-    const hanldeGoback = () => {
-        navigation.navigate("ClassDetailScreen", { course: course, classDetail: classDetail, goback: goback })
-    }
+        setClassChoosed(classList?.filter(obj => obj.choose === true)[0])
+    }, [route?.params?.classList, route?.params?.goback])
 
     const hanldeConfirm = () => {
         const registerList = studentList?.filter(student => student.check === true);
-        navigation.navigate("RegisterConfirmScreen", { course: course, classDetail: classDetail, goback: goback, studentList: registerList })
+        navigation.push("PaymentScreen", { classDetail: classChoosed, studentList: registerList })
     }
 
-    const getStudentAmount = () => {
-        const selectedStudents = studentList?.filter(student => student.check === true);
-        return selectedStudents.length
+    const selectStudent = (id) => {
+        const index = studentList.findIndex(obj => obj.id === id);
+        const updateArray = [...studentListDefault]
+        const defaultStatus = updateArray[index].check
+        // updateArray.forEach(item => item.check = false)
+        updateArray[index].check = !defaultStatus;
+        // console.log(updateArray);
+        setStudentList(updateArray)
+    }
+
+    const onCancleClassChoose = () => {
+        setModalVisible({ ...modalVisible, classChoose: false })
+    }
+
+    const onChooseClass = (id) => {
+        setModalVisible({ ...modalVisible, classChoose: true })
     }
 
     return (
         <>
-            <Header navigation={navigation} background={"#F5F5F5"} goback={hanldeGoback} />
+            <Header navigation={navigation} background={"#FF8F8F"} goback={navigation.popToTop} title={"Đăng Ký Khóa Học"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-                <Text style={styles.title}>Đăng Ký Lớp Học Ngay</Text>
-                <Text style={{ ...styles.title, backgroundColor: "#3A0CA3", fontSize: 16, color: "white" }}>Thông Tin Đăng Ký:</Text>
-                <View style={{ ...styles.flexColumn, padding: 20, paddingHorizontal: WIDTH * 0.1 }}>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Phụ Huynh:</Text>
+                <View style={styles.titleView}>
+                    <Text style={styles.title}>Chọn Cháu:</Text>
                 </View>
-                <View style={styles.parentDetail}>
-                    <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.6, marginBottom: 10 }}>
-                        <Text style={{ ...styles.boldText, width: WIDTH * 0.2 }}>Tên:</Text>
-                        <Text >Ngô Gia Thưởng</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.6, marginBottom: 10 }}>
-                        <Text style={{ ...styles.boldText, width: WIDTH * 0.2 }}>Email:</Text>
-                        <Text >thuongng@gmail.com</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.6, marginBottom: 10 }}>
-                        <Text style={{ ...styles.boldText, width: WIDTH * 0.2 }}>SĐT:</Text>
-                        <Text >0934*******</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.6, marginBottom: 10 }}>
-                        <Text style={{ ...styles.boldText, width: WIDTH * 0.2 }}>Địa Chỉ:</Text>
-                        <Text >123 ABC Q1</Text>
-                    </View>
+                <ScrollView showsHorizontalScrollIndicator={false} horizontal style={styles.studentList}>
+                    {
+                        studentList?.map((item, index) => {
+                            return (
+                                <StudentView student={item} index={index} key={index} onClick={selectStudent} />
+                            )
+                        })
+                    }
+                    <View style={styles.studentView}>
+                        <View style={styles.studentImage}>
+                            <Icon name={"person-add-alt"} color={"#5A5A5A"} size={50} />
+                        </View>
+                        <View style={styles.studentNameView}>
+                            <Text style={styles.studentName}>
+                                Thêm Bé
+                            </Text>
+                        </View>
+                    </View >
+                </ScrollView>
+                <View style={styles.studentDetail}>
+                    {
+                        studentList?.filter(obj => obj.check === true)[0] &&
+                        <Text style={styles.boldText}>Thông tin của cháu:</Text>
+                    }
+                    {
+                        studentList.filter(obj => obj.check === true).map((item, index) => {
+                            return (
+                                <View key={index}>
+                                    {
+                                        index !== 0 &&
+                                        <View style={styles.dashline} />
+                                    }
+                                    <View style={styles.flexColumn}>
+                                        <Icon name={"edit"} color={"#FF8D9D"} size={32} />
+                                        <View style={styles.detailView}>
+                                            <Text style={styles.detailViewTitle}>Họ và Tên:</Text>
+                                            <TextInput
+                                                style={styles.studentInput}
+                                                value={item.name}
+                                                editable={false}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={styles.flexColumn}>
+                                        <Icon name={"card-giftcard"} color={"#FF8D9D"} size={32} />
+                                        <View style={styles.detailView}>
+                                            <Text style={styles.detailViewTitle}>Họ và Tên:</Text>
+                                            <TextInput
+                                                style={styles.studentInput}
+                                                value={item.dob}
+                                                editable={false}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+                            )
+                        })
+                    }
                 </View>
-                <View style={styles.dashLine} />
-                <View style={{ ...styles.flexColumn, padding: 20, paddingHorizontal: WIDTH * 0.1 }}>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Học Viên: </Text>
-                    <TouchableOpacity style={styles.addButton}>
-                        <Text style={{ ...styles.boldText, color: "white" }}>Thêm học viên + </Text>
+                <View style={styles.titleView}>
+                    <Text style={styles.title}>Thông Tin Khóa Học:</Text>
+                </View>
+                <View style={{ ...styles.studentDetail, marginTop: 20 }}>
+                    {
+                        classChoosed &&
+                        <>
+                            <Text style={styles.boldText}>Thông tin khóa học:</Text>
+                            <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
+                                <Text style={styles.detailViewTitle}>Tên Khóa Học:</Text>
+                                <Text style={styles.boldText}>{classChoosed?.title} </Text>
+                            </View>
+                            <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
+                                <Text style={styles.detailViewTitle}>Số Lượng Đăng Ký:</Text>
+                                <Text style={styles.boldText}>{classChoosed?.registerAmount}</Text>
+                            </View>
+                            <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
+                                <Text style={styles.detailViewTitle}>Học Phí:</Text>
+                                <Text style={styles.boldText}>{formatPrice(classChoosed?.price)}đ</Text>
+                            </View>
+                        </>
+                    }
+                </View>
+                <View style={styles.titleView}>
+                    <Text style={styles.title}>Lịch Học:</Text>
+                    {
+                        !classChoosed &&
+                        <TouchableOpacity style={{ ...styles.addClass, ...styles.flexColumn }} onPress={onChooseClass}>
+                            <Text style={styles.addClassText}>Vui lòng chọn lịch học</Text>
+                            <View style={styles.addClassIcon}>
+                                <Icon name={"add"} color={"#222222"} size={15} />
+                            </View>
+                        </TouchableOpacity>
+                    }
+                </View>
+                <View style={styles.classCard}>
+                    {
+                        classChoosed &&
+                        <>
+                            <ClassCard cardDetail={classChoosed} index={classChoosed?.id} check={false} onClick={onChooseClass} />
+                            <TouchableOpacity style={{ ...styles.flexColumn, marginLeft: 20 }} onPress={onChooseClass}>
+                                <Icon name={"edit"} color={"#CFC9CA"} size={22} />
+                                <Text style={styles.chooseClassText}>Chọn lịch học khác</Text>
+                            </TouchableOpacity>
+                        </>
+                    }
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={{ ...styles.button, backgroundColor: "#FF8D9D" }} onPress={() => { hanldeConfirm() }}>
+                        <Text style={{ ...styles.boldText, padding: 15, color: "white" }}>Đăng Ký Ngay</Text>
                     </TouchableOpacity>
                 </View>
-                {studentList?.map((item, key) => {
-                    return (
-                        <View key={key} style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginHorizontal: WIDTH * 0.1, marginBottom: 20 }}>
-                            <View style={styles.flexColumn}>
-                                <TouchableOpacity
-                                    style={{ ...styles.selectBox, backgroundColor: item.check ? "#3A0CA3" : "white" }}
-                                    onPress={() => {
-                                        setStudentList((prevAgeOption) => {
-                                            const updatedList = [...prevAgeOption];
-                                            updatedList[key].check = !updatedList[key].check;
-                                            return updatedList;
-                                        });
-                                    }}
-                                >
-                                    {item.check && <Icon name={"check"} color={"white"} size={25} />}
-                                </TouchableOpacity>
-                                <Text style={styles.boldText}>Tên: </Text>
-                                <Text>{item.name}</Text>
-                            </View>
-                            <View style={styles.flexColumn}>
-                                <Text style={styles.boldText}>Tuổi: </Text>
-                                <Text>{item.age} tuổi</Text>
-                            </View>
-                        </View>
-                    )
-                })}
-                <View style={styles.dashLine} />
-                <View style={{ ...styles.flexColumn, padding: 20, paddingHorizontal: WIDTH * 0.1 }}>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Thông Tin  Lớp Học: </Text>
-                </View>
-                <View style={{ ...styles.detailCard }}>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Lớp học:</Text>
-                        <Text style={styles.cardText}>Toán Tư Duy cho trẻ mới bắt đầu (Cơ Bản)</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Giáo Viên:</Text>
-                        <Text style={styles.cardText}>Cô Hà My</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Số Buổi:</Text>
-                        <Text style={styles.cardText}>4 buổi / tuần</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Ngày Học:</Text>
-                        <Text style={styles.cardText}>8,9,10,11 / 11</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Thời Gian:</Text>
-                        <Text style={styles.cardText}>18:00 - 20:00</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Hình Thức</Text>
-                        <Text style={styles.cardText}>Online</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Cơ Sở:</Text>
-                        <Text style={styles.cardText}>Không có</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Địa Chỉ:</Text>
-                        <Text style={styles.cardText}>Không có</Text>
-                    </View>
-                    <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-                        <Text style={styles.boldText}>Phòng:</Text>
-                        <Text style={styles.cardText}>Không có</Text>
-                    </View>
-                </View>
-                <View style={styles.dashLine} />
-                <View style={{ ...styles.flexColumnBetween, padding: 20 }} >
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Thông Tin  Lớp Học: </Text>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{formatPrice(classDetail.price * getStudentAmount())} đ</Text>
-                </View>
             </ScrollView>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={{ ...styles.button, backgroundColor: "#C71212" }} onPress={() => {hanldeConfirm()}}>
-                    <Text style={{ ...styles.boldText, padding: 15, color: "white" }}>Đăng Ký Ngay</Text>
-                </TouchableOpacity>
-            </View>
+            <ChooseClassModal visible={modalVisible.classChoose} classList={classList} setClassList={setClassList} setClassChoosed={setClassChoosed} onCancle={onCancleClassChoose} navigation={navigation} />
         </>
     )
 }
@@ -170,16 +192,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
-        marginBottom: 80,
-    },
-    title: {
-        width: WIDTH,
-        textAlign: "center",
-        padding: 20,
-        // marginVertical: 20,
-        fontSize: 25,
-        fontWeight: "600",
-        backgroundColor: "#F5F5F5"
+        // marginBottom: 80,
     },
     flexColumnAround: {
         width: WIDTH,
@@ -195,6 +208,7 @@ const styles = StyleSheet.create({
     flexColumnBetween: {
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center"
     },
     flexColumn: {
         flexDirection: "row",
@@ -203,61 +217,130 @@ const styles = StyleSheet.create({
     boldText: {
         fontWeight: "600",
     },
-    parentDetail: {
-        width: WIDTH * 0.5,
-        marginHorizontal: WIDTH * 0.2,
+
+    studentList: {
+        width: "100%",
+        paddingHorizontal: 20,
+        marginVertical: 15,
+        // borderWidth: 1,
+        flexDirection: "row"
     },
-    dashLine: {
-        width: WIDTH * 0.9,
-        height: 2,
-        borderRadius: 15,
-        marginHorizontal: WIDTH * 0.05,
-        marginVertical: 10,
-        backgroundColor: "#000000"
-    },
-    addButton: {
-        padding: 10,
-        borderRadius: 15,
+    titleView: {
+        flexDirection: "row",
         marginHorizontal: 20,
-        backgroundColor: "#3A0CA3",
+        borderLeftWidth: 5,
+        borderLeftColor: "#FF8F8F",
+        marginTop: 15,
+        alignItems: "center"
     },
-    selectBox: {
-        width: 29,
-        height: 29,
-        borderWidth: 2,
-        borderColor: "#3A0CA3",
-        borderRadius: 5,
-        marginRight: 10,
+    title: {
+        marginLeft: 5,
+        color: "#FF8F8F",
+        fontWeight: "600",
+        fontSize: 18,
     },
-    detailCard: {
-        width: WIDTH * 0.9,
-        padding: 20,
-        borderRadius: 15,
-        marginHorizontal: WIDTH * 0.05,
-        // backgroundColor: "rgba(218, 218, 247, 0.6)"
+    studentDetail: {
+        paddingHorizontal: WIDTH * 0.12
     },
-    cardText: {
-        width: WIDTH * 0.5,
-        textAlign: "right"
+    detailView: {
+        marginVertical: 10,
+        marginLeft: 10,
+    },
+    detailViewTitle: {
+        color: "#C4C4C4",
+        fontSize: 15,
+        fontWeight: "600"
+    },
+    studentInput: {
+        width: WIDTH * 0.65,
+        padding: 5,
+        fontWeight: "600",
+        borderBottomWidth: 1,
+        borderBottomColor: "#C4C4C4"
+    },
+    dashline: {
+        width: "100%",
+        height: 2,
+        backgroundColor: "#C4C4C4",
+        marginVertical: 5
+    },
+    classCard: {
+        marginVertical: 20,
+        marginHorizontal: WIDTH * 0.08
+    },
+    chooseClassText: {
+        color: "#CFC9CA",
+        textDecorationLine: "underline",
+    },
+    addClass: {
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: "#888888",
+        marginHorizontal: 10,
+        backgroundColor: "white"
+    },
+    addClassText: {
+        color: "#888888"
+    },
+    addClassIcon: {
+        padding: 3,
+        borderRadius: 50,
+        backgroundColor: "rgba(126, 134, 158, 0.25)",
+        marginLeft: 10
     },
 
     buttonContainer: {
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        left: 0,
         flexDirection: "row",
         justifyContent: "center",
         paddingVertical: 15,
         backgroundColor: "white"
     },
     button: {
-        width: WIDTH * 0.45,
-        borderWidth: 1,
+        width: WIDTH * 0.7,
         borderColor: "#C71212",
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "white"
-    }
+    },
+
+    studentView: {
+        // width: WIDTH * 0.7,
+        marginRight: 30,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    studentImage: {
+        position: "relative",
+        width: WIDTH * 0.2,
+        height: WIDTH * 0.2,
+        borderWidth: 3,
+        borderRadius: 50,
+        borderColor: "#888888",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#D9D9D9",
+    },
+    studentCheck: {
+        position: "absolute",
+        right: 0,
+        top: 0,
+        padding: 2,
+        borderRadius: 50,
+        backgroundColor: "",
+    },
+    studentNameView: {
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 50,
+        marginTop: 10,
+        backgroundColor: "#C4C4C4"
+    },
+    studentName: {
+        fontWeight: "600",
+        fontSize: 12,
+        color: "#888888"
+    },
 });

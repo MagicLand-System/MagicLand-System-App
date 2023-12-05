@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         paddingHorizontal: 15,
         paddingRight: 25,
-        backgroundColor: '#3A0CA3',
+        backgroundColor: '#FFFFFF',
         flexDirection: "row",
         alignItems: "center",
     },

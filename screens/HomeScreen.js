@@ -4,6 +4,7 @@ import React from 'react'
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
+
 export default function HomeScreen({ navigation }) {
   return (
     <View>
@@ -12,7 +13,7 @@ export default function HomeScreen({ navigation }) {
           Các khóa Học
         </Text>
         <TouchableOpacity
-          onPress={() => {navigation.navigate("CourseScreen")}}
+          onPress={() => { navigation.navigate("CourseScreen") }}
         >
           <Text style={styles.viewAll}>
             Xem tất cả

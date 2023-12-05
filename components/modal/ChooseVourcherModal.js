@@ -1,11 +1,33 @@
-import { View, Text, TextInput, TouchableOpacity, Dimensions, ScrollView, StyleSheet, Modal } from 'react-native'
+import { View, Text, TextInput, Image, TouchableOpacity, Dimensions, ScrollView, StyleSheet, Modal } from 'react-native'
 import React from 'react'
 import Icon from "react-native-vector-icons/MaterialIcons";
+
+import Header from '../header/Header';
+import { formatPrice } from '../../util/util';
+
+import voucherBackground from "../../assets/voucherBackround.png"
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-export default function ChooseVourcherModal({ visible, vourcherList, onCancle, onChoose }) {
+export default function ChooseVourcherModal({ visible, vourcherList, onCancle, onChoose, discount, navigation }) {
+
+    const VoucherTab = ({ item, index }) => {
+        return (
+            <TouchableOpacity style={styles.vourcherCard} onPress={() => onChoose(index)}>
+                <Image source={voucherBackground} style={styles.voucherBackground} resizeMode="cover" />
+                <View style={styles.vourcherLeft}>
+                    <Text style={styles.vourcherLeftTitle}>Siêu Ưu Đãi</Text>
+                    <Text style={styles.vourcherLeftValue}>{item?.value} %</Text>
+                </View>
+                <View style={styles.vourcherRight}>
+                    <Text style={{ ...styles.boldText, color: "#F8556C" }}>Giảm tối đa {formatPrice(item.max)}đ </Text>
+                    <Text style={styles.boldText}>Đơn tối thiểu {formatPrice(item.minUse)}đ</Text>
+                    <Text style={styles.smallText}>{item?.content}</Text>
+                </View>
+            </TouchableOpacity>
+        )
+    }
 
     return (
         <Modal
@@ -13,90 +35,99 @@ export default function ChooseVourcherModal({ visible, vourcherList, onCancle, o
             animationType="fade"
             transparent={true}
         >
-            <TouchableOpacity style={styles.layout} onPress={onCancle} />
             <View style={styles.container}>
-                <View style={styles.modalHeader}>
-                    <Text style={styles.modalHeaderText}>Chọn Vourcher:</Text>
-                </View>
-                <View style={styles.modalContent}>
+                <View style={styles.safeArea} />
+                <Header navigation={navigation} background={"#FF8F8F"} goback={onCancle} title={"Chọn mã giảm giá"} />
+                <ScrollView showsVerticalScrollIndicator={false} style={styles.vourcherList}>
                     {
                         vourcherList.map((item, index) => {
                             return (
-                                <View style={{ ...styles.flexColumn, borderTopWidth: index != 0 ? 1 : 0, }} key={index}>
-                                    <View style={styles.modalLeft}>
-                                        <Text>{item?.name}</Text>
-                                        <Text>{item?.content}</Text>
-                                    </View>
-                                    <View style={styles.modalRight}>
-                                        <TouchableOpacity
-                                            style={{ ...styles.check, backgroundColor: item.choose ? "#C8A9F1" : "white" }}
-                                            onPress={()=>onChoose(index)}
-                                        >
-                                            {
-                                                item.choose &&
-                                                <Icon name={"check"} color={"#794BFF"} size={22} />
-                                            }
-                                        </TouchableOpacity>
-                                    </View>
+                                <View key={index}>
+                                    {
+                                        index !== 0 &&
+                                        <View style={styles.dashline} />
+                                    }
+                                    <VoucherTab item={item} index={index} />
                                 </View>
                             )
                         })
                     }
-                </View>
+                </ScrollView>
+                <Text style={styles.choosedText}>{discount !== 0 ? 1 : 0} Voucher đã được chọn. Bạn được giảm {formatPrice(discount)}đ</Text>
             </View>
-        </Modal>
+        </Modal >
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        position: "absolute",
-        bottom: HEIGHT * 0.35,
-        left: WIDTH * 0.1,
-        right: WIDTH * 0.1,
+        flex: 1,
         backgroundColor: "white",
         justifyContent: "center",
         alignItems: "center"
     },
-    layout: {
+    safeArea: {
+        width: WIDTH,
+        height: 50,
+        backgroundColor: "#FF8F8F"
+    },
+    vourcherList: {
+        marginTop: 20,
+        paddingHorizontal: WIDTH * 0.05,
+        // alignItems: "center",
+        // justifyContent: "center"
+    },
+    vourcherCard: {
+        position: "relative",
+        width: WIDTH * 0.8,
+        flexDirection: "row",
+        marginVertical: 10,
+    },
+    dashline: {
+        width: WIDTH * 0.82,
+        height: 2,
+        backgroundColor: "#F9ACC0",
+        marginVertical: 5,
+        marginTop: 12,
+    },
+    voucherBackground: {
         position: "absolute",
         top: 0,
         bottom: 0,
+        right: 0,
         left: 0,
-        right: 0,
-        backgroundColor: "rgba(0,0,0,0.1)"
     },
-    modalHeader: {
-        width: "100%",
-        padding: 20,
+    vourcherLeft: {
+        width: "30%",
         justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#C8A9F1"
+        alignItems: "center"
     },
-    modalHeaderText: {
-        fontWeight: "600",
-        color: "#3A0CA3"
+    vourcherRight: {
+        width: "72%",
+        padding: 5,
+        paddingHorizontal: 10,
     },
-    flexColumn: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
+    vourcherLeftTitle: {
+        color: "white",
+        fontWeight: "700",
+        fontSize: 12,
     },
-    modalLeft: {
-        width: "70%"
+    vourcherLeftValue: {
+        color: "white",
+        fontWeight: "700",
+        fontSize: 18,
     },
-    modalRight: {
-        position: "relative",
-        width: "20%",
-        justifyContent: "center"
+    boldText: {
+        fontSize: 10,
+        fontWeight: "700",
+        marginBottom: 3
     },
-    check: {
-        width: 26,
-        height: 26,
-        position: "absolute",
-        right: 0,
-        borderWidth: 2,
-        borderColor: "#794BFF",
-        borderRadius: 5,
+    smallText: {
+        fontSize: 8
+    },
+    choosedText: {
+        paddingVertical: 10,
+        paddingBottom: 40,
+        color: "#F8556C"
     }
 });

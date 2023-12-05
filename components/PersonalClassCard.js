@@ -12,10 +12,10 @@ const colorList = [
     "#DE9E71"
 ]
 
-export default function ClassCard({ cardDetail, check, index, onClick }) {
+export default function PersonalClassCard({ cardDetail, check, index, onClick }) {
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail.id) }}>
+        <TouchableOpacity style={styles.container} onPress={onClick}>
             {
                 check &&
                 <>
@@ -28,25 +28,31 @@ export default function ClassCard({ cardDetail, check, index, onClick }) {
                     </View>
                 </>
             }
-            <View style={{ ...styles.card, backgroundColor: colorList[(index % colorList.length)] }}>
-                <Text style={styles.cardName}>Lớp Toán Tư Duy 1</Text>
+            <View style={{ ...styles.card, borderColor: colorList[(index % colorList.length)] }}>
+                <View style={{ ...styles.flexColumn, marginLeft: 0, justifyContent: "space-between" }}>
+                    <Text style={{ ...styles.cardName, color: colorList[(index % colorList.length)] }}>{cardDetail.title}</Text>
+                    <View style={{ ...styles.status, backgroundColor: colorList[(index % colorList.length)] }}>
+                        <Text style={{ ...styles.cardDetailText, color: "white" }}>{cardDetail.type}</Text>
+                    </View>
+                </View>
+
                 <View style={{ ...styles.flexColumn, marginLeft: 0, marginTop: 10 }}>
                     <View style={{ ...styles.flexColumn, marginLeft: 0 }}>
-                        <View style={{ ...styles.statusCircle, backgroundColor: cardDetail.status ? "#3AAC45" : "#FFFFFF" }} />
+                        <View style={{ ...styles.statusCircle, backgroundColor: cardDetail.status ? "#3AAC45" : "#D1D1D6" }} />
                         {
                             cardDetail.status ?
-                                <Text style={styles.cardDetailText}>Online</Text>
+                                <Text style={{ ...styles.cardDetailText, color: colorList[(index % colorList.length)] }}>Online</Text>
                                 :
-                                <Text style={styles.cardDetailText}>Offline</Text>
+                                <Text style={{ ...styles.cardDetailText, color: colorList[(index % colorList.length)] }}>Offline</Text>
                         }
                     </View>
                     <View style={styles.flexColumn}>
-                        <Icon name={"notebook-multiple"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{cardDetail.leasonAmount} buổi</Text>
+                        <Icon name={"notebook-multiple"} color={colorList[(index % colorList.length)]} size={18} />
+                        <Text style={{ ...styles.cardDetailText, color: colorList[(index % colorList.length)] }}>{cardDetail.leasonAmount} buổi</Text>
                     </View>
                     <View style={styles.flexColumn}>
-                        <Icon name={"calendar-check"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>Thứ 2 - 4- 6 (7h30 - 9h)</Text>
+                        <Icon name={"calendar-check"} color={colorList[(index % colorList.length)]} size={18} />
+                        <Text style={{ ...styles.cardDetailText, color: colorList[(index % colorList.length)] }}>Thứ 2 - 4- 6 (7h30 - 9h)</Text>
                     </View>
                 </View>
             </View>
@@ -83,12 +89,28 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 10,
         borderRadius: 5,
+        borderWidth: 1,
         marginLeft: 10,
+        backgroundColor: "white",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5,
     },
     cardName: {
         color: "#241468",
         fontWeight: "700",
         fontSize: 18,
+    },
+    status:{
+        paddingHorizontal: 15,
+        paddingVertical: 3,
+        borderRadius: 50,
     },
     statusCircle: {
         width: 12,

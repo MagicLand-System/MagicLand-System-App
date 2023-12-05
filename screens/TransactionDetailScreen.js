@@ -13,29 +13,17 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function TransactionDetailScreen({ route, navigation }) {
 
-    let course = route?.params?.course
-    let classDetail = route?.params?.classDetail
-    let goback = route?.params?.goback
-    let vourcher = route?.params?.vourcherList
-    let studentList = route?.params?.studentList
     let total = route?.params?.total
 
-    const [modalVisible, setModalVisible] = useState({ notifi: true })
-
-    const hanldeGoback = () => {
-        navigation.navigate("PaymentScreen", { course: course, classDetail: classDetail, goback: goback, studentList: studentList, vourcherList: vourcher })
-    }
-
-    const handleCloseModal = () => {
-        setModalVisible({ notifi: false })
+    const handleClose = () => {
+        navigation.popToTop()
     }
 
     return (
         <>
-            <Header navigation={navigation} background={"#F5F5F5"} goback={hanldeGoback} />
-            <Text style={styles.title}>Chi Tiết Giao Dịch</Text>
+            <Header navigation={navigation} background={"#FF8F8F"} goback={navigation.popToTop} title={"Chi tiết giao dịch"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-                <Text style={{ ...styles.boldText, textAlign: "center", fontSize: 30 }}>Thanh Toán</Text>
+                {/* <Text style={{ ...styles.boldText, textAlign: "center", fontSize: 30 }}>Thanh Toán</Text> */}
                 <View style={{ ...styles.flexColumnCenter, marginVertical: 20 }}>
                     <View style={styles.headerImage}>
                         <Image style={styles.monneyImage} source={monneyIcon} />
@@ -62,14 +50,14 @@ export default function TransactionDetailScreen({ route, navigation }) {
                     <Text style={{ ...styles.boldText }}>Tên Người Thanh Toán:</Text>
                     <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Ngô Gia Thưởng</Text>
                 </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={{ ...styles.button, backgroundColor: "#FF8D9D" }} onPress={handleClose}>
+                        <Text style={{ ...styles.boldText, padding: 15, color: "white" }}>Đóng</Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
 
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={{ ...styles.button, backgroundColor: "#3D5CFF" }}>
-                    <Text style={{ ...styles.boldText, padding: 15, color: "white" }}>Đóng</Text>
-                </TouchableOpacity>
-            </View>
-            <PaymentSuccessModal visible={modalVisible.notifi} onSubmit={handleCloseModal} />
+
         </>
     )
 }
@@ -79,9 +67,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 20,
 
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        marginBottom: 79,
+        // borderTopLeftRadius: 30,
+        // borderTopRightRadius: 30,
+        // marginBottom: 79,
     },
     title: {
         width: WIDTH * 0.8,
@@ -126,10 +114,6 @@ const styles = StyleSheet.create({
     },
 
     buttonContainer: {
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        left: 0,
         flexDirection: "row",
         justifyContent: "center",
         paddingVertical: 15,
@@ -137,7 +121,6 @@ const styles = StyleSheet.create({
     },
     button: {
         width: WIDTH * 0.45,
-        borderWidth: 1,
         borderColor: "#C71212",
         borderRadius: 10,
         justifyContent: "center",

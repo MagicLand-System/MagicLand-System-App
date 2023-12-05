@@ -24,7 +24,7 @@ const classCardDetail = [
         timeTo: "20:00",
         time: "18:30 20:00",
         rate: 4.6,
-        registerAmount: 8,
+        registerAmount: 1,
         price: 200000,
     },
     {
@@ -38,7 +38,7 @@ const classCardDetail = [
         timeTo: "20:00",
         time: "18:30 20:00",
         rate: 4.6,
-        registerAmount: 8,
+        registerAmount: 1,
         price: 200000,
     },
     {
@@ -52,7 +52,7 @@ const classCardDetail = [
         timeTo: "20:00",
         time: "18:30 20:00",
         rate: 4.6,
-        registerAmount: 8,
+        registerAmount: 1,
         price: 200000,
     },
     {
@@ -66,7 +66,7 @@ const classCardDetail = [
         timeTo: "20:00",
         time: "18:30 20:00",
         rate: 4.6,
-        registerAmount: 8,
+        registerAmount: 1,
         price: 200000,
     },
 ]

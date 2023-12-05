@@ -1,10 +1,12 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, ScrollView, StyleSheet } from 'react-native'
 import React, { useState, useEffect, useContext } from "react";
 import { useFocusEffect } from '@react-navigation/native';
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import Header from '../components/header/Header';
+import ChooseVourcherModal from '../components/modal/ChooseVourcherModal';
 import InputOtpModal from '../components/modal/InputOtpModal';
+import PaymentSuccessModal from '../components/modal/PaymentSuccessModal';
 
 import { formatPrice } from '../util/util';
 
@@ -12,27 +14,36 @@ import { formatPrice } from '../util/util';
 const vourcherListDefault = [
     {
         name: "GIAMGIA15%",
-        content: "Voucher giảm giá 15% tối đa 30k cho đơn trên 150",
+        content: "Siêu ưu đãi mừng khai giảng khóa mới bắt đầu từ ngày 10/9 - 20/9",
         value: 15,
         max: 40000,
-        minUse: 150000,
+        minUse: 100000,
         expire: "20.12.2023",
         choose: false
     },
     {
         name: "GIAMGIA40%",
-        content: "Voucher giảm giá 15% tối đa 30k cho đơn trên 150",
+        content: "Siêu ưu đãi mừng khai giảng khóa mới bắt đầu từ ngày 10/9 - 20/9",
         value: 40,
-        max: 30000,
+        max: 50000,
         minUse: 150000,
         expire: "20.12.2023",
         choose: false
     },
     {
         name: "GIAMGIA50%",
-        content: "Voucher giảm giá 15% tối đa 30k cho đơn trên 150",
+        content: "Siêu ưu đãi mừng khai giảng khóa mới bắt đầu từ ngày 10/9 - 20/9",
         value: 50,
         max: 50000,
+        minUse: 150000,
+        expire: "20.12.2023",
+        choose: false
+    },
+    {
+        name: "GIAMGIA70%",
+        content: "Siêu ưu đãi mừng khai giảng khóa mới bắt đầu từ ngày 10/9 - 20/9",
+        value: 70,
+        max: 75000,
         minUse: 150000,
         expire: "20.12.2023",
         choose: false
@@ -44,25 +55,16 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function PaymentScreen({ route, navigation }) {
 
-    let course = route?.params?.course
     let classDetail = route?.params?.classDetail
-    let goback = route?.params?.goback
-    let vourcher = route?.params?.vourcherList
     const [studentList, setStudentList] = useState(route?.params?.studentList)
-    const [vourcherList, setVourcherList] = useState(vourcher ? vourcher : vourcherListDefault)
-    const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false })
+    const [vourcherList, setVourcherList] = useState(vourcherListDefault)
+    const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false })
 
     useEffect(() => {
-        course = route?.params?.course
         classDetail = route?.params?.classDetail
-        goback = route?.params?.goback
         setStudentList(route?.params?.studentList)
-        setVourcherList(vourcher ? vourcher : vourcherListDefault)
-    }, [route?.params?.course, route?.params?.classDetail, route?.params?.goback, route?.params?.studentList, route?.params?.vourcherList])
-
-    const hanldeGoback = () => {
-        navigation.navigate("RegisterConfirmScreen", { course: course, classDetail: classDetail, goback: goback, studentList: studentList })
-    }
+        setVourcherList(vourcherListDefault)
+    }, [route?.params?.classDetail, route?.params?.studentList])
 
     const hanldeCloseOtpModal = () => {
         setModalVisible({ ...modalVisible, otp: false })
@@ -73,16 +75,29 @@ export default function PaymentScreen({ route, navigation }) {
     }
 
     const handleSubmitOtp = (otp) => {
-        setModalVisible({ ...modalVisible, otp: false })
-        navigation.navigate("TransactionDetailScreen", { course: course, classDetail: classDetail, goback: goback, studentList: studentList, vourcherList: vourcherList, total: totalPayment()  })
+        setModalVisible({ ...modalVisible, otp: false, notifi: true })
     }
 
-    const handleNavigateVourcher = () => {
-        navigation.navigate("ChooseVoucherScreen", { course: course, classDetail: classDetail, goback: goback, studentList: studentList, vourcherList: vourcherList})
+    const handleChooseVourcherModal = () => {
+        setModalVisible({ ...modalVisible, vourcher: true })
     }
 
-    const getPrice = () => {
-        return (studentList.length * classDetail.price)
+    const handleCancleVourcherModal = () => {
+        setModalVisible({ ...modalVisible, vourcher: false })
+    }
+
+    const handleCloseNotifiModal = () => {
+        setModalVisible({ ...modalVisible, notifi: false })
+        navigation.push("TransactionDetailScreen", { total: totalPayment() })
+    }
+
+    const handleChooseVourcher = (index) => {
+        const updateList = [...vourcherList]
+        const defaultChoose = updateList[index].choose
+        updateList.forEach(item => item.choose = false)
+        updateList[index].choose = !defaultChoose
+        setVourcherList(updateList)
+        handleCancleVourcherModal()
     }
 
     const vourcherValue = () => {
@@ -95,7 +110,7 @@ export default function PaymentScreen({ route, navigation }) {
     }
 
     const totalPrice = () => {
-        return (studentList.length * classDetail.price)
+        return (studentList.length * (classDetail.price ? classDetail.price : 200000))
     }
 
     const vourcherDiscount = () => {
@@ -113,87 +128,79 @@ export default function PaymentScreen({ route, navigation }) {
         const totalPayment = totalPrice() - discountValue
         return totalPayment
     }
+
     return (
         <>
-            <Header navigation={navigation} background={"#F5F5F5"} goback={hanldeGoback} />
-            <Text style={styles.title}>THANH TOÁN</Text>
+            <Header navigation={navigation} background={"#FF8F8F"} title={"Thông tin thanh toán"} goback={navigation.popToTop}/>
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-                <View style={{ ...styles.flexColumn, paddingVertical: 20 }}>
-                    <Text style={{ ...styles.boldText, color: "#C8A9F1" }}>Phụ Huynh:</Text>
+                <View style={styles.checkPayment}>
+                    <Icon name={"alert-circle"} color={"#FF8D9D"} size={28} />
+                    <Text style={{ color: "#FF8F8F" }}>Vui lòng kiểm tra lại thông tin thanh toán:</Text>
                 </View>
-                <View style={{ ...styles.flexColumn, width: "80%", marginHorizontal: "20%", marginBottom: 5, }}>
-                    <Text style={{ ...styles.boldText, width: "30%" }}>Tên: </Text>
-                    <Text >Ngô Gia Thưởng</Text>
+                <View style={styles.titleView}>
+                    <Text style={styles.title}>Thông Tin Đăng Ký</Text>
                 </View>
-                <View style={{ ...styles.flexColumn, width: "80%", marginHorizontal: "20%", marginBottom: 5, }}>
-                    <Text style={{ ...styles.boldText, width: "30%" }}>Email: </Text>
-                    <Text >thuongng@gmail.com</Text>
+                {
+                    studentList?.map((item, index) => {
+                        return (
+                            <View style={styles.studentDetail} key={index}>
+                                {
+                                    index !== 0 &&
+                                    <View style={styles.dashline} />
+                                }
+                                <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
+                                    <Text style={styles.detailViewTitle}>Tên học viên:</Text>
+                                    <Text style={styles.boldText}>{item.name}</Text>
+                                </View>
+                                <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
+                                    <Text style={styles.detailViewTitle}>Khóa Học:</Text>
+                                    <Text style={styles.boldText}>{classDetail.title}</Text>
+                                </View>
+                                <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
+                                    <Text style={styles.detailViewTitle}>Lịch Học:</Text>
+                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>Thứ 2-4-6 / tuần (7h30 - 9h)</Text>
+                                </View>
+                            </View>
+                        )
+                    })
+                }
+                <View style={styles.titleView}>
+                    <Text style={styles.title}>Chọn phương thức thanh toán</Text>
                 </View>
-                <View style={{ ...styles.flexColumn, width: "80%", marginHorizontal: "20%", marginBottom: 5, }}>
-                    <Text style={{ ...styles.boldText, width: "30%" }}>SĐT: </Text>
-                    <Text >0934*******</Text>
-                </View>
-                <View style={{ ...styles.flexColumn, width: "80%", marginHorizontal: "20%", marginBottom: 15, }}>
-                    <Text style={{ ...styles.boldText, width: "30%" }}>Địa Chỉ: </Text>
-                    <Text >123 ABC Q1</Text>
-                </View>
-                <View style={{ ...styles.flexColumn, paddingVertical: 20 }}>
-                    <Text style={{ ...styles.boldText, color: "#C8A9F1" }}>Thông Tin Mua Hàng:</Text>
-                </View>
-                <View style={styles.paymentInfor}>
-                    <View style={{ ...styles.vourcherView, paddingTop: 20 }}>
-                        <View style={{ ...styles.flexColumnBetween, width: "100%", borderBottomWidth: 1, paddingBottom: 10 }}>
-                            <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Tổng Lớp Học Đăng Ký:</Text>
-                            <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{studentList.length}</Text>
-                        </View>
 
-                        <View style={{ ...styles.flexColumnBetween, width: "100%", paddingTop: 10 }}>
-                            <Text style={{ ...styles.boldText, color: "#3AAC45" }}>Vourcher Giảm Giá:</Text>
-                            <TouchableOpacity onPress={handleNavigateVourcher}>
-                                <Text style={{ ...styles.boldText, color: "#3AAC45", transform: [{ translateY: -8 }] }}>
-                                    {vourcherValue() ? vourcherValue()?.name : "Không Chọn"}
-                                    <View style={{ transform: [{ translateY: 5 }] }}>
-                                        <Icon name={"keyboard-arrow-right"} color={"#3AAC45"} size={20} />
-                                    </View>
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                <View style={styles.studentDetail} >
+                    <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }}>
+                        <Text style={styles.detailViewTitle}>Học Phí:</Text>
+                        <Text style={styles.boldText}>{formatPrice(200000)}đ</Text>
                     </View>
+                    <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, height: 45, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }} onPress={handleChooseVourcherModal}>
+                        <Text style={{ ...styles.detailViewTitle, color: "#3AAC45" }}>Vourcher Giảm Giá</Text>
+                        {
+                            vourcherValue() ?
+                                <View style={styles.flexColumn}>
+                                    <Text style={{ color: "#3AAC45" }}>Giảm {formatPrice(vourcherDiscount())}đ</Text>
+                                    <Icon name={"chevron-right"} color={"#3AAC45"} size={18} />
+                                </View>
+                                :
+                                <Icon name={"chevron-right"} color={"#FF8D9D"} size={28} />
+                        }
 
-                    <View style={styles.vourcherView}>
-                        <View style={{ ...styles.flexColumnBetween, width: "100%", paddingTop: 10 }}>
-                            <Text style={{ ...styles.boldText, color: "#C8A9F1" }}>TPhương Thức Thanh Toán</Text>
-                            <Text style={{ ...styles.boldText, color: "#888888" }}> Ví Điện Tử</Text>
-                        </View>
-                        <View style={{ ...styles.flexColumnBetween, width: "100%", paddingTop: 10 }}>
-                            <Text style={{ ...styles.boldText, color: "#888888" }}>Số Dư Của Bạn:</Text>
-                            <Text style={{ ...styles.boldText, color: "#888888" }}>{formatPrice(1000000)} đ</Text>
-                        </View>
+                    </TouchableOpacity>
+                    <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
+                        <Text style={styles.detailViewTitle}>Tổng tiền:</Text>
+                        <Text style={{ ...styles.boldText }}>{formatPrice(totalPayment())}đ</Text>
                     </View>
+                </View>
 
-                    <View style={{ ...styles.vourcherView, paddingBottom: 20, paddingTop: 30 }}>
-                        <Text style={{ ...styles.boldText, color: "#C8A9F1" }}>Chi Tiết Thanh Toán:</Text>
-                        <View style={{ ...styles.flexColumnBetween, width: "100%", paddingTop: 10 }}>
-                            <Text style={{ ...styles.boldText, color: "#888888" }}>Tổng Tiền:</Text>
-                            <Text style={{ ...styles.boldText, color: "#888888" }}>{formatPrice(totalPrice())} đ</Text>
-                        </View>
-                        <View style={{ ...styles.flexColumnBetween, width: "100%", paddingTop: 10 }}>
-                            <Text style={{ ...styles.boldText, color: "#888888" }}>Vourcher Giảm Giá:</Text>
-                            <Text style={{ ...styles.boldText, color: "#888888" }}>{vourcherValue() ? formatPrice(vourcherDiscount()) : 0} đ</Text>
-                        </View>
-                        <View style={{ ...styles.flexColumnBetween, width: "100%", paddingTop: 10 }}>
-                            <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Tổng Thanh Toán:</Text>
-                            <Text style={{ ...styles.boldText, color: "#C71212" }}>{formatPrice(totalPayment())} đ</Text>
-                        </View>
-                    </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={{ ...styles.button, backgroundColor: "#FF8D9D" }} onPress={handlePayment}>
+                        <Text style={{ ...styles.boldText, padding: 15, color: "white" }}>Xác nhận</Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={{ ...styles.button, backgroundColor: "#C71212" }} onPress={handlePayment}>
-                    <Text style={{ ...styles.boldText, padding: 15, color: "white" }}>Thanh Toán</Text>
-                </TouchableOpacity>
-            </View>
+            <ChooseVourcherModal visible={modalVisible.vourcher} vourcherList={vourcherList} navigation={navigation} onChoose={handleChooseVourcher} onCancle={handleCancleVourcherModal} discount={vourcherValue() ? vourcherDiscount() : 0} />
             <InputOtpModal visible={modalVisible.otp} phone={"12345689"} onCancle={hanldeCloseOtpModal} onSubmit={handleSubmitOtp} />
+            <PaymentSuccessModal visible={modalVisible.notifi} onSubmit={handleCloseNotifiModal} />
         </>
     )
 }
@@ -201,18 +208,6 @@ export default function PaymentScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
-        padding: 20,
-
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        marginBottom: 79,
-    },
-    title: {
-        width: WIDTH * 0.8,
-        marginHorizontal: WIDTH * 0.1,
-        marginVertical: 20,
-        fontSize: 25,
-        fontWeight: "600"
     },
     flexColumnAround: {
         width: WIDTH,
@@ -228,6 +223,7 @@ const styles = StyleSheet.create({
     flexColumnBetween: {
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center"
     },
     flexColumn: {
         flexDirection: "row",
@@ -237,69 +233,51 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
 
-    dashLine: {
-        width: "90%",
-        height: 1,
-        marginVertical: 10,
-        marginTop: 20,
-        backgroundColor: "#000000"
-    },
-
-    card: {
-        borderWidth: 1,
-        borderRadius: 10,
-        borderTopWidth: 0,
-        marginBottom: 20,
-        justifyContent: "center",
+    checkPayment: {
+        flexDirection: "row",
+        width: WIDTH,
+        paddingVertical: 10,
+        backgroundColor: "rgba(255, 141, 157, 0.25)",
         alignItems: "center",
+        justifyContent: "center",
     },
-    cardHeader: {
-        position: "relative",
-        width: "100%",
-        padding: 20,
-        borderWidth: 1,
-        // borderBottomWidth: 0,
-        borderRadius: 10,
-        backgroundColor: "rgba(200, 169, 241, 0.65)",
-        justifyContent: "center"
+    titleView: {
+        flexDirection: "row",
+        marginHorizontal: 20,
+        borderLeftWidth: 5,
+        borderLeftColor: "#FF8F8F",
+        marginVertical: 15,
+        alignItems: "center"
     },
-    dropdown: {
-        position: "absolute",
-        right: 20,
-        borderWidth: 2,
-        borderColor: "#363853",
-        borderRadius: 50,
-        backgroundColor: "rgba(54, 56, 83, 0.15)",
+    title: {
+        marginLeft: 5,
+        color: "#FF8F8F",
+        fontWeight: "600",
+        fontSize: 18,
     },
-    cardHeaderText: {
-        color: "#3A0CA3"
+    studentDetail: {
+        marginHorizontal: WIDTH * 0.1,
     },
-    cardContent: {
-        width: "90%",
+    detailViewTitle: {
+        color: "#C4C4C4",
+        fontSize: 15,
+        fontWeight: "600"
     },
-    paymentInfor: {
-        borderRadius: 10,
-        borderWidth: 1,
-        marginBottom: 30,
-    },
-    vourcherView: {
-        width: WIDTH * 0.9,
-        paddingHorizontal: 20,
+    dashline: {
+        width: "95%",
+        height: 2,
+        backgroundColor: "#FF8D9D",
+        marginVertical: 10
     },
 
     buttonContainer: {
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        left: 0,
         flexDirection: "row",
         justifyContent: "center",
         paddingVertical: 15,
         backgroundColor: "white"
     },
     button: {
-        width: WIDTH * 0.45,
-        borderWidth: 1,
+        width: WIDTH * 0.7,
         borderColor: "#C71212",
         borderRadius: 10,
         justifyContent: "center",

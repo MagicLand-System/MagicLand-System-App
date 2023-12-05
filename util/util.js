@@ -1,8 +1,8 @@
 export function truncateString(str, maxLength) {
-    if (str.length <= maxLength) {
+    if (str?.length <= maxLength) {
         return str;
     } else {
-        return str.slice(0, maxLength - 3) + "...";
+        return str?.slice(0, maxLength - 3) + "...";
     }
 }
 
@@ -15,4 +15,8 @@ export const formatPrice = (price) => {
     }
     const formattedNumber = numberArray.join('');
     return formattedNumber;
+}
+
+export function getIndexById(array, id) {
+    return array.findIndex(obj => obj.id === id);
 }

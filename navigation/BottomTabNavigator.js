@@ -18,32 +18,38 @@ import PaymentScreen from '../screens/PaymentScreen';
 import CartScreen from '../screens/CartScreen';
 import ChooseVoucherScreen from '../screens/ChooseVoucherScreen';
 import TransactionDetailScreen from '../screens/TransactionDetailScreen';
+import RegisterClassScreen from '../screens/RegisterClassScreen';
+import MultipleRegisScreen from '../screens/MultipleRegisScreen';
+
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
+
+    const activeColor = "#000000"
+    const inactiveColor = "#FFFFFF"
+
     return (
         <Tab.Navigator
             screenOptions={{
                 tabBarStyle: styles.tabNavigator,
-                tabBarInactiveTintColor: '#B8B8D2',
-                tabBarActiveTintColor: '#83A2FF',
+                tabBarInactiveTintColor: inactiveColor,
+                tabBarActiveTintColor: activeColor,
                 headerShown: false,
             }}
         >
             <Tab.Screen name="Home" component={HomeScreen} options={{
                 tabBarIcon: ({ focused }) => {
-                    let icon = focused == true ? require('./../assets/images/home_active_icon.png') : require('./../assets/images/home_icon.png');
-                    return <Image source={icon} style={styles.tabIcon} />
+                    return <Icon name={"home-minus"} color={focused ? activeColor : inactiveColor} size={28} />
                 },
                 tabBarLabel: 'Trang Chủ',
             }} />
             <Tab.Screen name="Document" component={DocumentScreen} options={{
                 tabBarIcon: ({ focused }) => {
-                    let icon = focused == true ? require('./../assets/images/document_active_icon.png') : require('./../assets/images/document_icon.png');
-                    return <Image source={icon} style={styles.tabIcon} />
+                    return <Icon name={"school"} color={focused ? activeColor : inactiveColor} size={28} />
                 },
-                tabBarLabel: 'Tài liệu',
+                tabBarLabel: 'Học Viên',
             }} />
             <Tab.Screen name="Scan" component={ScanScreen} options={{
                 tabBarIcon: ({ focused }) => {
@@ -54,17 +60,15 @@ const BottomTabNavigator = () => {
             }} />
             <Tab.Screen name="Schedule" component={ScheduleScreen} options={{
                 tabBarIcon: ({ focused }) => {
-                    let icon = focused == true ? require('./../assets/images/schedule_active_icon.png') : require('./../assets/images/schedule_icon.png');
-                    return <Image source={icon} style={styles.tabIcon} />
+                    return <Icon name={"calendar-month"} color={focused ? activeColor : inactiveColor} size={28} />
                 },
                 tabBarLabel: 'Lịch học',
             }} />
             <Tab.Screen name="Profile" component={ProfileScreen} options={{
                 tabBarIcon: ({ focused }) => {
-                    let icon = focused == true ? require('./../assets/images/profile_active_icon.png') : require('./../assets/images/profile_icon.png');
-                    return <Image source={icon} style={styles.tabIcon} />
+                    return <Icon name={"account"} color={focused ? activeColor : inactiveColor} size={28} />
                 },
-                tabBarLabel: 'Cá nhân',
+                tabBarLabel: 'Tài Khoản',
             }} />
             <Tab.Screen name="CourseScreen" component={CourseScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="CourseDetailScreen" component={CourseDetailScreen} options={{ tabBarButton: () => null }} />
@@ -77,6 +81,8 @@ const BottomTabNavigator = () => {
             <Tab.Screen name="CartScreen" component={CartScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="ChooseVoucherScreen" component={ChooseVoucherScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="TransactionDetailScreen" component={TransactionDetailScreen} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="RegisterClassScreen" component={RegisterClassScreen} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="MultipleRegisScreen" component={MultipleRegisScreen} options={{ tabBarButton: () => null }} />
         </Tab.Navigator>
     )
 }
@@ -92,7 +98,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         borderTopRightRadius: 20,
         borderTopLeftRadius: 20,
-        backgroundColor: '#3A0CA3'
+        backgroundColor: '#FF8F8F'
     }
 });
 

@@ -7,11 +7,7 @@ import defaultAvt from "../../assets/header/defaultAvt.png"
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-export default function Header({ goback, navigation, background, title }) {
-
-    const cartNavigate = () => {
-        navigation.navigate("CartScreen")
-    }
+export default function FavoriteHeader({ goback, navigation, background, title, type, setType, defaultType, editType }) {
 
     return (
         <View style={[styles.container, { backgroundColor: background }]}>
@@ -26,6 +22,22 @@ export default function Header({ goback, navigation, background, title }) {
             <Text style={styles.headerTitle}>
                 {title}
             </Text>
+            <TouchableOpacity
+                style={styles.chooseButton}
+                onPress={setType}
+            >
+                {
+                    type ?
+                        <Text style={styles.chooseText}>
+                            {defaultType ? defaultType : "Huỷ"}
+                        </Text>
+                        :
+                        <Text style={styles.chooseText}>
+                            {editType ? editType : "Chọn"}
+                        </Text>
+                }
+
+            </TouchableOpacity>
         </View>
     )
 }
@@ -47,10 +59,24 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         left: 0,
     },
+    chooseButton: {
+        position: "absolute",
+        paddingHorizontal: 15,
+        paddingVertical: 5,
+        borderRadius: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        right: 10,
+        backgroundColor: "#FFFFFF"
+    },
+    chooseText: {
+        fontWeight: "600",
+        color: "#FF8D9D"
+    },
     headerTitle: {
         paddingVertical: 10,
         color: "white",
         fontWeight: "600",
-        fontSize: 18,
+        fontSize: 15,
     },
 });

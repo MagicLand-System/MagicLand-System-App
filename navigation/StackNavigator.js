@@ -12,6 +12,8 @@ import PaymentScreen from '../screens/PaymentScreen';
 import CartScreen from '../screens/CartScreen';
 import ChooseVoucherScreen from '../screens/ChooseVoucherScreen';
 import TransactionDetailScreen from '../screens/TransactionDetailScreen';
+import RegisterClassScreen from '../screens/RegisterClassScreen';
+import MultipleRegisScreen from '../screens/MultipleRegisScreen';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
@@ -34,6 +36,8 @@ const StackNavigator = () => {
             <Stack.Screen name="CartScreen" component={CartScreen} options={{ headerShown: false }} />
             <Stack.Screen name="ChooseVoucherScreen" component={ChooseVoucherScreen} options={{ headerShown: false }} />
             <Stack.Screen name="TransactionDetailScreen" component={TransactionDetailScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="RegisterClassScreen" component={RegisterClassScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="MultipleRegisScreen" component={MultipleRegisScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
     )
 }

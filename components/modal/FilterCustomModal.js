@@ -17,7 +17,7 @@ export default function FilterCustomModal({ visible, content, onCancle, onSubmit
             <View style={styles.container}>
                 <View style={styles.modalHeader}>
                     <TouchableOpacity style={styles.closeIcon} onPress={onCancle}>
-                        <Icon name={"close"} color={"#000000"} size={28} />
+                        <Icon name={"close"} color={"#FF8D9D"} size={28} />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>
                         Tìm Kiếm
@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 18,
-        fontWeight: "600"
+        fontWeight: "600",
+        color: "#FF8D9D"
     },
     modalBottom: {
         marginBottom: 40,
@@ -85,11 +86,11 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingHorizontal: 30,
         borderWidth: 1,
-        borderColor: "#3D5CFF",
+        borderColor: "#FF8D9D",
         borderRadius: 15,
     },
     cancleText: {
-        color: "#3D5CFF",
+        color: "#FF8D9D",
         fontWeight: "600"
     },
     submitButton: {
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 50,
         borderRadius: 15,
         marginLeft: 20,
-        backgroundColor: "#3D5CFF",
+        backgroundColor: "#FF8D9D",
     },
     submitText: {
         color: "white",

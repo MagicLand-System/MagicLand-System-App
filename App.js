@@ -13,11 +13,11 @@ export default function App() {
     // <Provider store={store}>
     <>
       <SafeAreaView style={styles.unsafe} />
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <NavigationContainer>
           {userInfo ? <StackNavigator /> : <StackNavigatorLogin />}
         </NavigationContainer>
-      </SafeAreaView>
+      </View>
     </>
     // </Provider>
   );
@@ -26,10 +26,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3A0CA3',
+    // backgroundColor: '#FF8F8F',
   },
   unsafe: {
     flex: 0,
-    backgroundColor: '#000000'
+    backgroundColor: '#FF8F8F'
   }
 });

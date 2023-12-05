@@ -57,7 +57,7 @@ export default function InputRange({ min, max, minValue, maxValue, steps, title,
 
     const styleLine = useAnimatedStyle(() => {
         return {
-            backgroundColor: "#3D5CFF",
+            backgroundColor: "#FF8D9D",
             height: 3,
             marginTop: -3,
             borderRadius: 3,
@@ -106,9 +106,6 @@ export default function InputRange({ min, max, minValue, maxValue, steps, title,
     
     return (
         <GestureHandlerRootView>
-            <View style={styles.header}>
-                <Text style={styles.title}>{title}</Text>
-            </View>
             <View style={styles.rangeContainer}>
                 <View style={styles.labelContainer}>
                     <AnimatedTextInput defaultValue={`${minValue}`} editable={false} style={styles.label} animatedProps={propsLabel1} />
@@ -133,10 +130,6 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
     },
-    title: {
-        fontWeight: "600",
-        fontSize: 18,
-    },
     rangeContainer: {
         padding: 20,
     },
@@ -152,7 +145,7 @@ const styles = StyleSheet.create({
     },
     track: {
         height: 3,
-        backgroundColor: "rgba(0,0,0,0.3)",
+        backgroundColor: "#FF8D9D",
         borderRadius: 3,
     },
     knob: {
@@ -160,7 +153,7 @@ const styles = StyleSheet.create({
         height: KONBSIZE,
         width: KONBSIZE,
         borderRadius: KONBSIZE / 2,
-        borderColor: "#3D5CFF",
+        borderColor: "#FF8D9D",
         borderWidth: 2,
         backgroundColor: "#fff",
         marginTop: -KONBSIZE + 8,
