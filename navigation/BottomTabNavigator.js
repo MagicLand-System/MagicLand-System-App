@@ -5,16 +5,6 @@ import HomeScreen from '../screens/HomeScreen';
 import ScanScreen from '../screens/ScanScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import StudentScreen from '../screens/StudentScreen';
-
-import CourseScreen from '../screens/CourseScreen';
-import CourseDetailScreen from '../screens/CourseDetailScreen';
-import ClassScreen from '../screens/ClassScreen';
-import ClassDetailScreen from '../screens/ClassDetailScreen';
-import ClassRegisterScreen from '../screens/ClassRegisterScreen';
-import ClassConfirmScreen from '../screens/ClassConfirmScreen';
-import RegisterConfirmScreen from '../screens/RegisterConfirmScreen';
-import PaymentScreen from '../screens/PaymentScreen';
-import CartScreen from '../screens/CartScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 
 const Tab = createBottomTabNavigator();
@@ -79,15 +69,6 @@ const BottomTabNavigator = () => {
                 tabBarActiveTintColor: '#F2C955',
                 headerShown: false,
             }} />
-            <Tab.Screen name="CourseScreen" component={CourseScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="CourseDetailScreen" component={CourseDetailScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="ClassScreen" component={ClassScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="ClassDetailScreen" component={ClassDetailScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="ClassRegisterScreen" component={ClassRegisterScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="ClassConfirmScreen" component={ClassConfirmScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="RegisterConfirmScreen" component={RegisterConfirmScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="PaymentScreen" component={PaymentScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="CartScreen" component={CartScreen} options={{ tabBarButton: () => null }} />
         </Tab.Navigator>
     )
 }

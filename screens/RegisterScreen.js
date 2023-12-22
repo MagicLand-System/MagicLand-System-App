@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, StyleSheet, Alert, ActivityIndicator, Button, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import React, { useRef, useState } from "react";
 import { PhoneAuthProvider, signInWithCredential, } from "firebase/auth";
 import { auth, firebaseConfig } from "../firebase.config"
@@ -11,6 +11,10 @@ import { checkExist } from "../api/auth";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Inter_400Regular } from '@expo-google-fonts/inter';
 import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
+import LoadingModal from "../components/LoadingModal";
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 
 export default function RegisterScreen() {
   const recaptchaVerifier = useRef(null);
@@ -70,19 +74,9 @@ export default function RegisterScreen() {
   if (!fontsLoaded) {
     return null
   }
-  if (loading) {
-    return (
-      <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
-        <FirebaseRecaptchaVerifierModal
-          ref={recaptchaVerifier}
-          firebaseConfig={firebaseConfig}
-        />
-        <ActivityIndicator size={"large"} />
-      </View>
-    )
-  }
   return (
     <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+      {loading && (<LoadingModal />)}
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
@@ -131,6 +125,7 @@ export default function RegisterScreen() {
             inputCount={6}
             tintColor='#f2c955'
             textInputStyle={styles.otpInput}
+            autoFocus={true}
           />
           <View style={styles.navigationView}>
             <Text style={styles.navigationText}>Chưa nhận được mã</Text>
@@ -162,9 +157,9 @@ export default function RegisterScreen() {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+    flex: 1,
   },
   otpInput: {
     borderWidth: 1,
@@ -175,8 +170,8 @@ const styles = StyleSheet.create({
     fontSize: 28,
     textAlign: 'center',
     fontFamily: "Baloo2_700Bold",
-    marginBottom: 40,
-    marginTop: 180,
+    marginBottom: 80,
+    marginTop: 80,
   },
   textInput: {
     padding: 5,
@@ -193,8 +188,6 @@ const styles = StyleSheet.create({
   },
   buttonView: {
     minHeight: 200,
-    position: "absolute",
-    bottom: 200,
   },
   errorMessage: {
     borderColor: '#ffccc7',

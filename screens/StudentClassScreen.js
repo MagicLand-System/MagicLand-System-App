@@ -52,15 +52,9 @@ export default function StudentClassScreen() {
     if (!fontsLoaded) {
         return null
     }
-    if (loading) {
-        return (
-            <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size={"large"} />
-            </View>
-        )
-    }
     return (
         <View style={styles.container}>
+        {loading && (<LoadingModal />)}
             {classes.length > 0 ? (
                 <FlatList
                     style={styles.list}
@@ -92,7 +86,6 @@ export default function StudentClassScreen() {
                     <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Danh sách lớp học trống</Text>
                 </View>
             )}
-
         </View>
     )
 }

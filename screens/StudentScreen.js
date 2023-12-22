@@ -6,6 +6,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
 import { getStudents } from '../api/student';
+import LoadingModal from '../components/LoadingModal';
 
 export default function StudentScreen() {
     const [students, setStudents] = useState([])
@@ -44,6 +45,7 @@ export default function StudentScreen() {
     }
     return (
         <ScrollView style={styles.container}>
+            {loading && (<LoadingModal />)}
             <Text style={styles.title}>Danh sách học viên</Text>
             {students.length > 0 ? students.map((student) => (
                 <TouchableOpacity key={student.id} style={styles.student} onPress={() => { navigation.navigate('StudentMenu', { student }) }}>

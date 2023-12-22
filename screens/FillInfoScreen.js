@@ -1,7 +1,6 @@
-import { View, Text, Image, TextInput, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { View, Text, Image, TextInput, StyleSheet, ActivityIndicator, Alert, ScrollView } from "react-native";
 import React, { useState } from "react";
 import MainButton from "../components/MainButton";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { register } from "../api/auth";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useFonts, Inter_400Regular } from '@expo-google-fonts/inter';
@@ -10,6 +9,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { CheckBox } from "@rneui/themed";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import LoadingModal from "../components/LoadingModal";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function FillInfoScreen() {
   const routes = useRoute();
@@ -27,13 +28,6 @@ export default function FillInfoScreen() {
   if (!fontsLoaded) {
     return null
   }
-  if (loading) {
-    return (
-      <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size={"large"} />
-      </View>
-    )
-  }
   const registerValidationSchema = Yup.object().shape({
     fullName: Yup.string().required("Vui lòng nhập họ và tên").matches(/(\w.+\s).+/, 'Vui lòng nhập ít nhất 2 từ'),
     email: Yup.string().email("Vui lòng nhập đúng email").required("Vui lòng nhập email"),
@@ -43,6 +37,7 @@ export default function FillInfoScreen() {
   })
   return (
     <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+      {loading && (<LoadingModal />)}
       <Formik
         initialValues={{
           fullName: '',
@@ -72,35 +67,41 @@ export default function FillInfoScreen() {
         }) => (
           <>
             <Text style={styles.title}>Thông tin</Text>
-            <TextInput
-              placeholder="Họ và tên"
-              name='fullName'
-              value={values.fullName}
-              onChangeText={handleChange('fullName')}
-              onBlur={handleBlur('fullName')}
-              style={styles.textInput}
-            />
-            <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-              {errors.fullName && touched.fullName &&
-                <Text style={{ fontSize: 12, color: 'red' }}>{errors.fullName}</Text>
-              }
+            <View style={styles.input}>
+              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Họ và tên</Text>
+              <TextInput
+                placeholder="Họ và tên"
+                name='fullName'
+                value={values.fullName}
+                onChangeText={handleChange('fullName')}
+                onBlur={handleBlur('fullName')}
+                style={styles.textInput}
+              />
+              <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
+                {errors.fullName && touched.fullName &&
+                  <Text style={{ fontSize: 12, color: 'red' }}>{errors.fullName}</Text>
+                }
+              </View>
             </View>
-            <TextInput
-              placeholder="Email"
-              name='email'
-              value={values.email}
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              style={styles.textInput}
-              keyboardType="email-address"
-            />
-            <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-              {errors.email && touched.email &&
-                <Text style={{ fontSize: 12, color: 'red' }}>{errors.email}</Text>
-              }
+            <View style={styles.input}>
+              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Email</Text>
+              <TextInput
+                placeholder="Email"
+                name='email'
+                value={values.email}
+                onChangeText={handleChange('email')}
+                onBlur={handleBlur('email')}
+                style={styles.textInput}
+                keyboardType="email-address"
+              />
+              <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
+                {errors.email && touched.email &&
+                  <Text style={{ fontSize: 12, color: 'red' }}>{errors.email}</Text>
+                }
+              </View>
             </View>
-            <View style={{ width: '75%', marginTop: 0 }}>
-              <Text style={{ width: '100%', color: '#c0c0c0', fontSize: 16, fontFamily: 'Inter_400Regular', marginBottom: 5 }}>Ngày sinh</Text>
+            <View style={styles.input}>
+              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Ngày sinh</Text>
               <View style={{ width: '100%', alignItems: 'center', paddingTop: 5, marginBottom: 5 }}>
                 <DateTimePicker
                   value={dateOfBirth}
@@ -112,77 +113,88 @@ export default function FillInfoScreen() {
                 />
               </View>
             </View>
-            <Text style={{ width: '75%', color: '#c0c0c0', fontSize: 16, fontFamily: 'Inter_400Regular', marginTop: 10 }}>Giới tính</Text>
-            <View style={{ flexDirection: 'row', gap: 15 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <CheckBox
-                  checked={gender === 'Nữ'}
-                  onPress={() => setGender('Nữ')}
-                  iconType="material-community"
-                  checkedIcon="radiobox-marked"
-                  uncheckedIcon="radiobox-blank"
-                />
-                <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Nữ</Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <CheckBox
-                  checked={gender === 'Nam'}
-                  onPress={() => setGender('Nam')}
-                  iconType="material-community"
-                  checkedIcon="radiobox-marked"
-                  uncheckedIcon="radiobox-blank"
-                />
-                <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Nam</Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <CheckBox
-                  checked={gender === 'Khác'}
-                  onPress={() => setGender('Khác')}
-                  iconType="material-community"
-                  checkedIcon="radiobox-marked"
-                  uncheckedIcon="radiobox-blank"
-                />
-                <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular', marginRight: 20 }}>Khác</Text>
+            <View style={styles.input}>
+              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Giới tính</Text>
+              <View style={{ flexDirection: 'row', gap: 15 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <CheckBox
+                    checked={gender === 'Nữ'}
+                    onPress={() => setGender('Nữ')}
+                    iconType="material-community"
+                    checkedIcon="radiobox-marked"
+                    uncheckedIcon="radiobox-blank"
+                  />
+                  <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Nữ</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <CheckBox
+                    checked={gender === 'Nam'}
+                    onPress={() => setGender('Nam')}
+                    iconType="material-community"
+                    checkedIcon="radiobox-marked"
+                    uncheckedIcon="radiobox-blank"
+                  />
+                  <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Nam</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <CheckBox
+                    checked={gender === 'Khác'}
+                    onPress={() => setGender('Khác')}
+                    iconType="material-community"
+                    checkedIcon="radiobox-marked"
+                    uncheckedIcon="radiobox-blank"
+                  />
+                  <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular', marginRight: 20 }}>Khác</Text>
+                </View>
               </View>
             </View>
-            <TextInput
-              placeholder="Thành phố"
-              name='city'
-              value={values.city}
-              onBlur={handleBlur('city')}
-              onChangeText={handleChange('city')}
-              style={styles.textInput}
-            />
-            <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-              {errors.city && touched.city &&
-                <Text style={{ fontSize: 12, color: 'red' }}>{errors.city}</Text>
-              }
+            <View style={styles.input}>
+              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Tỉnh / Thành phố</Text>
+              <TextInput
+                placeholder="Tỉnh / Thành phố"
+                name='city'
+                value={values.city}
+                onBlur={handleBlur('city')}
+                onChangeText={handleChange('city')}
+                style={styles.textInput}
+              />
+              <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
+                {errors.city && touched.city &&
+                  <Text style={{ fontSize: 12, color: 'red' }}>{errors.city}</Text>
+                }
+              </View>
             </View>
-            <TextInput
-              placeholder="Quận / Huyện"
-              name='district'
-              value={values.district}
-              onBlur={handleBlur('district')}
-              onChangeText={handleChange('district')}
-              style={styles.textInput}
-            />
-            <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-              {errors.district && touched.district &&
-                <Text style={{ fontSize: 12, color: 'red' }}>{errors.district}</Text>
-              }
+            <View style={styles.input}>
+              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Quận / Huyện</Text>
+              <TextInput
+                placeholder="Quận / Huyện"
+                name='district'
+                value={values.district}
+                onBlur={handleBlur('district')}
+                onChangeText={handleChange('district')}
+                style={styles.textInput}
+              />
+              <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
+                {errors.district && touched.district &&
+                  <Text style={{ fontSize: 12, color: 'red' }}>{errors.district}</Text>
+                }
+              </View>
             </View>
-            <TextInput
-              placeholder="Số nhà - Tên Đường"
-              name='street'
-              value={values.street}
-              onBlur={handleBlur('street')}
-              onChangeText={handleChange('street')}
-              style={styles.textInput}
-            />
-            <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-              {errors.street && touched.street &&
-                <Text style={{ fontSize: 12, color: 'red' }}>{errors.street}</Text>
-              }
+            <View style={styles.input}>
+              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Số nhà - Tên đường</Text>
+              <TextInput
+                placeholder="Số nhà - Tên đường"
+                name='street'
+                value={values.street}
+                onBlur={handleBlur('street')}
+                onChangeText={handleChange('street')}
+                style={styles.textInput}
+              />
+              <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
+                {errors.street && touched.street &&
+                  <Text style={{ fontSize: 12, color: 'red' }}>{errors.street}</Text>
+                }
+              </View>
             </View>
             <MainButton onPress={handleSubmit} title="Xác nhận" />
           </>
@@ -194,9 +206,11 @@ export default function FillInfoScreen() {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+  },
+  input: {
+    width: '75%'
   },
   title: {
     color: '#3A0CA3',
@@ -204,10 +218,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: "Baloo2_700Bold",
     marginBottom: 40,
-    marginTop: 100,
+    marginTop: 80,
+  },
+  inputTitle: {
+    fontFamily: 'Inter_400Regular',
+    marginBottom: 5,
+    fontSize: 14,
   },
   textInput: {
-    width: '75%',
     height: 40,
     borderColor: '#3A0CA3',
     borderStyle: 'solid',
@@ -222,5 +240,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: 120,
     height: 120,
+    marginBottom: 10,
   },
 })

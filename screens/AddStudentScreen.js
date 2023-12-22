@@ -46,15 +46,9 @@ export default function AddStudentScreen() {
     if (!fontsLoaded) {
         return null
     }
-    if (loading) {
-        return (
-            <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size={"large"} />
-            </View>
-        )
-    }
     return (
         <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+            {loading && (<LoadingModal />)}
             <Formik
                 initialValues={{
                     fullName: '',
