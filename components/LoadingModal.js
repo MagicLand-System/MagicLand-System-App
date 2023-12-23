@@ -16,12 +16,12 @@ export default function LoadingModal() {
     return (
         <View style={styles.container}>
             <View style={styles.modal}>
-                <LottieView
+                {/* <LottieView
                     source={require('../assets/lottie/loading.json')}
                     autoPlay
                     loop
                     style={styles.animation}
-                />
+                /> */}
                 <Text style={styles.text}>Vui lòng đợi trong giây lát...</Text>
             </View>
         </View>

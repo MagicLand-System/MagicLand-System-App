@@ -42,6 +42,7 @@ export default function RegisterScreen() {
       }
     } catch (error) {
       console.error(error);
+      setLoading(false)
       if (error.response?.status === 404) {
         const phoneProvider = new PhoneAuthProvider(auth);
         const verificationId = await phoneProvider.verifyPhoneNumber(
@@ -49,7 +50,6 @@ export default function RegisterScreen() {
           recaptchaVerifier.current
         );
         setVerificationId(verificationId)
-        setLoading(false)
         setErrorMessage('')
         setShowOtp(true)
       }
