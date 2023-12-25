@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { View, Text, Image, TextInput, StyleSheet, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import React, { useState } from 'react'
 import { useFonts, Inter_400Regular } from '@expo-google-fonts/inter';
 import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
@@ -15,7 +15,8 @@ import { addStudent } from "../api/student";
 import { fetchUser } from "../store/features/authSlice";
 import { Icon, Button } from "@rneui/themed";
 import { storage } from "../firebase.config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { format } from 'date-fns';
 
 export default function AddStudentScreen() {
     const [image, setImage] = useState(null)
@@ -25,6 +26,7 @@ export default function AddStudentScreen() {
         Baloo2_700Bold,
     })
     const dispatch = useDispatch()
+    const [isShowDatePicker, setShowDatePicker] = useState(false);
     const [dateOfBirth, setDateOfBirth] = useState(new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate()))
     const [gender, setGender] = useState('Khác')
     const [imageError, setImageError] = useState(null)
@@ -103,7 +105,6 @@ export default function AddStudentScreen() {
                     isValid,
                 }) => (
                     <>
-                        <Text style={styles.title}>Thêm học viên</Text>
                         <Image style={{ width: 180, height: 180 }} source={image ? { uri: image } : require('./../assets/images/empty_avatar.png')}></Image>
                         <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
                             {imageError &&
@@ -119,90 +120,97 @@ export default function AddStudentScreen() {
                             Tải hình lên
                             <Icon name="cloud-upload" color="black" />
                         </Button>
-                        <TextInput
-                            placeholder="Họ và tên"
-                            name='fullName'
-                            value={values.fullName}
-                            onChangeText={handleChange('fullName')}
-                            onBlur={handleBlur('fullName')}
-                            style={styles.textInput}
-                        />
-                        <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-                            {errors.fullName && touched.fullName &&
-                                <Text style={{ fontSize: 12, color: 'red' }}>{errors.fullName}</Text>
-                            }
+                        <View style={styles.input}>
+                            <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Quận / Huyện</Text>
+                            <TextInput
+                                placeholder="Họ và tên"
+                                name='fullName'
+                                value={values.fullName}
+                                onChangeText={handleChange('fullName')}
+                                onBlur={handleBlur('fullName')}
+                                style={styles.textInput}
+                            />
+                            <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
+                                {errors.fullName && touched.fullName &&
+                                    <Text style={{ fontSize: 12, color: 'red' }}>{errors.fullName}</Text>
+                                }
+                            </View>
                         </View>
-                        <View style={{ width: '75%', marginTop: 0 }}>
-                            <Text style={{ width: '100%', color: '#c0c0c0', fontSize: 16, fontFamily: 'Inter_400Regular', marginBottom: 5 }}>Ngày sinh</Text>
-                            <View style={{ width: '100%', alignItems: 'center', paddingTop: 5, marginBottom: 5 }}>
+                        <View style={styles.input}>
+                            <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Ngày sinh</Text>
+                            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
+                                <Text style={styles.dateText}>{format(dateOfBirth, 'dd/MM/yyyy')}</Text>
+                            </TouchableOpacity>
+                            {isShowDatePicker && (
                                 <DateTimePicker
                                     value={dateOfBirth}
                                     maximumDate={new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate())}
                                     onChange={(event, selectedDate) => {
+                                        setShowDatePicker(false)
                                         setDateOfBirth(selectedDate)
                                     }}
                                     mode='date'
                                 />
+                            )}
+                        </View>
+                        <View style={styles.input}>
+                            <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Giới tính</Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <CheckBox
+                                        checked={gender === 'Nữ'}
+                                        onPress={() => setGender('Nữ')}
+                                        iconType="material-community"
+                                        checkedIcon="radiobox-marked"
+                                        uncheckedIcon="radiobox-blank"
+                                    />
+                                    <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular' }}>Nữ</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <CheckBox
+                                        checked={gender === 'Nam'}
+                                        onPress={() => setGender('Nam')}
+                                        iconType="material-community"
+                                        checkedIcon="radiobox-marked"
+                                        uncheckedIcon="radiobox-blank"
+                                    />
+                                    <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular' }}>Nam</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <CheckBox
+                                        checked={gender === 'Khác'}
+                                        onPress={() => setGender('Khác')}
+                                        iconType="material-community"
+                                        checkedIcon="radiobox-marked"
+                                        uncheckedIcon="radiobox-blank"
+                                    />
+                                    <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular', marginRight: 20 }}>Khác</Text>
+                                </View>
                             </View>
                         </View>
-                        <Text style={{ width: '75%', color: '#c0c0c0', fontSize: 16, fontFamily: 'Inter_400Regular', marginTop: 10 }}>Giới tính</Text>
-                        <View style={{ flexDirection: 'row', gap: 15 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <CheckBox
-                                    checked={gender === 'Nữ'}
-                                    onPress={() => setGender('Nữ')}
-                                    iconType="material-community"
-                                    checkedIcon="radiobox-marked"
-                                    uncheckedIcon="radiobox-blank"
-                                />
-                                <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Nữ</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <CheckBox
-                                    checked={gender === 'Nam'}
-                                    onPress={() => setGender('Nam')}
-                                    iconType="material-community"
-                                    checkedIcon="radiobox-marked"
-                                    uncheckedIcon="radiobox-blank"
-                                />
-                                <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Nam</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <CheckBox
-                                    checked={gender === 'Khác'}
-                                    onPress={() => setGender('Khác')}
-                                    iconType="material-community"
-                                    checkedIcon="radiobox-marked"
-                                    uncheckedIcon="radiobox-blank"
-                                />
-                                <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular', marginRight: 20 }}>Khác</Text>
-                            </View>
-                        </View>
-
                         <MainButton onPress={handleSubmit} title="Xác nhận" />
                     </>
                 )}
             </Formik>
-            <Image source={require('./../assets/images/logo.png')} style={styles.logo} />
         </KeyboardAwareScrollView>
     )
 }
 const styles = StyleSheet.create({
     container: {
+        paddingTop: 50,
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
     },
-    title: {
-        color: '#3A0CA3',
-        fontSize: 28,
-        textAlign: 'center',
-        fontFamily: "Baloo2_700Bold",
-        marginBottom: 20,
-        marginTop: 20,
+    input: {
+        width: '75%'
+    },
+    inputTitle: {
+      fontFamily: 'Inter_400Regular',
+      marginBottom: 5,
+      fontSize: 14,
     },
     textInput: {
-        width: '75%',
         height: 40,
         borderColor: '#3A0CA3',
         borderStyle: 'solid',
@@ -212,10 +220,19 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingLeft: 10,
     },
-    logo: {
-        marginTop: 20,
-        alignSelf: 'center',
-        width: 120,
-        height: 120,
+    dateInput: {
+        height: 40,
+        borderColor: '#3A0CA3',
+        borderStyle: 'solid',
+        borderWidth: 0.5,
+        borderRadius: 5,
+        paddingLeft: 10,
+        alignItems: 'center',
+        flexDirection: 'row',
+        marginBottom: 14,
+    },
+    dateText: {
+        fontSize: 16,
+        fontFamily: 'Inter_400Regular',
     },
 })

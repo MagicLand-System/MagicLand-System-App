@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, StyleSheet, ActivityIndicator, Alert, ScrollView } from "react-native";
+import { View, Text, Image, TextInput, StyleSheet, ActivityIndicator, Alert, ScrollView, Dimensions, Button, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import MainButton from "../components/MainButton";
 import { register } from "../api/auth";
@@ -11,6 +11,10 @@ import { CheckBox } from "@rneui/themed";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import LoadingModal from "../components/LoadingModal";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { format } from 'date-fns';
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 
 export default function FillInfoScreen() {
   const routes = useRoute();
@@ -22,6 +26,8 @@ export default function FillInfoScreen() {
     Inter_400Regular,
     Baloo2_700Bold,
   })
+
+  const [isShowDatePicker, setShowDatePicker] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState(new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate()))
   const [gender, setGender] = useState('Khác')
 
@@ -102,20 +108,24 @@ export default function FillInfoScreen() {
             </View>
             <View style={styles.input}>
               <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Ngày sinh</Text>
-              <View style={{ width: '100%', alignItems: 'center', paddingTop: 5, marginBottom: 5 }}>
+              <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
+                <Text style={styles.dateText}>{format(dateOfBirth, 'dd/MM/yyyy')}</Text>
+              </TouchableOpacity>
+              {isShowDatePicker && (
                 <DateTimePicker
                   value={dateOfBirth}
                   maximumDate={new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate())}
                   onChange={(event, selectedDate) => {
+                    setShowDatePicker(false)
                     setDateOfBirth(selectedDate)
                   }}
                   mode='date'
                 />
-              </View>
+              )}
             </View>
             <View style={styles.input}>
               <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Giới tính</Text>
-              <View style={{ flexDirection: 'row', gap: 15 }}>
+              <View style={{ flexDirection: 'row' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <CheckBox
                     checked={gender === 'Nữ'}
@@ -124,7 +134,7 @@ export default function FillInfoScreen() {
                     checkedIcon="radiobox-marked"
                     uncheckedIcon="radiobox-blank"
                   />
-                  <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Nữ</Text>
+                  <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular' }}>Nữ</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <CheckBox
@@ -134,7 +144,7 @@ export default function FillInfoScreen() {
                     checkedIcon="radiobox-marked"
                     uncheckedIcon="radiobox-blank"
                   />
-                  <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular' }}>Nam</Text>
+                  <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular' }}>Nam</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <CheckBox
@@ -144,7 +154,7 @@ export default function FillInfoScreen() {
                     checkedIcon="radiobox-marked"
                     uncheckedIcon="radiobox-blank"
                   />
-                  <Text style={{ fontSize: 16, fontFamily: 'Inter_400Regular', marginRight: 20 }}>Khác</Text>
+                  <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular', marginRight: 20 }}>Khác</Text>
                 </View>
               </View>
             </View>
@@ -208,9 +218,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     alignItems: 'center',
-  },
-  input: {
-    width: '75%'
+    minHeight: HEIGHT,
   },
   title: {
     color: '#3A0CA3',
@@ -219,6 +227,9 @@ const styles = StyleSheet.create({
     fontFamily: "Baloo2_700Bold",
     marginBottom: 40,
     marginTop: 80,
+  },
+  input: {
+    width: '75%'
   },
   inputTitle: {
     fontFamily: 'Inter_400Regular',
@@ -234,6 +245,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     borderRadius: 5,
     paddingLeft: 10,
+  },
+  dateInput: {
+    height: 40,
+    borderColor: '#3A0CA3',
+    borderStyle: 'solid',
+    borderWidth: 0.5,
+    borderRadius: 5,
+    paddingLeft: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 14,
+  },
+  dateText: {
+    fontSize: 16,
+    fontFamily: 'Inter_400Regular',
   },
   logo: {
     marginTop: 20,

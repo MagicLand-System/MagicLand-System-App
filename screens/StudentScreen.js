@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native'
 import React, { useState } from 'react'
 import { Avatar } from '@rneui/themed';
 import MainButton from '../components/MainButton';
@@ -36,13 +36,6 @@ export default function StudentScreen() {
     if (!fontsLoaded) {
         return null
     }
-    if (loading) {
-        return (
-            <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size={"large"} />
-            </View>
-        )
-    }
     return (
         <ScrollView style={styles.container}>
             {loading && (<LoadingModal />)}
@@ -57,7 +50,7 @@ export default function StudentScreen() {
                     </View>
                 </TouchableOpacity>
             )) : (
-                <Text style={styles.studentName}>Danh sách học viên trống</Text>
+                <Text style={styles.emptyText}>Danh sách học viên trống</Text>
             )}
             <View style={{ marginTop: 20 }}>
                 <MainButton onPress={() => { navigation.navigate('AddStudent') }} title='Thêm học viên' />
@@ -95,6 +88,11 @@ const styles = StyleSheet.create({
     studentName: {
         fontFamily: 'Inter_700Bold',
         fontSize: 18,
+    },
+    emptyText: {
+        fontFamily: 'Inter_400Regular',
+        fontSize: 16,
+        textAlign: 'center',
     },
     studentDetail: {
         marginLeft: 8,
