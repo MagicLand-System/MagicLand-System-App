@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, StyleSheet, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, Image, TextInput, StyleSheet, Alert, ActivityIndicator, TouchableOpacity, Dimensions } from "react-native";
 import React, { useState } from 'react'
 import { useFonts, Inter_400Regular } from '@expo-google-fonts/inter';
 import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
@@ -17,6 +17,9 @@ import { Icon, Button } from "@rneui/themed";
 import { storage } from "../firebase.config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { format } from 'date-fns';
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 
 export default function AddStudentScreen() {
     const [image, setImage] = useState(null)
@@ -197,8 +200,8 @@ export default function AddStudentScreen() {
 }
 const styles = StyleSheet.create({
     container: {
+        minHeight: HEIGHT,
         paddingTop: 50,
-        flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
     },
