@@ -17,13 +17,15 @@ export default function FilterCustomModal({ visible, content, onCancle, onSubmit
             <View style={styles.container}>
                 <View style={styles.modalHeader}>
                     <TouchableOpacity style={styles.closeIcon} onPress={onCancle}>
-                        <Icon name={"close"} color={"#FF8D9D"} size={28} />
+                        <Icon name={"close"} color={"#4582E6"} size={28} />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>
                         Tìm Kiếm
                     </Text>
                 </View>
-                {content}
+                <ScrollView style={styles.contentScrollView}>
+                    {content}
+                </ScrollView>
                 <View style={styles.modalBottom}>
                     <TouchableOpacity style={styles.cancleButton} onPress={onClear}>
                         <Text style={styles.cancleText}>
@@ -51,6 +53,9 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         backgroundColor: "white"
     },
+    contentScrollView: {
+        height: HEIGHT * 0.6
+    },
     layout: {
         position: "absolute",
         top: 0,
@@ -74,9 +79,10 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#FF8D9D"
+        color: "#4582E6"
     },
     modalBottom: {
+        paddingTop: 5,
         marginBottom: 40,
         flexDirection: "row",
         justifyContent: "center",
@@ -86,11 +92,11 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingHorizontal: 30,
         borderWidth: 1,
-        borderColor: "#FF8D9D",
+        borderColor: "#4582E6",
         borderRadius: 15,
     },
     cancleText: {
-        color: "#FF8D9D",
+        color: "#4582E6",
         fontWeight: "600"
     },
     submitButton: {
@@ -98,7 +104,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 50,
         borderRadius: 15,
         marginLeft: 20,
-        backgroundColor: "#FF8D9D",
+        backgroundColor: "#4582E6",
     },
     submitText: {
         color: "white",

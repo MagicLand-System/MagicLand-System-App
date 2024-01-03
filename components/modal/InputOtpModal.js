@@ -29,7 +29,7 @@ export default function InputOtpModal({ visible, phone, onCancle, onSubmit }) {
                 </View>
                 <View style={styles.modalContent}>
                     <OTPTextInput
-                        inputCount={4}
+                        inputCount={6}
                         handleTextChange={setOtp}
                         tintColor="#72AFD3"
                         containerStyle={{ marginBottom: 20 }}
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     otpInput: {
-        width: WIDTH * 0.15,
-        height: WIDTH * 0.15,
+        width: WIDTH * 0.1,
+        height: WIDTH * 0.10,
         // borderColor: '#72AFD3',
         color: '#72AFD3',
         borderWidth: 1,

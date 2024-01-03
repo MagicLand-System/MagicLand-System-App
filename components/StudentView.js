@@ -14,9 +14,9 @@ const colorList = [
 
 export default function StudentView({ student, index, onClick }) {
 
-    const fullName = student.name;
-    const words = fullName.split(' ');
-    const name = words.slice(-2).join(' ');
+    const fullName = student.fullName;
+    const words = fullName?.split(' ');
+    const name = words?.slice(-2)?.join(' ');
 
     const hexToRGBA = (hex, alpha) => {
         const hexColor = hex.replace(/^#/, '');
@@ -28,7 +28,7 @@ export default function StudentView({ student, index, onClick }) {
     };
 
     return (
-        <TouchableOpacity style={styles.container} onPress={()=>onClick(student.id)}>
+        <TouchableOpacity style={styles.container} onPress={() => onClick(student.id)}>
             <View style={{ ...styles.studentImage, borderColor: colorList[(index % colorList.length)], backgroundColor: hexToRGBA(colorList[(index % colorList.length)], 0.5) }}>
                 {
                     student.check &&
@@ -36,7 +36,19 @@ export default function StudentView({ student, index, onClick }) {
                         <Icon name={"check-bold"} color={"white"} size={13} />
                     </View>
                 }
-                <Icon name={"account"} color={colorList[(index % colorList.length)]} size={65} />
+                {
+                    student?.avatarImage ?
+                        <View style={{ ...styles.studentAvt, overflow: "hidden" }}>
+                            <Image
+                                source={{ uri: student?.avatarImage }}
+                                style={styles.studentAvt}
+                                resizeMode="cover"
+                            />
+                        </View>
+                        :
+                        <Icon name={"account"} color={colorList[(index % colorList.length)]} size={65} />
+                }
+
             </View>
             <View style={{ ...styles.studentNameView, backgroundColor: hexToRGBA(colorList[(index % colorList.length)], 0.3) }}>
                 <Text style={{ ...styles.studentName, color: colorList[(index % colorList.length)] }}>
@@ -59,7 +71,7 @@ const styles = StyleSheet.create({
         width: WIDTH * 0.2,
         height: WIDTH * 0.2,
         borderWidth: 3,
-        borderRadius: 50,
+        borderRadius: 150,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -69,6 +81,11 @@ const styles = StyleSheet.create({
         top: 0,
         padding: 2,
         borderRadius: 50,
+    },
+    studentAvt: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 150,
     },
     studentNameView: {
         paddingHorizontal: 8,

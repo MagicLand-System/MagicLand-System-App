@@ -14,10 +14,10 @@ export default function ChooseClassModal({ visible, classList, setClassList, set
         const index = classList.findIndex(obj => obj.id === id);
         const updateArray = [...classList]
         const defaultStatus = updateArray[index].choose
-        updateArray.forEach(item => item.choose = false)
+        // updateArray.forEach(item => item.choose = false)
         updateArray[index].choose = !defaultStatus;
         setClassList(updateArray)
-        setClassChoosed(updateArray[index])
+        setClassChoosed(updateArray?.filter(obj => obj.choose === true))
     }
 
     return (
@@ -28,8 +28,9 @@ export default function ChooseClassModal({ visible, classList, setClassList, set
         >
             <View style={styles.container}>
                 <View style={styles.safeArea} />
-                <Header navigation={navigation} background={"#FF8F8F"} goback={onCancle} title={"Vui Lòng Chọn Lịch Học"} />
+                <Header navigation={navigation} background={"#241468"} goback={onCancle} title={"Vui Lòng Chọn Lịch Học"} />
                 <ScrollView showsVerticalScrollIndicator={false} style={styles.cardList}>
+                    <View style={styles.srollHeader}></View>
                     {
                         classList.map((item, index) => {
                             return <ClassCard cardDetail={item} check={true} index={index} onClick={selectCourse} key={index} />
@@ -49,10 +50,14 @@ const styles = StyleSheet.create({
     safeArea: {
         width: WIDTH,
         height: 50,
-        backgroundColor: "#FF8F8F"
+        backgroundColor: "#241468"
     },
-    cardList:{
+    cardList: {
         marginTop: 20,
         paddingHorizontal: WIDTH * 0.05
-    }
+    },
+
+    srollHeader: {
+        marginBottom: 20,
+    },
 });

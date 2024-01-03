@@ -23,7 +23,7 @@ export default function Header({ goback, navigation, background, title }) {
             >
                 <Icon name={"close"} color={"white"} size={28} />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>
+            <Text style={styles.headerTitle} numberOfLines={1}>
                 {title}
             </Text>
         </View>
@@ -48,9 +48,11 @@ const styles = StyleSheet.create({
         left: 0,
     },
     headerTitle: {
+        width: "80%",
         paddingVertical: 10,
         color: "white",
         fontWeight: "600",
         fontSize: 18,
+        textAlign: "center",
     },
 });

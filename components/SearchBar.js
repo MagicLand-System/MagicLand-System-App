@@ -8,10 +8,10 @@ const HEIGHT = Dimensions.get('window').height;
 export default function SearchBar({ input, setInput, setFilterModal, placeHolder }) {
     return (
         <View style={styles.container}>
-            <Icon name={"search"} color={"#B8B8D2"} size={28} />
-            <TextInput value={input} onChangeText={setInput} style={styles.searchField} placeholder={placeHolder} placeholderTextColor="#B8B8D2"/>
+            <Icon name={"search"} color={"#241468"} size={28} />
+            <TextInput value={input} onChangeText={setInput} style={styles.searchField} placeholder={placeHolder} placeholderTextColor="#B8B8D2" />
             <TouchableOpacity onPress={() => { setFilterModal(true) }}>
-                <Icon name={"filter-alt"} color={"#B8B8D2"} size={28} />
+                <Icon name={"filter-alt"} color={"#241468"} size={28} />
             </TouchableOpacity>
         </View>
     )

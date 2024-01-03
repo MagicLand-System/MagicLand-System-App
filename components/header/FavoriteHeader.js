@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         paddingHorizontal: 15,
         paddingVertical: 5,
-        borderRadius: 50,
+        borderRadius: 10,
         alignItems: "center",
         justifyContent: "center",
         right: 10,
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     },
     chooseText: {
         fontWeight: "600",
-        color: "#FF8D9D"
+        color: "#241468"
     },
     headerTitle: {
         paddingVertical: 10,
