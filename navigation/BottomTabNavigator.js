@@ -68,10 +68,9 @@ const BottomTabNavigator = () => {
             }} />
             <Tab.Screen name="Scan" component={ScanScreen} options={{
                 tabBarIcon: ({ focused }) => {
-                    let icon = focused == true ? require('./../assets/images/scan_active_icon.png') : require('./../assets/images/scan_icon.png');
-                    return <Image source={icon} style={styles.tabIcon} />
+                    return <Icon name={"camera"} color={focused ? activeColor : inactiveColor} size={28} />
                 },
-                tabBarLabel: 'Quét QR',
+                tabBarLabel: 'Camera',
             }} />
             <Tab.Screen name="Schedule" component={user?.role.name === 'LECTURER' ? RateStudentScreen : ScheduleScreen} options={{
                 tabBarIcon: ({ focused }) => {

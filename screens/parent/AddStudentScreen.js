@@ -18,11 +18,13 @@ import { storage } from "../../firebase.config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { format } from 'date-fns';
 import LoadingModal from "../../components/LoadingModal"
+import { useNavigation } from "@react-navigation/native";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function AddStudentScreen() {
+    const navigation = useNavigation()
     const [image, setImage] = useState(null)
     const [loading, setLoading] = useState(false)
     const [fontsLoaded] = useFonts({
@@ -81,14 +83,12 @@ export default function AddStudentScreen() {
                             uploadBytes(imageRef, blob).then(() => {
                                 getDownloadURL(imageRef).then((url) => {
                                     addStudent({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url })
+                                        .then(dispatch(fetchUser()))
+                                        .then(setLoading(false))
                                         .then(Alert.alert("Đăng kí thành công"))
+                                        .then(navigation.goBack())
                                 })
                             })
-                            setLoading(false);
-                            setImage(null)
-                            setDateOfBirth(new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate()))
-                            setGender('Khác')
-                            dispatch(fetchUser())
                         } else {
                             setImageError("Hãy cung cấp hình ảnh học viên")
                         }
@@ -125,7 +125,7 @@ export default function AddStudentScreen() {
                             <Icon name="cloud-upload" color="black" />
                         </Button>
                         <View style={styles.input}>
-                            <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Quận / Huyện</Text>
+                            <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Họ và tên</Text>
                             <TextInput
                                 placeholder="Họ và tên"
                                 name='fullName'
@@ -201,7 +201,7 @@ export default function AddStudentScreen() {
 }
 const styles = StyleSheet.create({
     container: {
-        minHeight: HEIGHT,
+        flex: 1,
         paddingTop: 50,
         backgroundColor: '#fff',
         alignItems: 'center',
@@ -210,9 +210,9 @@ const styles = StyleSheet.create({
         width: '75%'
     },
     inputTitle: {
-      fontFamily: 'Inter_400Regular',
-      marginBottom: 5,
-      fontSize: 14,
+        fontFamily: 'Inter_400Regular',
+        marginBottom: 5,
+        fontSize: 14,
     },
     textInput: {
         height: 40,

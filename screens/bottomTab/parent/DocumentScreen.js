@@ -408,7 +408,7 @@ export default function DocumentScreen({ navigation }) {
 
   useEffect(() => {
     loadStudentData()
-  }, [])
+  }, [user])
 
   const loadStudentData = async () => {
     setStudentList(user?.students)
