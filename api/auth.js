@@ -1,5 +1,5 @@
 import axios from "axios";
-const URL = "https://magic-land-system.azurewebsites.net";
+const URL = process.env.EXPO_PUBLIC_API_LINK;
 
 const instance = axios.create({
     baseURL: URL,
