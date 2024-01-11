@@ -110,7 +110,7 @@ export default function CourseScreen({ navigation }) {
             }
         )
     }
-
+    
     const handleChangePrice = (value) => {
         setFilterTmpValue({ ...filterTmpValue, priceRange: { min: value?.min, max: value?.max } })
         // setPriceRange({ min: value?.min, max: value?.max })

@@ -11,6 +11,7 @@ import CourseCard from '../../components/CourseCard';
 import ClassCard from '../../components/ClassCard';
 import SpinnerLoading from "../../components/SpinnerLoading"
 import FilterCustomModal from '../../components/modal/FilterCustomModal';
+import ClassCartCard from '../../components/ClassCartCard';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;

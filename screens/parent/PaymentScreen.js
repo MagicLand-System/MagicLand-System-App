@@ -10,7 +10,22 @@ import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
 
 import { formatPrice } from '../../util/util';
 import { modifyCart } from '../../api/cart';
+import ChoosePaymentMethod from '../../components/modal/ChoosePaymentMethod';
 
+const paymentTypeDefault = [
+    {
+        id: 0,
+        name: "Ví điện tử",
+        img: require("../../assets/images/welletLogo.png"),
+        dropdown: true,
+    },
+    {
+        id: 1,
+        name: "VN Pay",
+        img: require("../../assets/images/vnpayLogo.png"),
+        dropdown: false,
+    },
+]
 
 const vourcherListDefault = [
     {
@@ -59,13 +74,20 @@ export default function PaymentScreen({ route, navigation }) {
     let classDetail = route?.params?.classDetail
     const [studentList, setStudentList] = useState(route?.params?.studentList)
     const [vourcherList, setVourcherList] = useState(vourcherListDefault)
-    const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false })
+    const [paymentMethodList, setPaymentMethodList] = useState(paymentTypeDefault)
+    const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false, paymentMethod: false })
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
         setStudentList(route?.params?.studentList)
         setVourcherList(vourcherListDefault)
     }, [route?.params?.classDetail, route?.params?.studentList])
+
+    useFocusEffect(
+        React.useCallback(() => {
+            setModalVisible({ vourcher: false, otp: false, notifi: false, paymentMethod: false })
+        }, [])
+    );
 
     const hanldeCloseOtpModal = () => {
         setModalVisible({ ...modalVisible, otp: false })
@@ -76,9 +98,6 @@ export default function PaymentScreen({ route, navigation }) {
     }
 
     const handleSubmitOtp = async (otp) => {
-        // console.log(studentList.map(item => item.id), classDetail.id);
-
-        // console.log(classDetail);
         classDetail?.map(async (classItem) => {
             const response = await modifyCart(studentList.map(item => item.id), classItem.id)
             if (response?.status === 200) {
@@ -88,11 +107,14 @@ export default function PaymentScreen({ route, navigation }) {
                 console.log(`Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`);
             }
         })
-
     }
 
     const handleChooseVourcherModal = () => {
         setModalVisible({ ...modalVisible, vourcher: true })
+    }
+
+    const handleOpenPaymentMethodModal = () => {
+        setModalVisible({ ...modalVisible, paymentMethod: true })
     }
 
     const handleCancleVourcherModal = () => {
@@ -111,6 +133,14 @@ export default function PaymentScreen({ route, navigation }) {
         updateList[index].choose = !defaultChoose
         setVourcherList(updateList)
         handleCancleVourcherModal()
+    }
+
+    const handleClosePaymentModal = () => {
+        setModalVisible({ ...modalVisible, paymentMethod: false })
+    }
+
+    const paymentMethod = () => {
+        return paymentMethodList.find(item => item.check)
     }
 
     const vourcherValue = () => {
@@ -189,10 +219,38 @@ export default function PaymentScreen({ route, navigation }) {
                         )
                     })
                 }
-                <View style={styles.titleView}>
+                <TouchableOpacity style={{
+                    ...styles.titleView,
+                    justifyContent: "space-between",
+                    marginRight: WIDTH * 0.15
+                }}
+                    onPress={handleOpenPaymentMethodModal}
+                >
                     <Text style={styles.title}>Chọn phương thức thanh toán</Text>
-                </View>
+                    {!paymentMethod() && <Icon name={"chevron-right"} color={"#4582E6"} size={30} />}
+                </TouchableOpacity>
                 <View style={styles.studentDetail} >
+                    <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }}
+                        onPress={handleOpenPaymentMethodModal}
+                    >
+                        {paymentMethod() &&
+                            <>
+                                <View
+                                    style={styles.paymentMethod}
+                                >
+                                    <Text style={{ ...styles.boldText, color: "#4582E6" }}>
+                                        {
+                                            paymentMethod().name
+                                        }
+                                    </Text>
+
+                                </View>
+                                <Icon name={"chevron-right"} color={"#4582E6"} size={30} />
+                            </>
+                        }
+
+                    </TouchableOpacity>
+
                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }}>
                         <Text style={styles.detailViewTitle}>Học Phí:</Text>
                         <Text style={styles.boldText}>{formatPrice(classDetail[0].coursePrice)}đ</Text>
@@ -222,9 +280,31 @@ export default function PaymentScreen({ route, navigation }) {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            <ChooseVourcherModal visible={modalVisible.vourcher} vourcherList={vourcherList} navigation={navigation} onChoose={handleChooseVourcher} onCancle={handleCancleVourcherModal} discount={vourcherValue() ? vourcherDiscount() : 0} />
-            <InputOtpModal visible={modalVisible.otp} phone={"12345689"} onCancle={hanldeCloseOtpModal} onSubmit={handleSubmitOtp} />
-            <PaymentSuccessModal visible={modalVisible.notifi} onSubmit={handleCloseNotifiModal} />
+            <ChooseVourcherModal
+                visible={modalVisible.vourcher}
+                vourcherList={vourcherList}
+                navigation={navigation}
+                onChoose={handleChooseVourcher}
+                onCancle={handleCancleVourcherModal}
+                discount={vourcherValue() ? vourcherDiscount() : 0}
+            />
+            <InputOtpModal
+                visible={modalVisible.otp}
+                phone={"12345689"}
+                onCancle={hanldeCloseOtpModal}
+                onSubmit={handleSubmitOtp}
+            />
+            <PaymentSuccessModal
+                visible={modalVisible.notifi}
+                onSubmit={handleCloseNotifiModal}
+            />
+            <ChoosePaymentMethod
+                visible={modalVisible.paymentMethod}
+                paymentMethodList={paymentMethodList}
+                setPaymentMethodList={setPaymentMethodList}
+                navigation={navigation}
+                onCancle={handleClosePaymentModal}
+            />
         </>
     )
 }
@@ -278,6 +358,9 @@ const styles = StyleSheet.create({
         color: "#4582E6",
         fontWeight: "600",
         fontSize: 18,
+    },
+    paymentMethod: {
+
     },
     studentDetail: {
         marginHorizontal: WIDTH * 0.1,

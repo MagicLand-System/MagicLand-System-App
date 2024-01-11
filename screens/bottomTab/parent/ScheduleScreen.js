@@ -135,13 +135,18 @@ export default function ScheduleScreen({ navigation }) {
     return currentDate
   }
 
+  const selectedDate = (date) => {
+    setDateSelected(date)
+    setCalendarType("day")
+  }
+
   const renderCustomDay = ({ date }) => {
 
     const currentDate = getCurrentDate(date)
 
     return (
-      <TouchableOpacity style={[styles.customDate, dateSelected === date.dateString && styles.selectedDate]} onPress={() => { setDateSelected(date.dateString) }}>
-        <Text style={{...styles.boldText}}>{date.day}</Text>
+      <TouchableOpacity style={[styles.customDate, dateSelected === date.dateString && styles.selectedDate]} onPress={() => { selectedDate(date.dateString) }}>
+        <Text style={{ ...styles.boldText }}>{date.day}</Text>
         {
           currentDate && currentDate[0]?.classList?.map((item, index) => {
             return (
@@ -224,7 +229,7 @@ export default function ScheduleScreen({ navigation }) {
         </View>
         <View style={styles.calendarView}>
           <View style={{ ...styles.flexColumnBetween, marginVertical: 20 }}>
-            <Text style={{...styles.boldText, fontSize: 10}}>{formatScheduleDate(dateSelected)}</Text>
+            <Text style={{ ...styles.boldText, fontSize: 10 }}>{formatScheduleDate(dateSelected)}</Text>
             <View style={{ ...styles.flexColumn, borderWidth: 1, borderRadius: 10, overflow: "hidden" }}>
               <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "month" ? "#241468" : "white" }} onPress={() => { setCalendarType("month") }}>
                 <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "month" ? "white" : "#888888" }}>Tháng</Text>
@@ -281,6 +286,7 @@ export default function ScheduleScreen({ navigation }) {
                     }}
                     current={dateSelected}
                     scrollEnabled={false}
+                    dayComponent={renderCustomDay}
 
                     // markingType="period"
                     markedDates={{
@@ -290,6 +296,7 @@ export default function ScheduleScreen({ navigation }) {
                         color: "#3AA6B9",
                       },
                     }}
+                    calendarHeight={150}
                   />
                 </CalendarProvider>
 
@@ -298,7 +305,7 @@ export default function ScheduleScreen({ navigation }) {
           }
 
           {
-            calendarType === "week" &&
+            calendarType === "day" &&
             getCurrentDate({ dateString: dateSelected })[0]?.classList?.map((item, key) => {
               return (
                 <TouchableOpacity
