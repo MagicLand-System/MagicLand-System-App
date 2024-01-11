@@ -9,6 +9,8 @@ import FilterCustomModal from '../../components/modal/FilterCustomModal';
 import SpinnerLoading from '../../components/SpinnerLoading';
 import { truncateString, formatPrice } from '../../util/util';
 import { modifyCart } from '../../api/cart';
+import ScheduleList from '../../components/ScheduleList';
+import CustomToast from "../../components/CustomToast";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -133,6 +135,7 @@ export default function CourseDetailScreen({ route, navigation }) {
     const [filterValue, setFilterValue] = useState(filterDetailDefault)
     const [dataLoading, setDataLoading] = useState(true)
     let course = route?.params?.course
+    const showToast = CustomToast();
 
     useEffect(() => {
         setViewDetail({ detail: false, course: false })
@@ -142,7 +145,7 @@ export default function CourseDetailScreen({ route, navigation }) {
 
     const loadClassData = async () => {
         setDataLoading(true)
-        const response = await getClassByCourseId(course?.id)
+        const response = await getClassByCourseId(course?.courseId)
         if (response?.status === 200) {
             setClassCardDetail(response?.data)
         }
@@ -176,13 +179,14 @@ export default function CourseDetailScreen({ route, navigation }) {
             classChoosed.map(async (item) => {
                 const response = await modifyCart([], item.id)
                 if (response?.status === 200) {
+                    showToast("Thành công", `Đã thêm ${item?.name} vào giỏ hàng`, "success");
                     console.log(`Đã thêm ${item?.name} vào giỏ hàng`);
                 } else {
-                    console.log(`Thêm ${item?.name} vào giỏ hàng thất bại`);
+                    showToast("Thất bại", `Thêm ${item?.name} vào giỏ hàng thất bại`, "error");
                 }
             })
         } else {
-            console.log("chưa Chọn lớp");
+            showToast("Thông Báo", `Chưa Chọn lớp`, "warning");
         }
     }
 
@@ -366,14 +370,17 @@ export default function CourseDetailScreen({ route, navigation }) {
                             </View>
                     }
                 </View>
-                <Text style={styles.descrip}>
-                    {
-                        !viewDetail.detail ?
-                            truncateString(introduceDefault, 109)
-                            :
-                            introduceDefault
-                    }
-                </Text>
+                {
+                    !viewDetail.detail ?
+                        <Text style={styles.descrip} numberOfLines={2}>
+                            {course.mainDescription}
+                        </Text>
+                        :
+                        <Text style={styles.descrip}>
+                            {course.mainDescription}
+                        </Text>
+                }
+
                 <Text style={{ ...styles.descrip }}>
                     {
                         !viewDetail.detail ?
@@ -383,7 +390,7 @@ export default function CourseDetailScreen({ route, navigation }) {
                     }
                 </Text>
                 <Text style={styles.title}>
-                    Vì Sao Nên Cho Bé Học Toán Tư Duy Từ Sớm?
+                    {course.subDescriptionTitle[0].title}
                 </Text>
                 {
                     !viewDetail.detail ?
@@ -392,10 +399,10 @@ export default function CourseDetailScreen({ route, navigation }) {
                                 <Icon name={"check-circle-outline"} color={"#1BAE3B"} size={28} />
                             </View>
                             <View style={styles.featureText}>
-                                <Text style={{ ...styles.descrip, fontWeight: "600" }}>
+                                <Text style={{ ...styles.descrip, fontWeight: "700", color: "#9393A3" }}>
                                     {defaultData?.courseFeture[0]?.name}:
-                                    <Text style={styles.descrip}>
-                                        {truncateString(" " + defaultData?.courseFeture[0]?.detail, 60)}
+                                    <Text style={{ ...styles.descrip, fontWeight: "500", color: "#9393A3" }}>
+                                        {truncateString(" " + course.subDescriptionTitle[0].contents[0]?.description, 60)}
                                         <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, detail: true, course: false }) }}>
                                             <Text style={styles.viewDetail}>
                                                 Xem Chi Tiết
@@ -407,17 +414,27 @@ export default function CourseDetailScreen({ route, navigation }) {
                             </View>
                         </View>
                         :
-                        defaultData?.courseFeture?.map((item, key) => {
+                        course.subDescriptionTitle[0].contents?.map((item, key) => {
+                            const isLastItem = key === defaultData.courseFeture.length;
+
                             return (
                                 <View style={styles.courseFeature} key={key}>
                                     <View style={styles.featureIcon}>
                                         <Icon name={"check-circle-outline"} color={"#1BAE3B"} size={28} />
                                     </View>
                                     <View style={styles.featureText}>
-                                        <Text style={{ ...styles.descrip, fontWeight: "600" }}>
-                                            {item?.name}:
-                                            <Text style={styles.descrip}>
-                                                {" " + item?.detail}
+                                        <Text style={{ ...styles.descrip, fontWeight: "700", color: "#9393A3" }}>
+                                            {item?.content}:
+                                            <Text style={{ ...styles.descrip, fontWeight: "500" }}>
+                                                {" " + item?.description}
+                                                {
+                                                    isLastItem &&
+                                                    <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, detail: false, course: false }) }}>
+                                                        <Text style={styles.viewDetail}>
+                                                            Thu hồi
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                }
                                             </Text>
                                         </Text>
                                     </View>
@@ -427,11 +444,20 @@ export default function CourseDetailScreen({ route, navigation }) {
                 }
                 <Text style={{ ...styles.title, marginTop: 20 }}>
                     {`Chi Tiết Khóa Học   `}
-                    <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, course: true, detail: false }) }}>
-                        <Text style={styles.viewDetail}>
-                            Xem Chi Tiết
-                        </Text>
-                    </TouchableOpacity>
+                    {
+                        viewDetail.course ?
+                            <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, course: false, detail: false }) }}>
+                                <Text style={styles.viewDetail}>
+                                    Thu hồi
+                                </Text>
+                            </TouchableOpacity>
+                            :
+                            <TouchableOpacity onPress={() => { setViewDetail({ ...viewDetail, course: true, detail: false }) }}>
+                                <Text style={styles.viewDetail}>
+                                    Xem Chi Tiết
+                                </Text>
+                            </TouchableOpacity>
+                    }
                 </Text>
                 {
                     viewDetail?.course &&
@@ -478,9 +504,10 @@ export default function CourseDetailScreen({ route, navigation }) {
                         :
                         <>
                             <View style={styles.cardList}>
-                                {classCardDetail?.map((item, key) => {
+                                <ScheduleList cardList={classCardDetail} onClick={selectCourse} />
+                                {/* {classCardDetail?.map((item, key) => {
                                     return <ClassCard cardDetail={item} check={true} index={key} onClick={selectCourse} key={key} />
-                                })}
+                                })} */}
                             </View>
                             <View style={{ ...styles.flexBetweenColumn, marginVertical: 15 }}>
                                 <TouchableOpacity style={styles.button} onPress={handleCare}>

@@ -19,7 +19,6 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { format } from 'date-fns';
 import LoadingModal from "../../components/LoadingModal"
 import { useNavigation } from "@react-navigation/native";
-import { callGoogleVisionAsync } from "../../api/google";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -46,27 +45,7 @@ export default function AddStudentScreen() {
             quality: 1,
         })
         if (!result.canceled) {
-            try {
-                const base64Data = await FileSystem.readAsStringAsync(result.assets[0].uri, {
-                    encoding: FileSystem.EncodingType.Base64,
-                });
-                const data = await callGoogleVisionAsync(base64Data)
-                const faces = data.responses[0].faceAnnotations
-                if (faces && faces.length === 1) {
-                    setImageError(null)
-                    setImage(result.assets[0].uri)
-                } else if (faces && faces.length > 0) {
-                    setImageError("Vui lòng chọn hình của một mình bé")
-                    setLoading(false);
-                } else {
-                    setImageError("Vui lòng chọn hình rõ mặt bé")
-                    setLoading(false);
-                }
-            } catch (error) {
-                console.log(error)
-                setImageError("Vui lòng chọn hình ảnh khác")
-                setLoading(false);
-            }
+            setImage(result.assets[0].uri)
         }
     }
     const registerValidationSchema = Yup.object().shape({
@@ -111,7 +90,7 @@ export default function AddStudentScreen() {
                                 })
                             })
                         } else {
-                            setImageError("Vui lòng cung cấp hình ảnh bé")
+                            setImageError("Hãy cung cấp hình ảnh học viên")
                         }
                     } catch (e) {
                         console.log(e)
@@ -133,7 +112,7 @@ export default function AddStudentScreen() {
                         <Image style={{ width: 180, height: 180 }} source={image ? { uri: image } : require('../../assets/images/empty_avatar.png')}></Image>
                         <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
                             {imageError &&
-                                <Text style={{ fontSize: 12, color: 'red', textAlign: 'center' }}>{imageError}</Text>
+                                <Text style={{ fontSize: 12, color: 'red' }}>{imageError}</Text>
                             }
                         </View>
                         <Button radius={"xl"} type="solid" onPress={pickImage} containerStyle={{
