@@ -11,6 +11,7 @@ import InputOtpModal from '../../components/modal/InputOtpModal';
 import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
 import Header from '../../components/header/Header';
 import ChoosePaymentMethod from '../../components/modal/ChoosePaymentMethod';
+import { registerClass } from '../../api/class';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -89,8 +90,19 @@ export default function MultiplePaymentScreen({ route, navigation }) {
         setModalVisible({ ...modalVisible, otp: true })
     }
 
-    const handleSubmitOtp = (otp) => {
-        setModalVisible({ ...modalVisible, otp: false, notifi: true })
+    const handleSubmitOtp = async (otp) => {
+        // courseList?.map(async (classItem) => { console.log(classItem.class.id); })
+        courseList?.map(async (classItem) => {
+            const response = await registerClass([classItem.class?.student.id], classItem.class.id)
+            console.log([classItem.class?.student.id], classItem.id);
+            if (response?.status === 200) {
+                console.log(`Đã đăng ký ${classItem.class?.student.fullName} vào lớp ${classItem.class.name}`);
+                setModalVisible({ ...modalVisible, otp: false, notifi: true })
+            } else {
+                // console.log(`Đăng ký ${classItem.class?.student.fullName} vào lớp ${classItem.class.name} thất bại`);
+                console.log(response);
+            }
+        })
     }
 
     const handleChooseVourcherModal = () => {
