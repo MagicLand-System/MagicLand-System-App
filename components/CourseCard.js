@@ -1,6 +1,8 @@
 import { View, Text, Image, TouchableOpacity, Dimensions, ScrollView, StyleSheet } from 'react-native'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useState } from 'react'
+import { courseSelector } from '../store/selector';
+import { useSelector } from 'react-redux';
 
 import { formatPrice } from '../util/util';
 
@@ -10,9 +12,15 @@ const HEIGHT = Dimensions.get('window').height;
 export default function CourseCard({ cardDetail, onClick, choose }) {
 
     const [favorite, setFavorite] = useState(cardDetail.favorite)
+    const course = useSelector(courseSelector)
 
     const handleStarClick = () => {
         setFavorite(!favorite)
+    }
+
+    const getCourseType = (courseName) => {
+        const courseFound = course.find(course => course.name.toUpperCase() === courseName.toUpperCase());
+        return courseFound ? courseFound.vietName : "khoá học";
     }
 
     return (
@@ -28,19 +36,19 @@ export default function CourseCard({ cardDetail, onClick, choose }) {
             <TouchableOpacity style={styles.card} onPress={() => { onClick(cardDetail) }}>
                 <Image source={{ uri: cardDetail.image }} style={styles.image} resizeMode='cover' />
                 <View style={{ ...styles.flexBetweenColumn, marginBottom: 10 }}>
-                    <Text style={{ textTransform: "capitalize" }}>{cardDetail.vietType}</Text>
+                    <Text style={{ textTransform: "capitalize" }}>{getCourseType(cardDetail.courseDetail.subject)}</Text>
                     <View style={styles.priceView}>
                         <Text style={styles.priceText}>{formatPrice(cardDetail.price)} đ</Text>
                     </View>
                 </View>
-                <Text style={styles.cardName}>{cardDetail.name}</Text>
+                <Text style={styles.cardName}>{cardDetail.courseDetail.courseName}</Text>
                 <View style={{ width: WIDTH * 0.45 }}>
                     <View style={{ ...styles.flexColumn, width: WIDTH * 0.37 }}>
                         <Icon name={"account"} color={"#888888"} size={22} />
                         <Text style={styles.cardText}>{cardDetail.rateCount ? cardDetail.rateCount : 0} người đăng ký</Text>
                     </View>
                     {
-                        cardDetail.rateCount && cardDetail.rateCount !== 0  ?
+                        cardDetail.rateCount && cardDetail.rateCount !== 0 ?
                             <View style={{ ...styles.flexColumn, width: WIDTH * 0.37 }}>
                                 <Icon name={"star"} color={"#FFC90C"} size={22} />
                                 <Text style={styles.cardText}><Text style={{ ...styles.cardText, fontSize: 12 }}>{cardDetail.rateValue}</Text> ({cardDetail.registerAmount} lượt đánh giá)</Text>

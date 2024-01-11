@@ -476,6 +476,7 @@ export default function DocumentScreen({ navigation }) {
 
   const loadStudentData = async () => {
     const studentList = await getStudents()
+    console.log(studentList);
     setStudentList(studentList)
   }
 
