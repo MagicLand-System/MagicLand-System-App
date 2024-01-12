@@ -7,6 +7,7 @@ export const getStudents = async () => {
     const response = await api.get("/api/v1/students/currentuser");
     return response.data;
 };
+
 export const getClasses = async ({ id, status }) => {
     const response = await api.get("/api/v1/students/getclass", {
         params: {
@@ -15,4 +16,14 @@ export const getClasses = async ({ id, status }) => {
         }
     });
     return response.data;
+};
+
+export const getschedule = async (id) => {
+    try {
+        const response = await api.get("/api/v1/students/getschedule?studentId=" + id);
+        return response;
+    } catch (error) {
+        console.log("getschedule in api/student.js error : ", error);
+        return error;
+    }
 };

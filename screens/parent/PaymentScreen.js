@@ -11,6 +11,7 @@ import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
 import { formatPrice } from '../../util/util';
 import { modifyCart } from '../../api/cart';
 import ChoosePaymentMethod from '../../components/modal/ChoosePaymentMethod';
+import { registerClass } from '../../api/class';
 
 const paymentTypeDefault = [
     {
@@ -98,15 +99,18 @@ export default function PaymentScreen({ route, navigation }) {
     }
 
     const handleSubmitOtp = async (otp) => {
-        classDetail?.map(async (classItem) => {
-            const response = await modifyCart(studentList.map(item => item.id), classItem.id)
-            if (response?.status === 200) {
-                console.log(`Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`);
-                setModalVisible({ ...modalVisible, otp: false, notifi: true })
-            } else {
-                console.log(`Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`);
-            }
-        })
+        setModalVisible({ ...modalVisible, otp: false, notifi: true })
+        // classDetail?.map(async (classItem) => {
+        //     const response = await registerClass(studentList.map(item => item.id), classItem.id)
+        //     // console.log("student ", studentList.map(item => item.id));
+        //     // console.log("classItem.id ", classItem.id);
+        //     if (response?.status === 200) {
+        //         console.log(`Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`);
+        //         setModalVisible({ ...modalVisible, otp: false, notifi: true })
+        //     } else {
+        //         console.log(`Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`);
+        //     }
+        // })
     }
 
     const handleChooseVourcherModal = () => {

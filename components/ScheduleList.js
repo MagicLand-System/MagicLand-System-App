@@ -54,9 +54,9 @@ export default function ScheduleList({ cardList, onClick }) {
                         <View style={{ ...styles.checkColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
                             {
                                 item.choose ?
-                                    <Icon name={"circle"} color={"#4582E6"} size={40} />
+                                    <Icon name={"check-circle-outline"} color={"#1BAE3B"} size={35} />
                                     :
-                                    <Icon name={"circle"} color={"#888888"} size={40} />
+                                    <Icon name={"circle"} color={"#888888"} size={35} />
                             }
                         </View>
                         <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>

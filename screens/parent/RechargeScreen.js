@@ -26,7 +26,8 @@ const paymentTypeDefault = [
 export default function RechargeScreen({ route, navigation }) {
 
     const paymentMethod = route.params.paymentMethod
-    const [price, setPrice] = useState(0)
+    const [price, setPrice] = useState('0')
+    const [inputPrice, setInputPrice] = useState(false)
 
     const handleInputChange = (text) => {
         const numericInput = text.replace(/[^0-9]/g, '');
@@ -51,6 +52,10 @@ export default function RechargeScreen({ route, navigation }) {
         }
     }
 
+    const formatPriceValue = (price) => {
+        return formatPrice(price) + "đ"
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.safeArea} />
@@ -58,7 +63,15 @@ export default function RechargeScreen({ route, navigation }) {
             <ScrollView showsVerticalScrollIndicator={false} style={styles.paymentMethodList}>
                 <View style={styles.priceInput}>
                     <Text style={{ ...styles.boldText, color: "#241468" }}>Số tiền nạp:</Text>
-                    <TextInput style={styles.priceInputField} value={price} onChangeText={(text) => handleInputChange(text)} placeholder='đ' keyboardType="numeric"></TextInput>
+                    <TextInput
+                        style={styles.priceInputField}
+                        value={inputPrice ? price : formatPriceValue(price)}
+                        onChangeText={(text) => handleInputChange(text)}
+                        onFocus={() => setInputPrice(true)}
+                        onBlur={() => setInputPrice(false)}
+                        placeholder='0'
+                        keyboardType="numeric"
+                    />
                     {/* <Text>đ</Text> */}
                     <View style={styles.flexDirectionBetween}>
                         <TouchableOpacity style={styles.priceButton} onPress={() => setPrice("100000")}>
