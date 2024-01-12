@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import StudentView from '../../../components/StudentView';
 import ClassCard from '../../../components/ClassCard';
-import { getStudents } from '../../../api/student';
+import { getStudents, getschedule } from '../../../api/student';
 import ClassCartCard from '../../../components/ClassCartCard';
 import { useFocusEffect } from '@react-navigation/native';
 import { userSelector } from '../../../store/selector';
@@ -426,6 +426,8 @@ export default function DocumentScreen({ navigation }) {
 
   const [studentList, setStudentList] = useState([])
   const [classList, setClassList] = useState([])
+  const [loading, setLoading] = useState(true)
+  // const [loadingClassList, setLoadingClassList] = useState(true)
   const [type, setType] = useState("PROGRESSING")
   const [animation] = useState(new Animated.Value(0));
   const user = useSelector(userSelector);
@@ -434,11 +436,11 @@ export default function DocumentScreen({ navigation }) {
     loadStudentData()
   }, [user])
 
-  useFocusEffect(
-    React.useCallback(() => {
-      loadStudentData()
-    }, [])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     loadStudentData()
+  //   }, [])
+  // );
 
   useEffect(() => {
     switch (type) {
@@ -475,11 +477,31 @@ export default function DocumentScreen({ navigation }) {
   };
 
   const loadStudentData = async () => {
+    setLoading(true)
     const studentList = await getStudents()
-    setStudentList(studentList)
+    studentList[studentList.length - 1].check = true
+    const scheduleData = await loadScheduleData(studentList[studentList.length - 1].id)
+    setClassList(scheduleData)
+    setStudentList(studentList.reverse())
+    setLoading(false)
   }
 
-  const selectStudent = (id) => {
+  const loadScheduleData = async (id) => {
+    let updateStudentList = [...studentList]
+    const index = studentList.findIndex(obj => obj.id === id);
+    if (!updateStudentList[index]?.schedule) {
+      const response = await getschedule(id);
+      if (response.status === 200) {
+        return response.data
+      } else {
+        console.log("Tải thông tin lớp học thất bại");
+        return []
+      }
+    }
+    return undefined
+  }
+
+  const selectStudent = async (id) => {
     setStudentList((prevStudentList) => {
       const index = prevStudentList.findIndex(obj => obj.id === id);
       return prevStudentList.map((item, i) => ({
@@ -487,8 +509,9 @@ export default function DocumentScreen({ navigation }) {
         check: i === index ? !item.check : false,
       }));
     });
+    const scheduleData = await loadScheduleData(id)
+    setClassList(scheduleData)
   };
-
 
 
   const handleClassNavigate = (classDetail) => {
@@ -500,13 +523,17 @@ export default function DocumentScreen({ navigation }) {
   }
 
   const getClassList = () => {
-    const updateArray = studentList.filter(item => item.check === true)
-    return updateArray[0].classList
+    const updateArray = studentList?.filter(item => item.check === true)
+    if (!updateArray[0]) {
+      selectStudent(studentList[0].id)
+      return studentList[0].schedule
+    }
+    return updateArray[0] ? updateArray[0].schedule ? updateArray[0].schedule : [] : []
   }
 
   const filterClassList = (array) => {
-    const updateArray = array.filter(item => item.status === type)
-    return updateArray
+    const updateArray = array?.filter(item => item.method === type)
+    return updateArray ? updateArray : []
   }
 
   const renderClassCard = (type, item, index) => {
@@ -539,6 +566,7 @@ export default function DocumentScreen({ navigation }) {
       </View>
       <ScrollView showsHorizontalScrollIndicator={false} horizontal style={styles.studentList}>
         {
+          !loading &&
           studentList?.map((item, index) => {
             return (
               <StudentView student={item} index={index} key={index} onClick={selectStudent} />
@@ -618,7 +646,8 @@ export default function DocumentScreen({ navigation }) {
         >
           {/* getClassList() */}
           {
-            filterClassList(classListData).map((item, index) => {
+            !loading &&
+            filterClassList(classList)?.map((item, index) => {
               return (
                 renderClassCard(type, item, index)
               )

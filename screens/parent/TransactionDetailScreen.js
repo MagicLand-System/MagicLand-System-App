@@ -19,7 +19,7 @@ export default function TransactionDetailScreen({ route, navigation }) {
     const user = useSelector(userSelector);
 
     const handleClose = () => {
-        navigation.navigate("DocumentScreen")
+        navigation.navigate("Document")
     }
 
     return (
