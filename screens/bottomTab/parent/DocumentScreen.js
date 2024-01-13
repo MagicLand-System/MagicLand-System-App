@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import StudentView from '../../../components/StudentView';
 import ClassCard from '../../../components/ClassCard';
-import { getStudents, getschedule } from '../../../api/student';
+import { getClassesByStudentId, getStudents, getschedule } from '../../../api/student';
 import ClassCartCard from '../../../components/ClassCartCard';
 import { useFocusEffect } from '@react-navigation/native';
 import { userSelector } from '../../../store/selector';
@@ -22,7 +22,7 @@ const classListData = [
     startDate: "2024-01-03T00:00:00",
     endDate: "2024-02-03T00:00:00",
     address: "Hồ Chí Minh Tân Bình 138 Lương Định Của",
-    status: "UPCOMMING",
+    status: "UPCOMING",
     method: "OFFLINE",
     limitNumberStudent: 30,
     leastNumberStudent: 1,
@@ -277,7 +277,7 @@ const classListData = [
     startDate: "2024-01-03T00:00:00",
     endDate: "2024-02-03T00:00:00",
     address: "Hồ Chí Minh Tân Bình 138 Lương Định Của",
-    status: "UPCOMMING",
+    status: "UPCOMING",
     method: "OFFLINE",
     limitNumberStudent: 30,
     leastNumberStudent: 1,
@@ -444,8 +444,8 @@ export default function DocumentScreen({ navigation }) {
 
   useEffect(() => {
     switch (type) {
-      case "UPCOMMING":
-        animateBorder(0); // Set the width to 0 when "UPCOMMING"
+      case "UPCOMING":
+        animateBorder(0); // Set the width to 0 when "UPCOMING"
         break;
       case "PROGRESSING":
         animateBorder(1); // Set the width to 1 when "PROGRESSING"
@@ -490,7 +490,7 @@ export default function DocumentScreen({ navigation }) {
     let updateStudentList = [...studentList]
     const index = studentList.findIndex(obj => obj.id === id);
     if (!updateStudentList[index]?.schedule) {
-      const response = await getschedule(id);
+      const response = await getClassesByStudentId(id);
       if (response.status === 200) {
         return response.data
       } else {
@@ -532,13 +532,13 @@ export default function DocumentScreen({ navigation }) {
   }
 
   const filterClassList = (array) => {
-    const updateArray = array?.filter(item => item.method === type)
+    const updateArray = array?.filter(item => item.status === type)
     return updateArray ? updateArray : []
   }
 
   const renderClassCard = (type, item, index) => {
     switch (type) {
-      case "UPCOMMING":
+      case "UPCOMING":
         return (
           <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
         )
@@ -595,7 +595,7 @@ export default function DocumentScreen({ navigation }) {
           ]} >
             <View style={[styles.buttonBorder,
             {
-              borderColor: type === "UPCOMMING" ?
+              borderColor: type === "UPCOMING" ?
                 "#C8A9F1"
                 :
                 type === "PROGRESSING" ?
@@ -606,7 +606,7 @@ export default function DocumentScreen({ navigation }) {
             }]} />
           </Animated.View>
           <TouchableOpacity
-            onPress={() => setType("UPCOMMING")}
+            onPress={() => setType("UPCOMING")}
             style={{ ...styles.typeButton, backgroundColor: "#C8A9F1" }}
           >
             <Text style={{ ...styles.typeText, color: "#250056" }}>
@@ -633,14 +633,14 @@ export default function DocumentScreen({ navigation }) {
         <View
           style={{
             ...styles.classItemList,
-            borderColor: type === "UPCOMMING" ?
+            borderColor: type === "UPCOMING" ?
               "#C8A9F1"
               :
               type === "PROGRESSING" ?
                 "#FACE9B"
                 :
                 "#BFE3C6",
-            borderTopLeftRadius: type !== "UPCOMMING" ? 10 : 0,
+            borderTopLeftRadius: type !== "UPCOMING" ? 10 : 0,
             borderTopRightRadius: type !== "COMPLETED" ? 10 : 0,
           }}
         >

@@ -21,6 +21,14 @@ export default function ProfileScreen({ navigation }) {
       .then(dispatch(removeUser()))
   }
 
+  const convertPhoneNumber = (phoneNumber) => {
+    let convertedNumber = phoneNumber.replace(/[^\d]/g, '');
+    if (phoneNumber.startsWith('+')) {
+      convertedNumber = '0' + convertedNumber.slice(2);
+    }
+    return convertedNumber
+  }
+
   const optionList = [
     {
       name: "Danh sách bé",
@@ -35,12 +43,12 @@ export default function ProfileScreen({ navigation }) {
     {
       name: "Khóa học quan tâm",
       icon: "",
-      onClick: ()=>console.log("comming soon"),
+      onClick: () => console.log("comming soon"),
     },
     {
       name: "Ví điện tử",
       icon: "",
-      onClick: ()=>console.log("comming soon"),
+      onClick: () => console.log("comming soon"),
     },
     {
       name: "Lịch sử giao dịch",
@@ -50,7 +58,7 @@ export default function ProfileScreen({ navigation }) {
     {
       name: "Quản lý tài khoản",
       icon: "",
-      onClick: ()=>console.log("comming soon"),
+      onClick: () => console.log("comming soon"),
     },
     {
       name: "Đăng xuất",
@@ -65,8 +73,16 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.userDetail}>
           <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-            <Text style={styles.userName}>PH: {user.fullName}</Text>
+            <Text style={styles.userName}>
+              {
+                user.role.name === "LECTURER" ?
+                  "GV: "
+                  :
+                  "PH: "
+              }
+              {user.fullName}</Text>
           </View>
+          {/* <Text >Sđt: {convertPhoneNumber(user.phone)}</Text> */}
           <Text >Sđt: {user.phone}</Text>
         </View>
         <View style={styles.userOption}>

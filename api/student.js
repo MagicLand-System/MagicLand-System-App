@@ -27,3 +27,14 @@ export const getschedule = async (id) => {
         return error;
     }
 };
+
+export const getClassesByStudentId = async (id) => {
+    try {
+        const response = await api.get("/api/v1/students/getclass?studentId=" + id);
+        return response;
+    } catch (error) {
+        console.log("getClassesByStudentId in api/student.js error : ", error);
+        return error;
+    }
+};
+
