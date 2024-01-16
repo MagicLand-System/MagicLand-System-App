@@ -82,8 +82,8 @@ export default function ProfileScreen({ navigation }) {
               }
               {user.fullName}</Text>
           </View>
-          {/* <Text >Sđt: {convertPhoneNumber(user.phone)}</Text> */}
-          <Text >Sđt: {user.phone}</Text>
+          <Text >Sđt: {convertPhoneNumber(user.phone)}</Text>
+          {/* <Text >Sđt: {user.phone}</Text> */}
         </View>
         <View style={styles.userOption}>
           <Text style={styles.boldText}>Tài khoản:</Text>

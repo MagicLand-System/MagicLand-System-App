@@ -630,7 +630,7 @@ export default function DocumentScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
         </View>
-        <View
+        <ScrollView
           style={{
             ...styles.classItemList,
             borderColor: type === "UPCOMING" ?
@@ -653,7 +653,7 @@ export default function DocumentScreen({ navigation }) {
               )
             })
           }
-        </View>
+        </ScrollView>
       </View>
       <View style={styles.titleView}>
         <Text style={styles.title}>Các sự kiện đã tham gia:</Text>
@@ -764,8 +764,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     marginTop: 10,
-    justifyContent: "center",
-    alignItems: "center",
+    // justifyContent: "center",
+    // alignItems: "center",
     zIndex: 99,
     // borderTopWidth: 0,
   },
