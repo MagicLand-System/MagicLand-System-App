@@ -353,10 +353,10 @@ export default function CourseDetailScreen({ route, navigation }) {
                     ...styles.flexBetweenColumn, width: WIDTH * 0.75, marginHorizontal: WIDTH * 0.025,
                     marginVertical: 20
                 }}>
-                    <View style={styles.flexColumn}>
+                    {/* <View style={styles.flexColumn}>
                         <Icon name={"account"} color={"#3AAC45"} size={32} />
                         <Text style={styles.cardText}>{course?.rateCount ? course?.rateCount : 0} người đăng ký</Text>
-                    </View>
+                    </View> */}
                     {
                         course?.rateCount && course?.rateCount !== 0 ?
                             <View style={styles.flexColumn}>

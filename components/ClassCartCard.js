@@ -26,21 +26,26 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
     }
 
     const getSchedule = (item) => {
-        switch (item?.schedules[0]?.dayOfWeeks) {
-            case "Monday":
-                return "Thứ 2 - 4 - 6 (7h30 - 9h)"
-            case "Tuesday":
-                return "Thứ 3 - 5 - 7 (7h30 - 9h)"
-            case "Saturday":
-                return "Thứ 7 - Cn (7h30 - 9h)"
+        if (item?.schedules) {
+            switch (item?.schedules[0]?.dayOfWeeks) {
+                case "Monday":
+                    return "Thứ 2 - 4 - 6 (7h30 - 9h)"
+                case "Tuesday":
+                    return "Thứ 3 - 5 - 7 (7h30 - 9h)"
+                case "Saturday":
+                    return "Thứ 7 - Cn (7h30 - 9h)"
 
-            default:
-                return "Thứ 2 - 4 - 6 (7h30 - 9h)"
+                default:
+                    return "Thứ 2 - 4 - 6 (7h30 - 9h)"
+            }
+        } else {
+            return "Thứ 2 - 4 - 6 (7h30 - 9h)"
         }
+
     }
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail.id) }}>
+        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail?.id) }}>
             <View
                 style={{
                     ...styles.card,
@@ -62,7 +67,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                     <>
                         {/* <View style={styles.checkBoxLine} /> */}
                         {
-                            cardDetail.choose &&
+                            cardDetail?.choose &&
                             <View style={styles.checkBox}>
                                 <Icon name={"check"} color={"#C2D9FF"} size={20} />
                             </View>
@@ -83,13 +88,20 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                 </View>
                 <View style={styles.cardDetail}>
                     <View style={{ ...styles.flexColumnBetween, marginTop: 5, paddingRight: 10 }}>
-                        <Text style={styles.cardName}>{cardDetail.name ? cardDetail.name : "Toán cấp 1"}</Text>
-                        <Text style={{ ...styles.cardName, color: "#241468" }}>{cardDetail.coursePrice ? formatPrice(cardDetail.coursePrice) : formatPrice(0)}đ</Text>
+                        <Text style={styles.cardName}>{
+                            cardDetail?.name ?
+                                cardDetail?.name
+                                :
+                                cardDetail?.className ?
+                                    cardDetail?.className
+                                    :
+                                    "Toán cấp 1"}</Text>
+                        <Text style={{ ...styles.cardName, color: "#241468" }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
                     </View>
-                    <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail.method}</Text></Text>
+                    <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>
                     <View style={styles.flexColumn}>
                         <Icon name={"calendar-check"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{formatDate(cardDetail.startDate)}</Text>
+                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.startDate ? cardDetail?.startDate : cardDetail?.Time)}</Text>
                     </View>
                     <View style={{ ...styles.flexColumn, marginVertical: 5 }}>
                         <Icon name={"clock-time-three-outline"} color={"#241468"} size={18} />

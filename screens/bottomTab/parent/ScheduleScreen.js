@@ -6,6 +6,7 @@ import { CalendarProvider, Calendar, WeekCalendar, Agenda } from 'react-native-c
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../../store/selector';
 import Header from '../../../components/header/Header';
+import { formatDefaultSelectedDate } from '../../../util/util';
 
 const studentListDefault = [
   {
@@ -96,7 +97,7 @@ const HEIGHT = Dimensions.get('window').height;
 export default function ScheduleScreen({ navigation }) {
 
   const [studentList, setStudentList] = useState(studentListDefault)
-  const [dateSelected, setDateSelected] = useState(new Date);
+  const [dateSelected, setDateSelected] = useState(formatDefaultSelectedDate(new Date));
   const [calendarType, setCalendarType] = useState("month")
 
   const user = useSelector(userSelector);
@@ -234,9 +235,9 @@ export default function ScheduleScreen({ navigation }) {
               <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "month" ? "#241468" : "white" }} onPress={() => { setCalendarType("month") }}>
                 <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "month" ? "white" : "#888888" }}>Tháng</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "week" ? "#241468" : "white" }} onPress={() => { setCalendarType("week") }}>
+              {/* <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "week" ? "#241468" : "white" }} onPress={() => { setCalendarType("week") }}>
                 <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "week" ? "white" : "#888888" }}>Tuần</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity style={{ ...styles.changeTypeButton, borderRightWidth: 0, backgroundColor: calendarType === "day" ? "#241468" : "white" }} onPress={() => { setCalendarType("day") }}>
                 <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "day" ? "white" : "#888888" }}>Ngày</Text>
               </TouchableOpacity>

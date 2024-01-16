@@ -366,7 +366,7 @@ export default function CartScreen({ navigation }) {
                     <ScrollView showsVerticalScrollIndicator={false} style={{ ...styles.container }}>
                         <View style={{ marginBottom: 15 }} />
                         {filferClassList(classCardDetail)?.map((item, index) => {
-                            return <ClassCard cardDetail={item.class} check={bottomModalVisible.total} index={index} onClick={selectCourse} key={index} />
+                            return <ClassCartCard cardDetail={item.class} check={bottomModalVisible.total} index={index} onClick={selectCourse} key={index} />
                         })}
                         <View style={{ height: bottomModalVisible.total ? bottomModalVisible.confirm ? 195 : 135 : 30 }} />
                     </ScrollView>
