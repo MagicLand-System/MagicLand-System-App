@@ -9,89 +9,7 @@ import Header from '../../../components/header/Header';
 import { formatDefaultSelectedDate } from '../../../util/util';
 import { getStudents, getschedule } from '../../../api/student';
 
-const studentListDefault = [
-  {
-    id: 0,
-    fullName: "Lê Bảo Ngọc",
-    age: "10",
-    dob: "2-2-2002",
-    check: true,
-    dateList: [
-      {
-        date: "2024-01-13T00:00:00",
-        classList: [
-          {
-            title: "Khóa Học Vẽ Cho Trẻ Mới Bắt Đầu",
-            time: "10:00-13:00",
-            room: "110",
-          },
-        ]
-      },
-      {
-        date: "2024-01-14T00:00:00",
-        classList: [
-          {
-            title: "Khóa Học Vẽ Cho Trẻ Mới Bắt Đầu",
-            time: "10:00-13:00",
-            room: "110",
-          },
-          {
-            title: "Hát cùng cô giáo nhỏ",
-            time: "10:00-13:00",
-            room: "110",
-          },
-          {
-            title: "Toán Tư Duy",
-            time: "10:00-13:00",
-            room: "110",
-          },
-        ]
-      },
-
-    ]
-  },
-  {
-    id: 1,
-    fullName: "Trần Hữu Nghĩa",
-    age: "11",
-    dob: "2-2-2003",
-    check: false,
-    dateList: [
-      {
-        date: "2024-01-14T00:00:00",
-        classList: [
-          {
-            title: "Khóa Học Vẽ Cho Trẻ Mới Bắt Đầu",
-            time: "10:00-13:00",
-            room: "110",
-          },
-        ]
-      },
-      {
-        date: "2024-01-15T00:00:00",
-        classList: [
-          {
-            title: "Khóa Học Vẽ Cho Trẻ Mới Bắt Đầu",
-            time: "10:00-13:00",
-            room: "110",
-          },
-          {
-            title: "Hát cùng cô giáo nhỏ",
-            time: "10:00-13:00",
-            room: "110",
-          },
-          {
-            title: "Toán Tư Duy",
-            time: "10:00-13:00",
-            room: "110",
-          },
-        ]
-      },
-
-    ]
-  },
-]
-
+import SpinnerLoading from "../../../components/SpinnerLoading"
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
@@ -100,6 +18,7 @@ export default function ScheduleScreen({ navigation }) {
   const [studentList, setStudentList] = useState([])
   const [scheduleList, setScheduleList] = useState([])
   const [loading, setLoading] = useState(true)
+  const [calendarLoading, setCalendarLoading] = useState(false)
   const [dateSelected, setDateSelected] = useState(formatDefaultSelectedDate(new Date));
   const [calendarType, setCalendarType] = useState("month")
 
@@ -152,7 +71,9 @@ export default function ScheduleScreen({ navigation }) {
         check: i === index ? !item.check : false,
       }));
     });
+    setCalendarLoading(true)
     const scheduleData = await loadScheduleData(id)
+    setCalendarLoading(false)
     setScheduleList(scheduleData)
   };
 
@@ -269,96 +190,75 @@ export default function ScheduleScreen({ navigation }) {
             </View>
           </View>
           {
-            calendarType === "month" ?
-              <>
-                <Calendar
-                  onDayPress={(day) => {
-                    setDateSelected(day.dateString);
-                  }}
-                  dayComponent={renderCustomDay}
-                />
-                <View style={styles.noteView}>
-                  <View style={{ ...styles.noteHaft, backgroundColor: "#F6F2E5" }}>
-                    <Text style={styles.noteTitle}>Ngày nghỉ</Text>
-                    <View style={styles.flexColumn}>
-                      <Text style={{ ...styles.boldText, color: "#EAB756", marginRight: 10 }}>1/1</Text>
-                      <Text >Tết Tây</Text>
-                    </View>
-                  </View>
-                  <View style={{ ...styles.noteHaft, backgroundColor: "#F4F4F4" }}>
-                    <Text style={styles.noteTitle}>Chú thích</Text>
-                    <View style={styles.flexColumn}>
-                      <View style={{ ...styles.exampleView, backgroundColor: "#52ACFF80" }} />
-                      <Text >Sáng</Text>
-                    </View>
-                    <View style={styles.flexColumn}>
-                      <View style={{ ...styles.exampleView, backgroundColor: "#FF95CE80" }} />
-                      <Text >Chiều</Text>
-                    </View>
-                    <View style={styles.flexColumn}>
-                      <View style={{ ...styles.exampleView, backgroundColor: "#92C88D80" }} />
-                      <Text >Tối</Text>
-                    </View>
-                  </View>
-                </View>
-              </>
-
-              : calendarType === "week" ?
-
-                <CalendarProvider date={dateSelected ? dateSelected : new Date}>
-                  <WeekCalendar
+            !calendarLoading &&
+            // <SpinnerLoading />
+            // :
+            <>
+              {
+                calendarType === "month" &&
+                <>
+                  <Calendar
                     onDayPress={(day) => {
                       setDateSelected(day.dateString);
                     }}
-                    current={dateSelected}
-                    scrollEnabled={false}
                     dayComponent={renderCustomDay}
-
-                    // markingType="period"
-                    markedDates={{
-                      [dateSelected]: {
-                        startingDay: true,
-                        endingDay: true,
-                        color: "#3AA6B9",
-                      },
-                    }}
-                    calendarHeight={150}
                   />
-                </CalendarProvider>
-
-                :
-                ""
-          }
-
-          {
-            calendarType === "day" &&
-            getCurrentDate({ dateString: dateSelected }).map((item, key) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => handleClassNavigate(item)}
-                  style={{ ...styles.classWeekCard, ...styles.flexColumnBetween, alignItems: "flex-start" }}
-                  key={key}
-                >
-
-                  <Text style={{ ...styles.boldText, width: "30%", color: "#241468" }}>{item.startTime}</Text>
-                  <View style={{ width: "50%" }}>
-                    <Text style={{ ...styles.boldText, color: "#241468" }}>{item.className}</Text>
-                    <Text style={{ ...styles.boldText, color: "#3C87FF" }}>Phòng {item.roomName}</Text>
+                  <View style={styles.noteView}>
+                    <View style={{ ...styles.noteHaft, backgroundColor: "#F6F2E5" }}>
+                      <Text style={styles.noteTitle}>Ngày nghỉ</Text>
+                      <View style={styles.flexColumn}>
+                        <Text style={{ ...styles.boldText, color: "#EAB756", marginRight: 10 }}>1/1</Text>
+                        <Text >Tết Tây</Text>
+                      </View>
+                    </View>
+                    <View style={{ ...styles.noteHaft, backgroundColor: "#F4F4F4" }}>
+                      <Text style={styles.noteTitle}>Chú thích</Text>
+                      <View style={styles.flexColumn}>
+                        <View style={{ ...styles.exampleView, backgroundColor: "#52ACFF80" }} />
+                        <Text >Sáng</Text>
+                      </View>
+                      <View style={styles.flexColumn}>
+                        <View style={{ ...styles.exampleView, backgroundColor: "#FF95CE80" }} />
+                        <Text >Chiều</Text>
+                      </View>
+                      <View style={styles.flexColumn}>
+                        <View style={{ ...styles.exampleView, backgroundColor: "#92C88D80" }} />
+                        <Text >Tối</Text>
+                      </View>
+                    </View>
                   </View>
-                  <View style={{ ...styles.flexColumn, width: "20%" }}>
-                    <View style={{ ...styles.statusCircle, backgroundColor: item?.method === "ONLINE" ? "#3AAC45" : "#888888" }} />
-                    {
-                      item?.method === "ONLINE" ?
-                        <Text style={styles.cardDetailText}>Online</Text>
-                        :
-                        <Text style={styles.cardDetailText}>Offline</Text>
-                    }
-                  </View>
-                </TouchableOpacity>
-              )
-            })
-          }
+                </>
+              }
+              {
+                calendarType === "day" &&
+                getCurrentDate({ dateString: dateSelected }).map((item, key) => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => handleClassNavigate(item)}
+                      style={{ ...styles.classWeekCard, ...styles.flexColumnBetween, alignItems: "flex-start" }}
+                      key={key}
+                    >
 
+                      <Text style={{ ...styles.boldText, width: "30%", color: "#241468" }}>{item.startTime}</Text>
+                      <View style={{ width: "50%" }}>
+                        <Text style={{ ...styles.boldText, color: "#241468" }}>{item.className}</Text>
+                        <Text style={{ ...styles.boldText, color: "#3C87FF" }}>Phòng {item.roomName}</Text>
+                      </View>
+                      <View style={{ ...styles.flexColumn, width: "20%" }}>
+                        <View style={{ ...styles.statusCircle, backgroundColor: item?.method === "ONLINE" ? "#3AAC45" : "#888888" }} />
+                        {
+                          item?.method === "ONLINE" ?
+                            <Text style={styles.cardDetailText}>Online</Text>
+                            :
+                            <Text style={styles.cardDetailText}>Offline</Text>
+                        }
+                      </View>
+                    </TouchableOpacity>
+                  )
+                })
+              }
+            </>
+          }
         </View>
 
       </ScrollView>

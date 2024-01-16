@@ -83,7 +83,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                         style={styles.cardImageValue}
                     />
                     <View style={styles.classType}>
-                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{getCourseType(cardDetail?.courseDetail?.subject)}</Text>
+                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{getCourseType(cardDetail?.classSubject)}</Text>
                     </View>
                 </View>
                 <View style={styles.cardDetail}>

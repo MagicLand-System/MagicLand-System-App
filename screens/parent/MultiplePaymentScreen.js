@@ -12,6 +12,7 @@ import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
 import Header from '../../components/header/Header';
 import ChoosePaymentMethod from '../../components/modal/ChoosePaymentMethod';
 import { registerClass } from '../../api/class';
+import CustomToast from "../../components/CustomToast";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -76,6 +77,7 @@ export default function MultiplePaymentScreen({ route, navigation }) {
     const [vourcherList, setVourcherList] = useState(vourcherListDefault)
     const [paymentMethodList, setPaymentMethodList] = useState(paymentTypeDefault)
     const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false, paymentMethod: false })
+    const showToast = CustomToast();
 
     useEffect(() => {
         courseList = route?.params?.courseList
@@ -93,14 +95,14 @@ export default function MultiplePaymentScreen({ route, navigation }) {
     const handleSubmitOtp = async (otp) => {
         // courseList?.map(async (classItem) => { console.log(classItem.class.id); })
         courseList?.map(async (classItem) => {
-            const response = await registerClass([classItem.class?.student.id], classItem.class.id)
+            const response = await registerClass([classItem.class?.student.id], classItem.class.classId)
             console.log([classItem.class?.student.id], classItem.id);
             if (response?.status === 200) {
-                console.log(`Đã đăng ký ${classItem.class?.student.fullName} vào lớp ${classItem.class.name}`);
+                showToast("Thành công", `Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`, "success");
                 setModalVisible({ ...modalVisible, otp: false, notifi: true })
             } else {
-                // console.log(`Đăng ký ${classItem.class?.student.fullName} vào lớp ${classItem.class.name} thất bại`);
-                console.log(response);
+                showToast("Thất bại", `Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`, "error");
+                console.log(response.response.data);
             }
         })
     }

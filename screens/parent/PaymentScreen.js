@@ -105,12 +105,11 @@ export default function PaymentScreen({ route, navigation }) {
             console.log(studentList.map(item => item.id), classItem.classId);
             const response = await registerClass(studentList.map(item => item.id), classItem.classId)
             if (response?.status === 200) {
-                console.log(`Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`);
+                // showToast("Thành công", `Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`, "success");
                 setModalVisible({ ...modalVisible, otp: false, notifi: true })
             } else {
-                // showToast("Thành công", `Đã thêm ${item?.name} vào giỏ hàng`, "success");
-                console.log(response.response.config.data);
-                console.log(`Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`);
+                showToast("Thất bại", `${response.response.data.Error}`, "error");
+                // console.log(response.response.data);
             }
         })
     }
