@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet, Dimensions, TextInput, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import Header from '../../../components/header/Header';
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import unhappyIcon from "../../../assets/rateIcon/unhapppyIcon.png"
 import happyIcon from "../../../assets/rateIcon/happyIcon.png"
@@ -14,67 +14,70 @@ const studentListDefault = [
   {
     id: 1,
     name: "Nguyễn Văn A",
-    note: "Học Bù"
+    note: "Học Bù",
+    rate: "bad"
   },
   {
     id: 2,
     name: "Nguyễn Văn B",
+    rate: "neutral"
   },
   {
     id: 3,
     name: "Nguyễn Văn A",
+    rate: "happy"
   },
   {
     id: 4,
     name: "Nguyễn Văn C",
-    note: "Học Bù"
+    note: "Học Bù",
+    rate: "happy"
   },
   {
     id: 5,
     name: "Nguyễn Văn B",
+    rate: "happy"
   },
   {
     id: 6,
     name: "Nguyễn Văn D",
+    rate: "happy"
   },
   {
     id: 7,
     name: "Nguyễn Văn A",
-    note: "Học Bù"
+    note: "Học Bù",
+    rate: "happy"
   },
   {
     id: 8,
     name: "Nguyễn Văn D",
+    rate: "happy"
   },
   {
     id: 9,
     name: "Nguyễn Văn E",
+    rate: "happy"
   },
   {
     id: 10,
     name: "Nguyễn Văn F",
-    note: "Dự thính"
+    note: "Dự thính",
+    rate: "happy"
   },
   {
     id: 11,
     name: "Nguyễn Văn A",
+    rate: "happy"
   },
 ]
 
 export default function AttendanceScreen({ route, navigation }) {
   const classDetail = route.params.classDetail
-  const [studentList, setStudentList] = useState(studentListDefault)
+  const [studentList, setStudentList] = useState(JSON.parse(JSON.stringify(studentListDefault)))
+  const [studentTmpList, setStudentTmpList] = useState(JSON.parse(JSON.stringify(studentListDefault)))
   const [searchValue, setSearchValue] = useState("")
-
-  const handleCheckAttend = (id) => {
-    const index = studentList.findIndex(obj => obj.id === id);
-    const updateArray = [...studentList]
-    const defaultStatus = updateArray[index].status
-    // updateArray.forEach(item => item.check = false)
-    updateArray[index].status = !defaultStatus;
-    // console.log(updateArray);
-    setStudentList(updateArray)
-  }
+  const [editMode, setEditMode] = useState(false)
 
   const handleClearAttend = () => {
     const updateArray = [...studentList]
@@ -87,6 +90,30 @@ export default function AttendanceScreen({ route, navigation }) {
     return attendList
   }
 
+  const changeRate = (id, rate) => {
+    if (editMode) {
+      const index = studentTmpList.findIndex(obj => obj.id === id);
+      const updateArray = JSON.parse(JSON.stringify(studentTmpList))
+      updateArray[index].rate = rate;
+      setStudentTmpList(updateArray)
+    }
+  }
+
+  const handleCompleteEditing = () => {
+    setStudentList(JSON.parse(JSON.stringify(studentTmpList)))
+    setEditMode(false)
+  }
+
+  const handleClearEditing = () => {
+    setStudentTmpList(JSON.parse(JSON.stringify(studentList)))
+    setEditMode(false)
+  }
+
+  const handleSetEditing = () => {
+    setStudentTmpList(JSON.parse(JSON.stringify(studentList)))
+    setEditMode(true)
+  }
+
   return (
     <>
       <Header navigation={navigation} background={"#241468"} title={classDetail.title} goback={() => navigation.pop()} />
@@ -95,7 +122,7 @@ export default function AttendanceScreen({ route, navigation }) {
           <Text style={styles.title}>Danh sách lớp:</Text>
         </View>
         <View style={styles.searchBar}>
-          <Icon name={"search"} color={"#908484"} size={28} />
+          <Icon name={"search-web"} color={"#908484"} size={28} />
           <TextInput value={searchValue} onChangeText={setSearchValue} style={styles.searchField} placeholder={"Tìm kiếm học viên..."} placeholderTextColor="#B8B8D2" />
         </View>
         <View style={styles.studentList}>
@@ -106,7 +133,7 @@ export default function AttendanceScreen({ route, navigation }) {
             <Text style={styles.columnNote}>Ghi chú</Text>
           </View>
           {
-            studentList.map((item, index) => {
+            (editMode ? studentTmpList : studentList).map((item, index) => {
               return (
                 <TouchableOpacity
                   // onPress={() => handleCheckAttend(item.id)}
@@ -118,20 +145,29 @@ export default function AttendanceScreen({ route, navigation }) {
                   </View>
                   <Text style={styles.columnName}>{item?.name}</Text>
                   <View style={styles.columnStatus}>
-                    <TouchableOpacity style={{ marginRight: 10 }}>
-                      <Image
-                        source={unhappyIcon}
-                      />
+                    <TouchableOpacity onPress={() => changeRate(item.id, "bad")} style={{ marginRight: 10 }}>
+                      {
+                        item.rate === "bad" ?
+                          <Icon name={"emoticon-sad-outline"} color={"#F86565"} size={25} />
+                          :
+                          <Icon name={"emoticon-sad-outline"} color={"#B6C8E2"} size={25} />
+                      }
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ marginRight: 10 }}>
-                      <Image
-                        source={happyIcon}
-                      />
+                    <TouchableOpacity onPress={() => changeRate(item.id, "neutral")} style={{ marginRight: 10 }}>
+                      {
+                        item.rate === "neutral" ?
+                          <Icon name={"emoticon-neutral-outline"} color={"#7B61FF"} size={25} />
+                          :
+                          <Icon name={"emoticon-neutral-outline"} color={"#B6C8E2"} size={25} />
+                      }
                     </TouchableOpacity>
-                    <TouchableOpacity>
-                      <Image
-                        source={ContentedIcon}
-                      />
+                    <TouchableOpacity onPress={() => changeRate(item.id, "happy")}>
+                      {
+                        item.rate === "happy" ?
+                          <Icon name={"emoticon-happy-outline"} color={"#229A89"} size={25} />
+                          :
+                          <Icon name={"emoticon-happy-outline"} color={"#B6C8E2"} size={25} />
+                      }
                     </TouchableOpacity>
                   </View>
                   <Text style={styles.columnNote}>{item.note}</Text>
@@ -141,16 +177,23 @@ export default function AttendanceScreen({ route, navigation }) {
           }
         </View>
         {
-          getAttendList().length !== 0 && mode === "attend" &&
+          editMode &&
           <View style={styles.buttonPack}>
-            <TouchableOpacity style={{ ...styles.buttonView }} onPress={handleClearAttend}>
-              <Text style={{ ...styles.boldText, width: "100%" }}>Hủy</Text>
+            <TouchableOpacity style={{ ...styles.buttonView, backgroundColor: "#DC4646" }} onPress={handleClearEditing}>
+              <Text style={{ ...styles.boldText, width: "100%", color: "white" }}>Hủy</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{ ...styles.buttonView, backgroundColor: "#241468" }} onPress={() => handleChangeMode("rate")}>
-              <Text style={{ ...styles.boldText, width: "100%", color: "white" }}>Điểm danh</Text>
+            <TouchableOpacity style={{ ...styles.buttonView, backgroundColor: "#241468" }} onPress={handleCompleteEditing}>
+              <Text style={{ ...styles.boldText, width: "100%", color: "white" }}>Lưu</Text>
             </TouchableOpacity>
           </View>
         }
+        {
+          !editMode &&
+          <TouchableOpacity style={{ ...styles.editButton, bottom: editMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing}>
+            <Icon name={"lead-pencil"} color={"white"} size={28} />
+          </TouchableOpacity>
+        }
+        <View style={{ height: 40 }} />
       </ScrollView>
 
     </>
@@ -159,6 +202,7 @@ export default function AttendanceScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
     flex: 1,
     backgroundColor: 'white',
   },
@@ -220,11 +264,19 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   buttonView: {
-    paddingVertical: 5,
-    paddingHorizontal: 30,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
     borderWidth: 1,
     borderColor: "#241468",
     borderRadius: 10
+  },
+  editButton: {
+    position: "absolute",
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: "#4582E6",
+    right: WIDTH * 0.05,
+    bottom: HEIGHT * 0.05
   },
 
   searchBar: {
