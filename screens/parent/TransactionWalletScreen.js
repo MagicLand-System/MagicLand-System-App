@@ -17,7 +17,7 @@ export default function TransactionWalletScreen({ route, navigation }) {
 
     const hanldeCloseOtpModal = () => {
         setModalVisible({ ...modalVisible, otp: false })
-        
+
     }
 
     const handleSubmitOtp = async (otp) => {
@@ -31,7 +31,7 @@ export default function TransactionWalletScreen({ route, navigation }) {
         //     }
         // })
         hanldeCloseOtpModal()
-        navigation.push("TransactionDetailScreen", { total: price })
+        navigation.push("TransactionDetailScreen", { total: price, lable: "+", handleClose: () => { navigation.pop } })
     }
 
     return (
