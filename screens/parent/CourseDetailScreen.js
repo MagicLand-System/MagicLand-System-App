@@ -172,19 +172,26 @@ export default function CourseDetailScreen({ route, navigation }) {
     }
 
     const handleRegister = () => {
-        navigation.push("ClassRegisterScreen", { course: course, classList: classCardDetail })
+        const checkChoosed = classCardDetail.filter((item) => item.choose)
+        if (checkChoosed[0]) {
+            navigation.push("ClassRegisterScreen", { course: course, classList: classCardDetail })
+        }else{
+            showToast("Thông Báo", `Chưa Chọn lớp`, "warning");
+        }
     }
 
     const handleCare = async () => {
         const classChoosed = classCardDetail.filter(obj => obj.choose === true);
         if (classChoosed[0]) {
             classChoosed.map(async (item) => {
-                const response = await modifyCart([], item.id)
+                console.log(item.classId);
+                const response = await modifyCart([], item.classId)
                 if (response?.status === 200) {
                     showToast("Thành công", `Đã thêm ${item?.name} vào giỏ hàng`, "success");
                     console.log(`Đã thêm ${item?.name} vào giỏ hàng`);
                 } else {
                     showToast("Thất bại", `Thêm ${item?.name} vào giỏ hàng thất bại`, "error");
+                    console.log(response.response.data);
                 }
             })
         } else {

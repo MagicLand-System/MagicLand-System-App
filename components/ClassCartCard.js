@@ -135,8 +135,9 @@ const styles = StyleSheet.create({
         borderColor: "#241468",
         borderRadius: 15,
         backgroundColor: "#241468",
-        left: "101%",
-        bottom: "105%"
+        left: "96.8%",
+        bottom: "93%",
+        zIndex: 999
     },
     classType: {
         position: "absolute",

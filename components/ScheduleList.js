@@ -25,7 +25,7 @@ export default function ScheduleList({ cardList, onClick }) {
                 return "Thứ 7 - Cn"
 
             default:
-                break;
+                return "Thứ 2 - 4 - 6"
         }
     }
 
@@ -44,32 +44,35 @@ export default function ScheduleList({ cardList, onClick }) {
                 </View>
             </View>
             {
-                cardList.map((item, index) => (
-                    <TouchableOpacity
-                        style={[styles.tableColumn, styles.flexColumn]}
-                        onPress={() => { onClick(item.classId) }}
-                        activeOpacity={0.9}
-                        key={index}
-                    >
-                        <View style={{ ...styles.checkColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
-                            {
-                                item.choose ?
-                                    <Icon name={"check-circle-outline"} color={"#1BAE3B"} size={35} />
-                                    :
-                                    <Icon name={"circle"} color={"#888888"} size={35} />
-                            }
-                        </View>
-                        <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
-                            <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{getSchedule(item?.schedules[0].dayOfWeeks)}</Text>
-                        </View>
-                        <View style={{ ...styles.startDateColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
-                            <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{formatDate(item?.startDate)}</Text>
-                        </View>
-                        <View style={{ ...styles.typeColumn, borderWidth: 1, borderTopWidth: 0, borderColor: "#4582E6" }}>
-                            <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", textTransform: "capitalize" }}>{item?.method}</Text>
-                        </View>
-                    </TouchableOpacity>
-                ))
+                cardList.map((item, index) => {
+                    return (
+                        item.status === "UPCOMING" &&
+                        <TouchableOpacity
+                            style={[styles.tableColumn, styles.flexColumn]}
+                            onPress={() => { onClick(item.classId) }}
+                            activeOpacity={0.9}
+                            key={index}
+                        >
+                            <View style={{ ...styles.checkColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
+                                {
+                                    item.choose ?
+                                        <Icon name={"check-circle-outline"} color={"#1BAE3B"} size={35} />
+                                        :
+                                        <Icon name={"circle-outline"} color={"#888888"} size={35} />
+                                }
+                            </View>
+                            <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{getSchedule(item?.schedules[0].dayOfWeeks)}</Text>
+                            </View>
+                            <View style={{ ...styles.startDateColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{formatDate(item?.startDate)}</Text>
+                            </View>
+                            <View style={{ ...styles.typeColumn, borderWidth: 1, borderTopWidth: 0, borderColor: "#4582E6" }}>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", textTransform: "capitalize" }}>{item?.method}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    )
+                })
             }
         </View>
     )

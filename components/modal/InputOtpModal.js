@@ -2,6 +2,7 @@ import { View, Text, TextInput, TouchableOpacity, Dimensions, ScrollView, StyleS
 import React, { useState } from 'react'
 import OTPTextInput from "react-native-otp-textinput"
 import Icon from "react-native-vector-icons/MaterialIcons";
+import CountdownTimer from '../CountdownTimer';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -9,6 +10,7 @@ const HEIGHT = Dimensions.get('window').height;
 export default function InputOtpModal({ visible, phone, onCancle, onSubmit }) {
 
     const [otp, setOtp] = useState()
+    const [timer, setTimer] = useState(600)
 
     return (
         <Modal
@@ -26,6 +28,9 @@ export default function InputOtpModal({ visible, phone, onCancle, onSubmit }) {
                 </View>
                 <View style={styles.modalHeader}>
                     <Text style={styles.phoneNumber}>MÃ XÁC NHẬN GỬI QUA SỐ ĐIỆN THOẠI {phone}</Text>
+                </View>
+                <View style={styles.modalHeader}>
+                    <Text style={styles.phoneNumber}>MÃ XÁC NHẬN HẾT HIỆU LỰC SAU <CountdownTimer color={"#3A0CA3"} fontsize={15} timer={timer} setTimer={setTimer} /></Text>
                 </View>
                 <View style={styles.modalContent}>
                     <OTPTextInput
@@ -46,7 +51,7 @@ export default function InputOtpModal({ visible, phone, onCancle, onSubmit }) {
                     </Text>
                 </View>
                 <View style={styles.confirm}>
-                    <TouchableOpacity style={styles.confirmButton} onPress={()=>onSubmit(otp)}>
+                    <TouchableOpacity style={styles.confirmButton} onPress={() => onSubmit(otp)}>
                         <Text style={styles.confirmText}>
                             XÁC NHẬN
                         </Text>

@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     },
     program: {
         width: WIDTH * 0.9,
-        maxHeight: HEIGHT * 0.4,
+        // maxHeight: HEIGHT * 0.4,
         // paddingBottom: 20,
         borderWidth: 1,
         borderRadius: 10,

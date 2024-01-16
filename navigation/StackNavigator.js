@@ -41,6 +41,7 @@ import TransactionHistoryScreen from '../screens/parent/TransactionHistoryScreen
 import TransactionDetailSceen from '../screens/parent/TransactionDetailSceen';
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
+import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
@@ -124,6 +125,7 @@ const StackNavigator = () => {
                     <Stack.Screen name="WorkScheduleScreen" component={WorkScheduleScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="RateStudentScreen" component={RateStudentScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ClassOptionScreen" component={ClassOptionScreen} options={{ headerShown: false }} />
 
                 </>
 

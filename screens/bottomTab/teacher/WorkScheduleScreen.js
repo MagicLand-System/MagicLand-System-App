@@ -49,7 +49,7 @@ export default function WorkScheduleScreen({ navigation }) {
   const [calendarType, setCalendarType] = useState("month")
 
   const handleClassNavigate = (classDetail) => {
-    navigation.push("AttendanceScreen", { classDetail: classDetail })
+    navigation.push("ClassOptionScreen", { classDetail: classDetail })
   }
 
   const getCurrentDate = (date) => {
@@ -62,7 +62,7 @@ export default function WorkScheduleScreen({ navigation }) {
     const currentDate = getCurrentDate(date)
 
     return (
-      <TouchableOpacity style={[styles.customDate, dateSelected === date.dateString && styles.selectedDate]} onPress={() => { setDateSelected(date.dateString) }}>
+      <TouchableOpacity style={[styles.customDate, dateSelected === date.dateString && styles.selectedDate]} onPress={() => { setDateSelected(date.dateString), setCalendarType("day") }}>
         <Text style={styles.boldText}>{date.day}</Text>
         {
           currentDate && currentDate[0]?.classList?.map((item, index) => {
@@ -130,75 +130,49 @@ export default function WorkScheduleScreen({ navigation }) {
               <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "month" ? "#241468" : "white" }} onPress={() => { setCalendarType("month") }}>
                 <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "month" ? "white" : "#888888" }}>Tháng</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "week" ? "#241468" : "white" }} onPress={() => { setCalendarType("week") }}>
-                <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "week" ? "white" : "#888888" }}>Tuần</Text>
-              </TouchableOpacity>
               <TouchableOpacity style={{ ...styles.changeTypeButton, borderRightWidth: 0, backgroundColor: calendarType === "day" ? "#241468" : "white" }} onPress={() => { setCalendarType("day") }}>
                 <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "day" ? "white" : "#888888" }}>Ngày</Text>
               </TouchableOpacity>
             </View>
           </View>
           {
-            calendarType === "month" ?
-              <>
-                <Calendar
-                  onDayPress={(day) => {
-                    setDateSelected(day.dateString);
-                  }}
-                  dayComponent={renderCustomDay}
-                />
-                <View style={styles.noteView}>
-                  <View style={{ ...styles.noteHaft, backgroundColor: "#F6F2E5" }}>
-                    <Text style={styles.noteTitle}>Ngày nghỉ</Text>
-                    <View style={styles.flexColumn}>
-                      <Text style={{ ...styles.boldText, color: "#EAB756", marginRight: 10 }}>1/1</Text>
-                      <Text >Tết Tây</Text>
-                    </View>
-                  </View>
-                  <View style={{ ...styles.noteHaft, backgroundColor: "#F4F4F4" }}>
-                    <Text style={styles.noteTitle}>Chú thích</Text>
-                    <View style={styles.flexColumn}>
-                      <View style={{ ...styles.exampleView, backgroundColor: "#52ACFF80" }} />
-                      <Text >Sáng</Text>
-                    </View>
-                    <View style={styles.flexColumn}>
-                      <View style={{ ...styles.exampleView, backgroundColor: "#FF95CE80" }} />
-                      <Text >Chiều</Text>
-                    </View>
-                    <View style={styles.flexColumn}>
-                      <View style={{ ...styles.exampleView, backgroundColor: "#92C88D80" }} />
-                      <Text >Tối</Text>
-                    </View>
+            calendarType === "month" &&
+            <>
+              <Calendar
+                onDayPress={(day) => {
+                  setDateSelected(day.dateString);
+                }}
+                dayComponent={renderCustomDay}
+              />
+              <View style={styles.noteView}>
+                <View style={{ ...styles.noteHaft, backgroundColor: "#F6F2E5" }}>
+                  <Text style={styles.noteTitle}>Ngày nghỉ</Text>
+                  <View style={styles.flexColumn}>
+                    <Text style={{ ...styles.boldText, color: "#EAB756", marginRight: 10 }}>1/1</Text>
+                    <Text >Tết Tây</Text>
                   </View>
                 </View>
-              </>
-              : calendarType === "week" ?
-
-                <CalendarProvider date={dateSelected ? dateSelected : new Date}>
-                  <WeekCalendar
-                    onDayPress={(day) => {
-                      setDateSelected(day.dateString);
-                    }}
-                    current={dateSelected}
-                    scrollEnabled={false}
-
-                    // markingType="period"
-                    markedDates={{
-                      [dateSelected]: {
-                        startingDay: true,
-                        endingDay: true,
-                        color: "#3AA6B9",
-                      },
-                    }}
-                  />
-                </CalendarProvider>
-
-                :
-                ""
+                <View style={{ ...styles.noteHaft, backgroundColor: "#F4F4F4" }}>
+                  <Text style={styles.noteTitle}>Chú thích</Text>
+                  <View style={styles.flexColumn}>
+                    <View style={{ ...styles.exampleView, backgroundColor: "#52ACFF80" }} />
+                    <Text >Sáng</Text>
+                  </View>
+                  <View style={styles.flexColumn}>
+                    <View style={{ ...styles.exampleView, backgroundColor: "#FF95CE80" }} />
+                    <Text >Chiều</Text>
+                  </View>
+                  <View style={styles.flexColumn}>
+                    <View style={{ ...styles.exampleView, backgroundColor: "#92C88D80" }} />
+                    <Text >Tối</Text>
+                  </View>
+                </View>
+              </View>
+            </>
           }
 
           {
-            calendarType === "week" &&
+            calendarType === "day" &&
             getCurrentDate({ dateString: dateSelected })[0]?.classList?.map((item, key) => {
               return (
                 <TouchableOpacity

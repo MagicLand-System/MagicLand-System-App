@@ -10,6 +10,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { userSelector } from '../../../store/selector';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SpinnerLoading from '../../../components/SpinnerLoading';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -428,7 +429,7 @@ export default function DocumentScreen({ navigation }) {
   const [studentList, setStudentList] = useState([])
   const [classList, setClassList] = useState([])
   const [loading, setLoading] = useState(true)
-  // const [loadingClassList, setLoadingClassList] = useState(true)
+  const [loadingClassList, setLoadingClassList] = useState(true)
   const [type, setType] = useState("PROGRESSING")
   const [animation] = useState(new Animated.Value(0));
   const user = useSelector(userSelector);
@@ -496,17 +497,21 @@ export default function DocumentScreen({ navigation }) {
   }
 
   const loadClassData = async (id) => {
+    setLoadingClassList(true)
     let updateStudentList = [...studentList]
     const index = studentList.findIndex(obj => obj.id === id);
     if (!updateStudentList[index]?.schedule) {
       const response = await getClassesByStudentId(id);
       if (response.status === 200) {
+        setLoadingClassList(false)
         return response.data
       } else {
         console.log("Tải thông tin lớp học thất bại");
+        setLoadingClassList(false)
         return []
       }
     }
+    setLoadingClassList(false)
     return undefined
   }
 
@@ -655,12 +660,17 @@ export default function DocumentScreen({ navigation }) {
         >
           {/* getClassList() */}
           {
-            !loading &&
-            filterClassList(classList)?.map((item, index) => {
-              return (
-                renderClassCard(type, item, index)
-              )
-            })
+            !loading && !loadingClassList ?
+              filterClassList(classList)[0] ?
+                filterClassList(classList)?.map((item, index) => {
+                  return (
+                    renderClassCard(type, item, index)
+                  )
+                })
+                :
+                <Text style={{fontWeight: 600, textAlign: "center" }}>Bé chưa đăng ký khóa học</Text>
+              :
+              <SpinnerLoading />
           }
         </ScrollView>
       </View>

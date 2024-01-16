@@ -7,6 +7,7 @@ import { userSelector } from '../../../store/selector';
 
 import SearchBar from '../../../components/SearchBar';
 import ClassCartCard from '../../../components/ClassCartCard';
+import NofiticationCard from '../../../components/NofiticationCard';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -616,12 +617,12 @@ export default function HomeScreen({ navigation }) {
           }
         </ScrollView>
         <View style={styles.titleView}>
-          <Text style={styles.title}>Lớp học hôm nay:</Text>
+          <Text style={styles.title}>Thông báo:</Text>
         </View>
         <ScrollView style={styles.noficationList}>
           {
             noficationList.map((item, key) => (
-              <ClassCartCard cardDetail={item} index={item?.id} check={false} onClick={hanldeViewWorkSchedule} key={key} />
+              <NofiticationCard notificationDetail={item} onClick={hanldeViewWorkSchedule} key={key} />
             ))
           }
         </ScrollView>

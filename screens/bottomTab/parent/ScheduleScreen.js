@@ -10,6 +10,8 @@ import { formatDefaultSelectedDate } from '../../../util/util';
 import { getStudents, getschedule } from '../../../api/student';
 
 import SpinnerLoading from "../../../components/SpinnerLoading"
+import ClassCartCard from '../../../components/ClassCartCard';
+
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
@@ -231,29 +233,30 @@ export default function ScheduleScreen({ navigation }) {
               }
               {
                 calendarType === "day" &&
-                getCurrentDate({ dateString: dateSelected }).map((item, key) => {
+                getCurrentDate({ dateString: dateSelected }).map((item, index) => {
                   return (
-                    <TouchableOpacity
-                      onPress={() => handleClassNavigate(item)}
-                      style={{ ...styles.classWeekCard, ...styles.flexColumnBetween, alignItems: "flex-start" }}
-                      key={key}
-                    >
+                    // <TouchableOpacity
+                    //   onPress={() => handleClassNavigate(item)}
+                    //   style={{ ...styles.classWeekCard, ...styles.flexColumnBetween, alignItems: "flex-start" }}
+                    //   key={index}
+                    // >
 
-                      <Text style={{ ...styles.boldText, width: "30%", color: "#241468" }}>{item.startTime}</Text>
-                      <View style={{ width: "50%" }}>
-                        <Text style={{ ...styles.boldText, color: "#241468" }}>{item.className}</Text>
-                        <Text style={{ ...styles.boldText, color: "#3C87FF" }}>Phòng {item.roomName}</Text>
-                      </View>
-                      <View style={{ ...styles.flexColumn, width: "20%" }}>
-                        <View style={{ ...styles.statusCircle, backgroundColor: item?.method === "ONLINE" ? "#3AAC45" : "#888888" }} />
-                        {
-                          item?.method === "ONLINE" ?
-                            <Text style={styles.cardDetailText}>Online</Text>
-                            :
-                            <Text style={styles.cardDetailText}>Offline</Text>
-                        }
-                      </View>
-                    </TouchableOpacity>
+                    //   <Text style={{ ...styles.boldText, width: "30%", color: "#241468" }}>{item.startTime}</Text>
+                    //   <View style={{ width: "50%" }}>
+                    //     <Text style={{ ...styles.boldText, color: "#241468" }}>{item.className}</Text>
+                    //     <Text style={{ ...styles.boldText, color: "#3C87FF" }}>Phòng {item.roomName}</Text>
+                    //   </View>
+                    //   <View style={{ ...styles.flexColumn, width: "20%" }}>
+                    //     <View style={{ ...styles.statusCircle, backgroundColor: item?.method === "ONLINE" ? "#3AAC45" : "#888888" }} />
+                    //     {
+                    //       item?.method === "ONLINE" ?
+                    //         <Text style={styles.cardDetailText}>Online</Text>
+                    //         :
+                    //         <Text style={styles.cardDetailText}>Offline</Text>
+                    //     }
+                    //   </View>
+                    // </TouchableOpacity>
+                    <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
                   )
                 })
               }

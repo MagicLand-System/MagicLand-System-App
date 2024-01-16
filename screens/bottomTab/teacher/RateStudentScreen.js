@@ -61,8 +61,8 @@ const studentListDefault = [
   },
 ]
 
-export default function AttendanceScreen({ navigation }) {
-
+export default function AttendanceScreen({ route, navigation }) {
+  const classDetail = route.params.classDetail
   const [studentList, setStudentList] = useState(studentListDefault)
   const [searchValue, setSearchValue] = useState("")
 
@@ -89,7 +89,7 @@ export default function AttendanceScreen({ navigation }) {
 
   return (
     <>
-      <Header navigation={navigation} background={"#241468"} title={"Lớp TTD - Điểm danh"} goback={() => navigation.goBack()} />
+      <Header navigation={navigation} background={"#241468"} title={classDetail.title} goback={() => navigation.pop()} />
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         <View style={styles.titleView}>
           <Text style={styles.title}>Danh sách lớp:</Text>

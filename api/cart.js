@@ -13,8 +13,8 @@ export const getCartOfParent = async () => {
 export const modifyCart = async (studentIds, classId) => {
 
     const data = {
-        studentIds: studentIds,
-        classId: classId
+        StudentIdList: studentIds,
+        ClassId: classId
     }
 
     try {
@@ -26,9 +26,14 @@ export const modifyCart = async (studentIds, classId) => {
     }
 };
 
-export const removeClassInCart = async (itemId) => {
+export const removeClassInCart = async (itemIdList) => {
+    let path = ""
+    itemIdList?.forEach(element => {
+        path += "itemIdList=" + element + "&"
+    });
+    console.log(itemIdList);
     try {
-        const response = await api.delete(`/api/v1/cart/item/${itemId}/delete`);
+        const response = await api.delete(`/api/v1/cart/item/delete?` + path);
         return response;
     } catch (error) {
         console.log("removeClassInCart in api/cart.js error : ", error);

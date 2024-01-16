@@ -30,7 +30,7 @@ export default function ClassCard({ cardDetail, check, index, onClick, backgroun
     }
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail.id) }}>
+        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail.classId) }}>
             {/* {
                 check &&
                 <>

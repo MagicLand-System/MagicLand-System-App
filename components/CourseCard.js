@@ -36,17 +36,13 @@ export default function CourseCard({ cardDetail, onClick, choose }) {
             <TouchableOpacity style={styles.card} onPress={() => { onClick(cardDetail) }}>
                 <Image source={{ uri: cardDetail.image }} style={styles.image} resizeMode='cover' />
                 <View style={{ ...styles.flexBetweenColumn, marginBottom: 10 }}>
-                    <Text style={{ textTransform: "capitalize" }}>{getCourseType(cardDetail.courseDetail.subject)}</Text>
+                    <Text style={{ textTransform: "capitalize", fontSize: 11 }}>{getCourseType(cardDetail.courseDetail.subject)}</Text>
                     <View style={styles.priceView}>
                         <Text style={styles.priceText}>{formatPrice(cardDetail.price)} đ</Text>
                     </View>
                 </View>
                 <Text style={styles.cardName}>{cardDetail.courseDetail.courseName}</Text>
                 <View style={{ width: WIDTH * 0.45 }}>
-                    <View style={{ ...styles.flexColumn, width: WIDTH * 0.37 }}>
-                        <Icon name={"account"} color={"#888888"} size={22} />
-                        <Text style={styles.cardText}>{cardDetail.rateCount ? cardDetail.rateCount : 0} người đăng ký</Text>
-                    </View>
                     {
                         cardDetail.rateCount && cardDetail.rateCount !== 0 ?
                             <View style={{ ...styles.flexColumn, width: WIDTH * 0.37 }}>
