@@ -161,11 +161,13 @@ export default function CourseDetailScreen({ route, navigation }) {
     }
 
     const selectCourse = (id) => {
-        const index = classCardDetail.findIndex(obj => obj.id === id);
+        const index = classCardDetail.findIndex(obj => obj.classId === id);
         const updateArray = [...classCardDetail]
-        const defaultStatus = updateArray[index].choose ? updateArray[index].choose : false
-        updateArray.forEach(item => item.choose = false)
-        updateArray[index].choose = !defaultStatus;
+        if (updateArray[index]) {
+            const defaultStatus = updateArray[index].choose ? updateArray[index].choose : false
+            updateArray.forEach(item => item.choose = false)
+            updateArray[index].choose = !defaultStatus;
+        }
         setClassCardDetail(updateArray)
     }
 
@@ -206,7 +208,6 @@ export default function CourseDetailScreen({ route, navigation }) {
         clearedFilterValue.amountRegister.forEach(item => (item.check = false));
         clearedFilterValue.amountLesson.forEach(item => (item.check = false));
         clearedFilterValue.type.forEach(item => (item.check = false));
-        clearedFilterValue.time.forEach(item => (item.check = false));
 
         setFilterValue(clearedFilterValue);
     };

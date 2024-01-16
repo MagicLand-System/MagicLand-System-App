@@ -7,6 +7,7 @@ import Header from '../../components/header/Header';
 import ChooseVourcherModal from '../../components/modal/ChooseVourcherModal';
 import InputOtpModal from '../../components/modal/InputOtpModal';
 import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
+import CustomToast from "../../components/CustomToast";
 
 import { formatPrice } from '../../util/util';
 import { modifyCart } from '../../api/cart';
@@ -77,6 +78,7 @@ export default function PaymentScreen({ route, navigation }) {
     const [vourcherList, setVourcherList] = useState(vourcherListDefault)
     const [paymentMethodList, setPaymentMethodList] = useState(paymentTypeDefault)
     const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false, paymentMethod: false })
+    const showToast = CustomToast();
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
@@ -99,18 +101,15 @@ export default function PaymentScreen({ route, navigation }) {
     }
 
     const handleSubmitOtp = async (otp) => {
-        // setModalVisible({ ...modalVisible, otp: false, notifi: true })
-        
         classDetail?.map(async (classItem) => {
             console.log(studentList.map(item => item.id), classItem.classId);
-            console.log( classItem.classId);
             const response = await registerClass(studentList.map(item => item.id), classItem.classId)
-            // console.log("student ", studentList.map(item => item.id));
-            // console.log("classItem.id ", classItem.id);
             if (response?.status === 200) {
                 console.log(`Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`);
                 setModalVisible({ ...modalVisible, otp: false, notifi: true })
             } else {
+                // showToast("Thành công", `Đã thêm ${item?.name} vào giỏ hàng`, "success");
+                console.log(response.response.config.data);
                 console.log(`Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`);
             }
         })
@@ -162,7 +161,7 @@ export default function PaymentScreen({ route, navigation }) {
     const totalPrice = () => {
         let totalPrice = 0
         classDetail?.map(item => {
-            totalPrice += item.coursePrice
+            totalPrice += item?.coursePrice
         })
         return (studentList.length * (totalPrice !== 0 ? totalPrice : 200000))
     }
@@ -260,7 +259,7 @@ export default function PaymentScreen({ route, navigation }) {
 
                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }}>
                         <Text style={styles.detailViewTitle}>Học Phí:</Text>
-                        <Text style={styles.boldText}>{formatPrice(classDetail[0].coursePrice)}đ</Text>
+                        <Text style={styles.boldText}>{formatPrice(classDetail[0]?.coursePrice)}đ</Text>
                     </View>
                     <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, height: 45, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }} onPress={handleChooseVourcherModal}>
                         <Text style={{ ...styles.detailViewTitle, color: "#3AAC45" }}>Vourcher Giảm Giá</Text>

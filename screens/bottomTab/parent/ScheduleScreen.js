@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { userSelector } from '../../../store/selector';
 import Header from '../../../components/header/Header';
 import { formatDefaultSelectedDate } from '../../../util/util';
+import { getStudents, getschedule } from '../../../api/student';
 
 const studentListDefault = [
   {
@@ -96,19 +97,44 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function ScheduleScreen({ navigation }) {
 
-  const [studentList, setStudentList] = useState(studentListDefault)
+  const [studentList, setStudentList] = useState([])
+  const [scheduleList, setScheduleList] = useState([])
+  const [loading, setLoading] = useState(true)
   const [dateSelected, setDateSelected] = useState(formatDefaultSelectedDate(new Date));
   const [calendarType, setCalendarType] = useState("month")
 
   const user = useSelector(userSelector);
 
-  // useEffect(() => {
-  //   loadStudentData()
-  // }, [])
+  useEffect(() => {
+    loadStudentData()
+  }, [user])
 
-  // const loadStudentData = async () => {
-  //   setStudentList(user?.students)
-  // }
+  const loadStudentData = async () => {
+    setLoading(true)
+    const studentList = await getStudents()
+    if (studentList.length !== 0) {
+      studentList[studentList.length - 1].check = true
+      const scheduleData = await loadScheduleData(studentList[studentList.length - 1].id)
+      setScheduleList(scheduleData)
+    }
+    setStudentList(studentList.reverse())
+    setLoading(false)
+  }
+
+  const loadScheduleData = async (id) => {
+    let updateStudentList = [...studentList]
+    const index = studentList.findIndex(obj => obj.id === id);
+    if (!updateStudentList[index]?.schedule) {
+      const response = await getschedule(id);
+      if (response.status === 200) {
+        return response.data
+      } else {
+        console.log("Tải thông tin lớp học thất bại");
+        return []
+      }
+    }
+    return undefined
+  }
 
   const handleClassNavigate = (classDetail) => {
     navigation.push("ClassStudyDetailScreen", { classDetail: classDetail })
@@ -118,21 +144,20 @@ export default function ScheduleScreen({ navigation }) {
     navigation.push("AddStudent")
   }
 
-  const selectStudent = (id) => {
-    const index = studentList.findIndex(obj => obj.id === id);
-    const updateArray = [...studentListDefault]
-    const defaultStatus = updateArray[index].check
-    updateArray.forEach(item => item.check = false)
-    updateArray[index].check = !defaultStatus;
-    // console.log(updateArray);
-    setStudentList(updateArray)
-  }
+  const selectStudent = async (id) => {
+    setStudentList((prevStudentList) => {
+      const index = prevStudentList.findIndex(obj => obj.id === id);
+      return prevStudentList.map((item, i) => ({
+        ...item,
+        check: i === index ? !item.check : false,
+      }));
+    });
+    const scheduleData = await loadScheduleData(id)
+    setScheduleList(scheduleData)
+  };
 
   const getCurrentDate = (date) => {
-    const selectedStudent = studentList.find((student) =>
-      student.check === true
-    );
-    const currentDate = selectedStudent?.dateList.filter(item => item.date.substring(0, 10) === date?.dateString)
+    const currentDate = scheduleList?.filter(item => item.date.substring(0, 10) === date?.dateString)
     return currentDate
   }
 
@@ -149,7 +174,7 @@ export default function ScheduleScreen({ navigation }) {
       <TouchableOpacity style={[styles.customDate, dateSelected === date.dateString && styles.selectedDate]} onPress={() => { selectedDate(date.dateString) }}>
         <Text style={{ ...styles.boldText }}>{date.day}</Text>
         {
-          currentDate && currentDate[0]?.classList?.map((item, index) => {
+          currentDate && currentDate?.map((item, index) => {
             return (
               <View
                 style={{
@@ -174,7 +199,7 @@ export default function ScheduleScreen({ navigation }) {
                         :
                         "#15CA00"
                   }}
-                  numberOfLines={1}>{item.title}</Text>
+                  numberOfLines={1}>{item.className}</Text>
               </View>
             )
           })
@@ -307,7 +332,7 @@ export default function ScheduleScreen({ navigation }) {
 
           {
             calendarType === "day" &&
-            getCurrentDate({ dateString: dateSelected })[0]?.classList?.map((item, key) => {
+            getCurrentDate({ dateString: dateSelected }).map((item, key) => {
               return (
                 <TouchableOpacity
                   onPress={() => handleClassNavigate(item)}
@@ -315,10 +340,10 @@ export default function ScheduleScreen({ navigation }) {
                   key={key}
                 >
 
-                  <Text style={{ ...styles.boldText, width: "30%", color: "#241468" }}>{item.time}</Text>
+                  <Text style={{ ...styles.boldText, width: "30%", color: "#241468" }}>{item.startTime}</Text>
                   <View style={{ width: "50%" }}>
-                    <Text style={{ ...styles.boldText, color: "#241468" }}>{item.title}</Text>
-                    <Text style={{ ...styles.boldText, color: "#3C87FF" }}>Phòng {item.room}</Text>
+                    <Text style={{ ...styles.boldText, color: "#241468" }}>{item.className}</Text>
+                    <Text style={{ ...styles.boldText, color: "#3C87FF" }}>Phòng {item.roomName}</Text>
                   </View>
                   <View style={{ ...styles.flexColumn, width: "20%" }}>
                     <View style={{ ...styles.statusCircle, backgroundColor: item?.method === "ONLINE" ? "#3AAC45" : "#888888" }} />

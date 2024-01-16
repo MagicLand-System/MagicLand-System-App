@@ -47,7 +47,7 @@ export default function ScheduleList({ cardList, onClick }) {
                 cardList.map((item, index) => (
                     <TouchableOpacity
                         style={[styles.tableColumn, styles.flexColumn]}
-                        onPress={() => { onClick(item.id) }}
+                        onPress={() => { onClick(item.classId) }}
                         activeOpacity={0.9}
                         key={index}
                     >

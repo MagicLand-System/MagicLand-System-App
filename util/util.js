@@ -72,3 +72,20 @@ export function getMinMaxPrice(courses) {
 
     return { minPrice, maxPrice };
 }
+
+export function compareDates(dateString1, dateString2) {
+    const date1 = new Date(dateString1);
+    const date2 = new Date(dateString2);
+
+    // Extract date components (year, month, day) from the Date objects
+    const year1 = date1.getFullYear();
+    const month1 = date1.getMonth();
+    const day1 = date1.getDate();
+
+    const year2 = date2.getFullYear();
+    const month2 = date2.getMonth();
+    const day2 = date2.getDate();
+
+    // Compare date components and return a boolean value
+    return year1 === year2 && month1 === month2 && day1 === day2;
+}

@@ -32,10 +32,12 @@ export const getClassByCourseId = async (courseID) => {
 
 export const registerClass = async (studentsIdList, classId) => {
 
-    const data = {
-        studentsIdList: studentsIdList,
+    const data = [{
+        studentIdList: studentsIdList,
         classId: classId
-    }
+    }]
+
+    // console.log(data);
 
     try {
         const response = await api.post(`/api/v1/users/checkout`, data);
