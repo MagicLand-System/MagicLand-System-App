@@ -161,28 +161,37 @@ export default function CourseDetailScreen({ route, navigation }) {
     }
 
     const selectCourse = (id) => {
-        const index = classCardDetail.findIndex(obj => obj.id === id);
+        const index = classCardDetail.findIndex(obj => obj.classId === id);
         const updateArray = [...classCardDetail]
-        const defaultStatus = updateArray[index].choose ? updateArray[index].choose : false
-        updateArray.forEach(item => item.choose = false)
-        updateArray[index].choose = !defaultStatus;
+        if (updateArray[index]) {
+            const defaultStatus = updateArray[index].choose ? updateArray[index].choose : false
+            updateArray.forEach(item => item.choose = false)
+            updateArray[index].choose = !defaultStatus;
+        }
         setClassCardDetail(updateArray)
     }
 
     const handleRegister = () => {
-        navigation.push("ClassRegisterScreen", { course: course, classList: classCardDetail })
+        const checkChoosed = classCardDetail.filter((item) => item.choose)
+        if (checkChoosed[0]) {
+            navigation.push("ClassRegisterScreen", { course: course, classList: classCardDetail })
+        }else{
+            showToast("Thông Báo", `Chưa Chọn lớp`, "warning");
+        }
     }
 
     const handleCare = async () => {
         const classChoosed = classCardDetail.filter(obj => obj.choose === true);
         if (classChoosed[0]) {
             classChoosed.map(async (item) => {
-                const response = await modifyCart([], item.id)
+                console.log(item.classId);
+                const response = await modifyCart([], item.classId)
                 if (response?.status === 200) {
                     showToast("Thành công", `Đã thêm ${item?.name} vào giỏ hàng`, "success");
                     console.log(`Đã thêm ${item?.name} vào giỏ hàng`);
                 } else {
                     showToast("Thất bại", `Thêm ${item?.name} vào giỏ hàng thất bại`, "error");
+                    console.log(response.response.data);
                 }
             })
         } else {
@@ -206,7 +215,6 @@ export default function CourseDetailScreen({ route, navigation }) {
         clearedFilterValue.amountRegister.forEach(item => (item.check = false));
         clearedFilterValue.amountLesson.forEach(item => (item.check = false));
         clearedFilterValue.type.forEach(item => (item.check = false));
-        clearedFilterValue.time.forEach(item => (item.check = false));
 
         setFilterValue(clearedFilterValue);
     };

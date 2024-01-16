@@ -63,27 +63,38 @@ const studentListDefault = [
 
 export default function AttendanceScreen({ navigation }) {
 
-    const [studentList, setStudentList] = useState(studentListDefault)
+    const [studentList, setStudentList] = useState(JSON.parse(JSON.stringify(studentListDefault)))
+    const [studentTmpList, setStudentTmpList] = useState(JSON.parse(JSON.stringify(studentListDefault)))
+    const [edittingMode, setEdittingMode] = useState(false)
     const [searchValue, setSearchValue] = useState("")
 
     const handleCheckAttend = (id) => {
-        const index = studentList.findIndex(obj => obj.id === id);
-        const updateArray = [...studentList]
-        const defaultStatus = updateArray[index].status
-        // updateArray.forEach(item => item.check = false)
-        updateArray[index].status = !defaultStatus;
-        // console.log(updateArray);
-        setStudentList(updateArray)
+        if (edittingMode) {
+            const index = studentTmpList.findIndex(obj => obj.id === id);
+            const updateArray = JSON.parse(JSON.stringify(studentTmpList))
+            // const updateArray = [...studentList]
+            const defaultStatus = updateArray[index].status
+            // updateArray.forEach(item => item.check = false)
+            updateArray[index].status = !defaultStatus;
+            // console.log(updateArray);
+            setStudentTmpList(updateArray)
+        }
+
     }
 
     const handleCompleteAttend = () => {
-        console.log("completed attend");
+        setStudentList(JSON.parse(JSON.stringify(studentTmpList)))
+        setEdittingMode(false)
     }
 
     const handleClearAttend = () => {
-        const updateArray = [...studentList]
-        updateArray.forEach(item => item.status = false)
-        setStudentList(updateArray)
+        setStudentTmpList(JSON.parse(JSON.stringify(studentList)))
+        setEdittingMode(false)
+    }
+
+    const handleSetEditing = () => {
+        setStudentTmpList(JSON.parse(JSON.stringify(studentList)))
+        setEdittingMode(true)
     }
 
     const getAttendList = () => {
@@ -110,11 +121,11 @@ export default function AttendanceScreen({ navigation }) {
                         <Text style={styles.columnNote}>Ghi chú</Text>
                     </View>
                     {
-                        studentList.map((item, index) => {
+                        (edittingMode ? studentTmpList : studentList).map((item, index) => {
                             return (
                                 <TouchableOpacity
                                     onPress={() => handleCheckAttend(item.id)}
-                                    style={{ ...styles.tableColumn, borderBottomWidth: 1 }}
+                                    style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#707070" }}
                                     key={index}>
                                     <View style={styles.columnNumber}>
                                         <Text style={{ ...styles.boldText, marginHorizontal: 10, marginRight: 2 }}>{index + 1}</Text>
@@ -139,7 +150,7 @@ export default function AttendanceScreen({ navigation }) {
                     }
                 </View>
                 {
-                    getAttendList().length !== 0 &&
+                    edittingMode &&
                     <View style={styles.buttonPack}>
                         <TouchableOpacity style={{ ...styles.buttonView }} onPress={handleClearAttend}>
                             <Text style={{ ...styles.boldText, width: "100%" }}>Hủy</Text>
@@ -149,6 +160,13 @@ export default function AttendanceScreen({ navigation }) {
                         </TouchableOpacity>
                     </View>
                 }
+                {
+                    !edittingMode &&
+                    <TouchableOpacity style={{ ...styles.editButton, bottom: edittingMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing }>
+                        <Icon name={"edit"} color={"white"} size={28} />
+                    </TouchableOpacity>
+                }
+                <View style={{ height: 40 }} />
             </ScrollView>
 
         </>
@@ -157,6 +175,7 @@ export default function AttendanceScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
+        position: "relative",
         flex: 1,
         backgroundColor: 'white',
     },
@@ -224,6 +243,14 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#241468",
         borderRadius: 10
+    },
+    editButton: {
+        position: "absolute",
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: "#4582E6",
+        right: WIDTH * 0.05,
+        bottom: HEIGHT * 0.05
     },
 
     searchBar: {

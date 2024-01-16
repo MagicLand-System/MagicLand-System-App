@@ -31,6 +31,7 @@ import MutilpleChoiceScreen from '../screens/parent/MutilpleChoiceScreen';
 
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
+import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -108,6 +109,7 @@ const BottomTabNavigator = () => {
             <Tab.Screen name="ClassContentScreen" component={ClassContentScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="ClassOptionScreen" component={ClassOptionScreen} options={{ tabBarButton: () => null }} />
         </Tab.Navigator>
     )
 }

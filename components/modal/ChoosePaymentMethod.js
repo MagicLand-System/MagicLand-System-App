@@ -53,13 +53,19 @@ export default function ChoosePaymentMethod({ visible, paymentMethodList, setPay
                                     <TouchableOpacity
                                         style={{
                                             ...styles.paymentMethod,
-                                            backgroundColor: item.check ? "rgba(36, 20, 104, 0.7)" : "white",
+                                            backgroundColor: "white",
                                             borderTopWidth: index !== 0 ? 1 : 0
                                         }}
                                         onPress={() => handleChoosePaymentMethod(item.id, index)}
 
                                     >
                                         <View style={{ ...styles.flexDirectionBetween, width: "50%" }}>
+                                            {
+                                                !item.check ?
+                                                    <Icon name={"circle-outline"} color={"#888888"} size={20} />
+                                                    :
+                                                    <Icon name={"check-circle-outline"} color={"#1BAE3B"} size={20} />
+                                            }
                                             <View style={{ padding: 5, borderWidth: 1, borderRadius: 15, borderColor: "#241468", backgroundColor: "white" }}>
                                                 <Image
                                                     source={item.img}

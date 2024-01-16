@@ -9,6 +9,8 @@ import ClassCartCard from '../../../components/ClassCartCard';
 import { useFocusEffect } from '@react-navigation/native';
 import { userSelector } from '../../../store/selector';
 import { useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SpinnerLoading from '../../../components/SpinnerLoading';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -427,7 +429,7 @@ export default function DocumentScreen({ navigation }) {
   const [studentList, setStudentList] = useState([])
   const [classList, setClassList] = useState([])
   const [loading, setLoading] = useState(true)
-  // const [loadingClassList, setLoadingClassList] = useState(true)
+  const [loadingClassList, setLoadingClassList] = useState(true)
   const [type, setType] = useState("PROGRESSING")
   const [animation] = useState(new Animated.Value(0));
   const user = useSelector(userSelector);
@@ -476,28 +478,40 @@ export default function DocumentScreen({ navigation }) {
     transform: [{ translateX: interpolatedValue }],
   };
 
+  // const getAccesstoken = async () => {
+  //   const accessToken = await AsyncStorage.getItem("accessToken");
+  //   console.log(accessToken); 
+  // }
+  // getAccesstoken()
+
   const loadStudentData = async () => {
     setLoading(true)
     const studentList = await getStudents()
-    studentList[studentList.length - 1].check = true
-    const scheduleData = await loadScheduleData(studentList[studentList.length - 1].id)
-    setClassList(scheduleData)
+    if (studentList.length !== 0) {
+      studentList[studentList.length - 1].check = true
+      const scheduleData = await loadClassData(studentList[studentList.length - 1].id)
+      setClassList(scheduleData)
+    }
     setStudentList(studentList.reverse())
     setLoading(false)
   }
 
-  const loadScheduleData = async (id) => {
+  const loadClassData = async (id) => {
+    setLoadingClassList(true)
     let updateStudentList = [...studentList]
     const index = studentList.findIndex(obj => obj.id === id);
     if (!updateStudentList[index]?.schedule) {
       const response = await getClassesByStudentId(id);
       if (response.status === 200) {
+        setLoadingClassList(false)
         return response.data
       } else {
         console.log("Tải thông tin lớp học thất bại");
+        setLoadingClassList(false)
         return []
       }
     }
+    setLoadingClassList(false)
     return undefined
   }
 
@@ -509,7 +523,7 @@ export default function DocumentScreen({ navigation }) {
         check: i === index ? !item.check : false,
       }));
     });
-    const scheduleData = await loadScheduleData(id)
+    const scheduleData = await loadClassData(id)
     setClassList(scheduleData)
   };
 
@@ -646,12 +660,17 @@ export default function DocumentScreen({ navigation }) {
         >
           {/* getClassList() */}
           {
-            !loading &&
-            filterClassList(classList)?.map((item, index) => {
-              return (
-                renderClassCard(type, item, index)
-              )
-            })
+            !loading && !loadingClassList ?
+              filterClassList(classList)[0] ?
+                filterClassList(classList)?.map((item, index) => {
+                  return (
+                    renderClassCard(type, item, index)
+                  )
+                })
+                :
+                <Text style={{fontWeight: 600, textAlign: "center" }}>Bé chưa đăng ký khóa học</Text>
+              :
+              <SpinnerLoading />
           }
         </ScrollView>
       </View>
@@ -759,6 +778,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   classItemList: {
+    maxHeight: HEIGHT * 0.42,
     padding: 10,
     // paddingHorizontal: 10,
     borderWidth: 1,

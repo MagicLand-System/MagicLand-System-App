@@ -11,11 +11,11 @@ const HEIGHT = Dimensions.get('window').height;
 export default function ChooseClassModal({ visible, classList, setClassList, setClassChoosed, onCancle, navigation }) {
 
     const selectCourse = (id) => {
-        const index = classList.findIndex(obj => obj.id === id);
+        const index = classList.findIndex(obj => obj.classId === id);
         const updateArray = [...classList]
         const defaultStatus = updateArray[index].choose
-        // updateArray.forEach(item => item.choose = false)
-        updateArray[index].choose = !defaultStatus;
+        updateArray.forEach(item => item.choose = false)
+        updateArray[index].choose = true;
         setClassList(updateArray)
         setClassChoosed(updateArray?.filter(obj => obj.choose === true))
     }
@@ -33,7 +33,10 @@ export default function ChooseClassModal({ visible, classList, setClassList, set
                     <View style={styles.srollHeader}></View>
                     {
                         classList.map((item, index) => {
-                            return <ClassCard cardDetail={item} check={true} index={index} onClick={selectCourse} key={index} />
+                            return (
+                                item.status === "UPCOMING" &&
+                                <ClassCard cardDetail={item} check={true} index={index} onClick={selectCourse} key={index} />
+                            )
                         })
                     }
                 </ScrollView>
