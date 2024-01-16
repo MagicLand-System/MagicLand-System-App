@@ -55,7 +55,7 @@ export default function ClassOptionScreen({ route, navigation }) {
                     <Text style={styles.title}>Đánh giá tổng quan: </Text>
                 </View>
                 <Text style={{ opacity: 0.6, marginLeft: WIDTH * 0.04 }}>Đánh giá sau khi các bé hoàn thành khóa học</Text>
-                <ClassOption title={"Đánh giá"} icon={<Icon name={"book"} color={"#4582E6"} size={25} />} onClick={() => console.log("comming soon")} />
+                <ClassOption title={"Đánh giá"} icon={<Icon name={"book"} color={"#4582E6"} size={25} />} onClick={() => navigation.push("RateStudentScreen", { classDetail: classDetail })} />
             </ScrollView>
         </>
     )
