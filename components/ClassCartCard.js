@@ -45,7 +45,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
     }
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail?.id) }}>
+        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail?.classId) }}>
             <View
                 style={{
                     ...styles.card,

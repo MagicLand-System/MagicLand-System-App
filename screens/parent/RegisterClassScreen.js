@@ -65,14 +65,14 @@ export default function RegisterClassScreen({ route, navigation }) {
     }
 
     const handleChooseStudent = (item, student) => {
-        const index = courseList.findIndex(obj => obj?.class?.id === item?.id);
+        const index = courseList.findIndex(obj => obj?.class?.classId === item?.classId);
         const updateArray = [...courseList]
         updateArray[index].class.student = student;
         setCourseList(updateArray)
     }
 
     const handleChooseDate = (item, date) => {
-        const index = courseList.findIndex(obj => obj.class.id === item.id);
+        const index = courseList.findIndex(obj => obj.class.classId === item.classId);
         const updateArray = [...courseList]
         updateArray[index].class.date = date;
         setCourseList(updateArray)
@@ -124,13 +124,22 @@ export default function RegisterClassScreen({ route, navigation }) {
     }
 
     const setSchedule = (item) => {
-        const index = courseList.findIndex(obj => obj.class.id === item?.class.id);
+        const index = courseList.findIndex(obj => obj.class.classId === item?.class.classId);
         switch (courseList[index]?.class?.schedules[0].dayOfWeeks) {
             case "Monday":
                 handleChooseDate(item?.class, dateDefault[0])
                 break;
             case "Tuesday":
                 handleChooseDate(item?.class, dateDefault[1])
+                break;
+            case "Wednesday":
+                handleChooseDate(item?.class, dateDefault[0])
+                break; 
+            case "Thursday":
+                handleChooseDate(item?.class, dateDefault[1])
+                break;
+            case "Friday":
+                handleChooseDate(item?.class, dateDefault[0])
                 break;
             case "Saturday":
                 handleChooseDate(item?.class, dateDefault[2])
@@ -231,8 +240,9 @@ export default function RegisterClassScreen({ route, navigation }) {
                                                         :
                                                         <Text numberOfLines={1}>Chọn lớp</Text>
                                             }
-                                            disable={checkExistedSchedule(item)}
+                                            disable={!checkExistedSchedule(item)}
                                         />
+                                        {/* {console.log(item?.class.date)} */}
                                         {/* <Text style={[styles.tableText]} >Lịch học</Text> */}
                                     </View>
                                     <View style={[styles.classPrice]}>

@@ -187,10 +187,10 @@ export default function CourseDetailScreen({ route, navigation }) {
                 console.log(item.classId);
                 const response = await modifyCart([], item.classId)
                 if (response?.status === 200) {
-                    showToast("Thành công", `Đã thêm ${item?.name} vào giỏ hàng`, "success");
+                    showToast("Thành công", `Đã thêm ${item?.name} vào danh sách quan tâm`, "success");
                     console.log(`Đã thêm ${item?.name} vào giỏ hàng`);
                 } else {
-                    showToast("Thất bại", `Thêm ${item?.name} vào giỏ hàng thất bại`, "error");
+                    showToast("Thất bại", `Thêm ${item?.name} vào danh sách quan tâm thất bại`, "error");
                     console.log(response.response.data);
                 }
             })
@@ -349,7 +349,7 @@ export default function CourseDetailScreen({ route, navigation }) {
             <View style={styles.content}>
                 <View style={styles.flexColumn}>
                     <Text style={{ ...styles.title, width: WIDTH * 0.55 }}>
-                        Khóa Học: {course?.name}
+                        Khóa Học: {course?.courseDetail?.courseName}
                     </Text>
                     <View style={styles.priceView}>
                         <Text style={{ ...styles.priceText }}>
@@ -394,7 +394,7 @@ export default function CourseDetailScreen({ route, navigation }) {
                         !viewDetail.detail ?
                             ""
                             :
-                            `Dành cho bé từ ${course?.minAgeStudent} đến ${course?.maxAgeStudent} tuổi`
+                            `Dành cho bé từ ${course?.courseDetail?.minAgeStudent} đến ${course?.courseDetail?.maxAgeStudent} tuổi`
                     }
                 </Text>
                 <Text style={styles.title}>
