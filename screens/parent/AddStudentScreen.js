@@ -56,7 +56,7 @@ export default function AddStudentScreen() {
                     setImageError(null)
                     setImage(result.assets[0].uri)
                 } else if (faces && faces.length > 0) {
-                    setImageError("Vui lòng chọn hình của một mình bé")
+                    setImageError("Vui lòng chỉ chọn hình của một mình bé")
                     setLoading(false);
                 } else {
                     setImageError("Vui lòng chọn hình rõ mặt bé")
