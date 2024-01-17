@@ -67,7 +67,6 @@ export default function AddStudentScreen() {
                 setImageError("Vui lòng chọn hình ảnh khác")
                 setLoading(false);
             }
-            setImage(result.assets[0].uri)
         }
     }
     const registerValidationSchema = Yup.object().shape({
