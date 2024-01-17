@@ -75,6 +75,7 @@ export default function MultiplePaymentScreen({ route, navigation }) {
 
     let courseList = route?.params?.courseList
     const [vourcherList, setVourcherList] = useState(vourcherListDefault)
+    const [otpLoading, setOtpLoading] = useState(false)
     const [paymentMethodList, setPaymentMethodList] = useState(paymentTypeDefault)
     const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false, paymentMethod: false })
     const showToast = CustomToast();
@@ -94,17 +95,24 @@ export default function MultiplePaymentScreen({ route, navigation }) {
 
     const handleSubmitOtp = async (otp) => {
         // courseList?.map(async (classItem) => { console.log(classItem.class.id); })
-        courseList?.map(async (classItem) => {
-            const response = await registerClass([classItem.class?.student.id], classItem.class.classId)
-            console.log([classItem.class?.student.id], classItem.id);
-            if (response?.status === 200) {
-                showToast("Thành công", `Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`, "success");
-                setModalVisible({ ...modalVisible, otp: false, notifi: true })
-            } else {
-                showToast("Thất bại", `Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`, "error");
-                console.log(response.response.data);
-            }
-        })
+        setOtpLoading(true);
+
+        try {
+            await Promise.all(courseList?.map(async (classItem) => {
+                const response = await registerClass([classItem.class?.student.id], classItem.class.classId);
+                if (response?.status === 200) {
+                    showToast("Thành công", `Đã đăng ký ${classItem.class?.student?.fullName} vào lớp ${classItem?.class?.name}`, "success");
+                    setModalVisible({ ...modalVisible, otp: false, notifi: true });
+                } else {
+                    showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+                    console.log(response.response.data);
+                }
+            }));
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setOtpLoading(false);
+        }
     }
 
     const handleChooseVourcherModal = () => {
@@ -267,7 +275,13 @@ export default function MultiplePaymentScreen({ route, navigation }) {
                 </View>
             </ScrollView>
             <ChooseVourcherModal visible={modalVisible.vourcher} vourcherList={vourcherList} navigation={navigation} onChoose={handleChooseVourcher} onCancle={handleCancleVourcherModal} discount={vourcherValue() ? vourcherDiscount() : 0} />
-            <InputOtpModal visible={modalVisible.otp} phone={"12345689"} onCancle={hanldeCloseOtpModal} onSubmit={handleSubmitOtp} />
+            <InputOtpModal
+                visible={modalVisible.otp}
+                phone={"12345689"}
+                onCancle={hanldeCloseOtpModal}
+                onSubmit={handleSubmitOtp}
+                loading={otpLoading}
+            />
             <PaymentSuccessModal visible={modalVisible.notifi} onSubmit={handleCloseNotifiModal} />
             <ChoosePaymentMethod
                 visible={modalVisible.paymentMethod}

@@ -3,14 +3,21 @@ import React, { useState } from 'react'
 import OTPTextInput from "react-native-otp-textinput"
 import Icon from "react-native-vector-icons/MaterialIcons";
 import CountdownTimer from '../CountdownTimer';
+import SpinnerLoading from '../SpinnerLoading';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-export default function InputOtpModal({ visible, phone, onCancle, onSubmit }) {
+export default function InputOtpModal({ visible, phone, onCancle, onSubmit, loading }) {
 
     const [otp, setOtp] = useState()
-    const [timer, setTimer] = useState(600)
+    // const [timer, setTimer] = useState(600)
+
+    const handleSubmit = async (otp) => {
+        // console.log("17", loading);
+        await onSubmit(otp);
+        // console.log("19", loading);
+    }
 
     return (
         <Modal
@@ -29,9 +36,9 @@ export default function InputOtpModal({ visible, phone, onCancle, onSubmit }) {
                 <View style={styles.modalHeader}>
                     <Text style={styles.phoneNumber}>MÃ XÁC NHẬN GỬI QUA SỐ ĐIỆN THOẠI {phone}</Text>
                 </View>
-                <View style={styles.modalHeader}>
+                {/* <View style={styles.modalHeader}>
                     <Text style={styles.phoneNumber}>MÃ XÁC NHẬN HẾT HIỆU LỰC SAU <CountdownTimer color={"#3A0CA3"} fontsize={15} timer={timer} setTimer={setTimer} /></Text>
-                </View>
+                </View> */}
                 <View style={styles.modalContent}>
                     <OTPTextInput
                         inputCount={6}
@@ -51,10 +58,16 @@ export default function InputOtpModal({ visible, phone, onCancle, onSubmit }) {
                     </Text>
                 </View>
                 <View style={styles.confirm}>
-                    <TouchableOpacity style={styles.confirmButton} onPress={() => onSubmit(otp)}>
-                        <Text style={styles.confirmText}>
-                            XÁC NHẬN
-                        </Text>
+                    <TouchableOpacity style={{ ...styles.confirmButton, padding: loading ? 0 : 10 }} onPress={() => handleSubmit(otp)}>
+                        {
+                            loading ?
+                                <SpinnerLoading />
+                                :
+                                <Text style={styles.confirmText}>
+                                    XÁC NHẬN
+                                </Text>
+                        }
+
                     </TouchableOpacity>
                 </View>
             </View>
@@ -128,13 +141,16 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     confirmButton: {
-        padding: 10,
-        paddingHorizontal: 20,
+        height: 40,
+        // paddingHorizontal: 20,
         borderRadius: 5,
         backgroundColor: "#3D5CFF",
+        alignItems: "center",
+        overflow: "hidden"
     },
     confirmText: {
-        color: "white"
+        color: "white",
+        alignItems: "center"
     },
     closeButton: {
         position: "absolute",

@@ -183,7 +183,7 @@ export default function CartScreen({ navigation }) {
     };
 
     const getIndexById = (array, id) => {
-        return array.findIndex(item => item.class && item.class.id === id);
+        return array.findIndex(item => item.class && item.class.classId === id);
     };
 
     const hanldeSubmit = () => {

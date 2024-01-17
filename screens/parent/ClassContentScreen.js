@@ -206,9 +206,9 @@ export default function ClassContentScreen({ route, navigation }) {
                             <View style={styles.doccumentView}>
                                 <Text>Tài liệu</Text>
                             </View>
-                            <View style={{ ...styles.flexColumn, marginVertical: 20, width: WIDTH * 0.9, alignItems: "baseline" }}>
+                            <View style={{ ...styles.flexColumn, marginVertical: 20, width: WIDTH * 0.9, alignItems: "flex-start" }}>
                                 <Text style={{ ...styles.boldText, color: "#3D5CFF" }}>Bài tập:  </Text>
-                                <Text >{focusHomework.descrip}</Text>
+                                <Text style={{ width: WIDTH * 0.8 }}>{focusHomework.descrip}</Text>
                             </View>
                             <TouchableOpacity style={styles.startButton} onPress={handleDoHomeWork}>
                                 <Text style={{ ...styles.boldText, color: "white" }}>Bắt Đầu</Text>

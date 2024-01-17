@@ -31,7 +31,7 @@ export default function TransactionWalletScreen({ route, navigation }) {
         //     }
         // })
         hanldeCloseOtpModal()
-        navigation.push("TransactionDetailScreen", { total: price, lable: "+", handleClose: () => { navigation.pop } })
+        navigation.push("TransactionDetailScreen", { total: price, lable: "+", handleClose: true })
     }
 
     return (
