@@ -19,6 +19,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { format } from 'date-fns';
 import LoadingModal from "../../components/LoadingModal"
 import { useNavigation } from "@react-navigation/native";
+import { callGoogleVisionAsync } from "../../api/google";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
