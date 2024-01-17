@@ -45,6 +45,27 @@ export default function AddStudentScreen() {
             quality: 1,
         })
         if (!result.canceled) {
+            try {
+                const base64Data = await FileSystem.readAsStringAsync(result.assets[0].uri, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+                const data = await callGoogleVisionAsync(base64Data)
+                const faces = data.responses[0].faceAnnotations
+                if (faces && faces.length === 1) {
+                    setImageError(null)
+                    setImage(result.assets[0].uri)
+                } else if (faces && faces.length > 0) {
+                    setImageError("Vui lòng chỉ chọn hình của một mình bé")
+                    setLoading(false);
+                } else {
+                    setImageError("Vui lòng chọn hình rõ mặt bé")
+                    setLoading(false);
+                }
+            } catch (error) {
+                console.log(error)
+                setImageError("Vui lòng chọn hình ảnh khác")
+                setLoading(false);
+            }
             setImage(result.assets[0].uri)
         }
     }
