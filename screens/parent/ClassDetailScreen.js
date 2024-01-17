@@ -6,6 +6,8 @@ import Header from '../../components/header/Header';
 import NotificationModal from '../../components/modal/NotificationModal';
 import CircularProgressBar from '../../components/CircularProgressBar';
 
+import { formatDate } from '../../util/util';
+
 // import ThuyTienAvt from "../assets/images/ThuyTienAvt.png"
 // import ProcessBar from '../components/ProcessBar';
 
@@ -168,6 +170,7 @@ export default function ClassDetailScreen({ route, navigation }) {
     const [programEducation, setProgramEducation] = useState(programEducationDefault)
     const [currentPage, setCurrentPage] = useState(0);
     let count = 0
+    
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
@@ -186,15 +189,15 @@ export default function ClassDetailScreen({ route, navigation }) {
                     <Text style={styles.title}>Khóa học:</Text>
                 </View>
                 <View style={styles.classDetail}>
-                    <View style={styles.flexColumnBetween}>
+                    <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
                         <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                             Khóa học:
                         </Text>
                         <Text style={{ ...styles.classValue, width: "58%", textAlign: "left" }}>
-                            {classDetail?.title}
+                            {classDetail?.name}
                         </Text>
                     </View>
-                    <View style={styles.flexColumnBetween}>
+                    <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
                         <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                             Lớp học:
                         </Text>
@@ -202,7 +205,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             TTD2
                         </Text>
                     </View>
-                    <View style={styles.flexColumnBetween}>
+                    <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
                         <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                             Ngày khai giảng:
                         </Text>
@@ -210,13 +213,13 @@ export default function ClassDetailScreen({ route, navigation }) {
                             05/01/2024
                         </Text>
                     </View>
-                    <View style={styles.flexColumnBetween}>
+                    <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
                         <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                             Lịch học
                         </Text>
                         <Text style={{ ...styles.classValue, width: "58%", textAlign: "left", color: "#3AA6B9" }}>Thứ 3 - 5 - 7 (17h - 18h:30)</Text>
                     </View>
-                    <View style={styles.flexColumnBetween}>
+                    <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
                         <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                             Hình Thức:
                         </Text>
@@ -224,7 +227,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             Offline
                         </Text>
                     </View>
-                    <View style={styles.flexColumnBetween}>
+                    <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
                         <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                             Giáo viên:
                         </Text>
@@ -232,7 +235,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             Thủy Tiên
                         </Text>
                     </View>
-                    <View style={styles.flexColumnBetween}>
+                    <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
                         <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                             Trạng thái:
                         </Text>
@@ -256,7 +259,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                 >
                     {progressData.map((item, index) => (
                         <View key={index} style={styles.processBar}>
-                            <Text style={{...styles.boldText, fontSize: 20, marginBottom: 10}}>{item.label}</Text>
+                            <Text style={{ ...styles.boldText, fontSize: 20, marginBottom: 10 }}>{item.label}</Text>
                             <CircularProgressBar
                                 value={item.value}
                                 inActiveStrokeColor={item.inActiveStrokeColor}
@@ -301,7 +304,11 @@ export default function ClassDetailScreen({ route, navigation }) {
                                             setProgramEducation(updatedProgramEducation);
                                         }}
                                     >
-                                        <Text style={styles.mainText} numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.name}</Text>
+                                        <Text style={styles.mainText}>
+                                            <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.name}</Text>
+                                            {/* {formatDate()} */}
+                                            {"(05/01/2024)"}
+                                        </Text>
                                         {
                                             !item.expand ?
                                                 <Icon name={"plus"} color={"#241468"} size={25} />
@@ -453,7 +460,6 @@ const styles = StyleSheet.create({
     },
     boldText: {
         fontWeight: "600",
-        marginBottom: 5,
     },
 
     titleView: {

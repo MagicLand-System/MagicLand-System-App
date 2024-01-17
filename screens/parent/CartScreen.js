@@ -11,6 +11,7 @@ import CourseCard from '../../components/CourseCard';
 import ClassCard from '../../components/ClassCard';
 import SpinnerLoading from "../../components/SpinnerLoading"
 import FilterCustomModal from '../../components/modal/FilterCustomModal';
+import ClassCartCard from '../../components/ClassCartCard';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -138,10 +139,12 @@ export default function CartScreen({ navigation }) {
     const handleRemoveCart = async () => {
         setDataLoading(true)
         const choosedList = classCardDetail?.filter(item => item.class.choose)
-        choosedList.map(async (item) => {
-            await removeClassInCart(item.id)
-        })
-        await loadClassData()
+        const response = await removeClassInCart(choosedList.map((item) => (item.itemId)))
+        if (response.status === 200) {
+            await loadClassData()
+        } else {
+            console.log(response.response.data);
+        }
         setDataLoading(false)
     }
 
@@ -365,7 +368,7 @@ export default function CartScreen({ navigation }) {
                     <ScrollView showsVerticalScrollIndicator={false} style={{ ...styles.container }}>
                         <View style={{ marginBottom: 15 }} />
                         {filferClassList(classCardDetail)?.map((item, index) => {
-                            return <ClassCard cardDetail={item.class} check={bottomModalVisible.total} index={index} onClick={selectCourse} key={index} />
+                            return <ClassCartCard cardDetail={item.class} check={bottomModalVisible.total} index={index} onClick={selectCourse} key={index} />
                         })}
                         <View style={{ height: bottomModalVisible.total ? bottomModalVisible.confirm ? 195 : 135 : 30 }} />
                     </ScrollView>

@@ -10,9 +10,27 @@ import ChooseVourcherModal from '../../components/modal/ChooseVourcherModal';
 import InputOtpModal from '../../components/modal/InputOtpModal';
 import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
 import Header from '../../components/header/Header';
+import ChoosePaymentMethod from '../../components/modal/ChoosePaymentMethod';
+import { registerClass } from '../../api/class';
+import CustomToast from "../../components/CustomToast";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
+
+const paymentTypeDefault = [
+    {
+        id: 0,
+        name: "Ví điện tử",
+        img: require("../../assets/images/welletLogo.png"),
+        dropdown: true,
+    },
+    {
+        id: 1,
+        name: "VN Pay",
+        img: require("../../assets/images/vnpayLogo.png"),
+        dropdown: false,
+    },
+]
 
 const vourcherListDefault = [
     {
@@ -57,7 +75,9 @@ export default function MultiplePaymentScreen({ route, navigation }) {
 
     let courseList = route?.params?.courseList
     const [vourcherList, setVourcherList] = useState(vourcherListDefault)
-    const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false })
+    const [paymentMethodList, setPaymentMethodList] = useState(paymentTypeDefault)
+    const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false, paymentMethod: false })
+    const showToast = CustomToast();
 
     useEffect(() => {
         courseList = route?.params?.courseList
@@ -72,12 +92,27 @@ export default function MultiplePaymentScreen({ route, navigation }) {
         setModalVisible({ ...modalVisible, otp: true })
     }
 
-    const handleSubmitOtp = (otp) => {
-        setModalVisible({ ...modalVisible, otp: false, notifi: true })
+    const handleSubmitOtp = async (otp) => {
+        // courseList?.map(async (classItem) => { console.log(classItem.class.id); })
+        courseList?.map(async (classItem) => {
+            const response = await registerClass([classItem.class?.student.id], classItem.class.classId)
+            console.log([classItem.class?.student.id], classItem.id);
+            if (response?.status === 200) {
+                showToast("Thành công", `Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`, "success");
+                setModalVisible({ ...modalVisible, otp: false, notifi: true })
+            } else {
+                showToast("Thất bại", `Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`, "error");
+                console.log(response.response.data);
+            }
+        })
     }
 
     const handleChooseVourcherModal = () => {
         setModalVisible({ ...modalVisible, vourcher: true })
+    }
+
+    const handleOpenPaymentMethodModal = () => {
+        setModalVisible({ ...modalVisible, paymentMethod: true })
     }
 
     const handleCancleVourcherModal = () => {
@@ -87,6 +122,10 @@ export default function MultiplePaymentScreen({ route, navigation }) {
     const handleCloseNotifiModal = () => {
         setModalVisible({ ...modalVisible, notifi: false })
         navigation.push("TransactionDetailScreen", { total: totalPayment() })
+    }
+
+    const handleClosePaymentModal = () => {
+        setModalVisible({ ...modalVisible, paymentMethod: false })
     }
 
     const handleChooseVourcher = (index) => {
@@ -131,6 +170,10 @@ export default function MultiplePaymentScreen({ route, navigation }) {
         return totalPayment ? totalPayment : 0
     }
 
+    const paymentMethod = () => {
+        return paymentMethodList.find(item => item.check)
+    }
+
     return (
         <>
             <Header navigation={navigation} background={"#241468"} title={"Thông tin thanh toán"} />
@@ -148,7 +191,7 @@ export default function MultiplePaymentScreen({ route, navigation }) {
                         <Text>
                             Khóa Học:
                         </Text>
-                        <Text style={{width: "53%" }}>
+                        <Text style={{ width: "53%" }}>
                             Lịch Học:
                         </Text>
                     </View>
@@ -163,11 +206,37 @@ export default function MultiplePaymentScreen({ route, navigation }) {
                     }
                 </View>
 
-                <View style={styles.titleView}>
+                <TouchableOpacity style={{
+                    ...styles.titleView,
+                    justifyContent: "space-between",
+                    marginRight: WIDTH * 0.15
+                }}
+                    onPress={handleOpenPaymentMethodModal}
+                >
                     <Text style={styles.title}>Chọn phương thức thanh toán</Text>
-                </View>
+                    {!paymentMethod() && <Icon name={"chevron-right"} color={"#4582E6"} size={30} />}
+                </TouchableOpacity>
 
                 <View style={styles.studentDetail} >
+                    <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }}
+                        onPress={handleOpenPaymentMethodModal}
+                    >
+                        {paymentMethod() &&
+                            <>
+                                <View
+                                    style={styles.paymentMethod}
+                                >
+                                    <Text style={{ ...styles.boldText, color: "#4582E6" }}>
+                                        {
+                                            paymentMethod().name
+                                        }
+                                    </Text>
+
+                                </View>
+                                <Icon name={"chevron-right"} color={"#4582E6"} size={30} />
+                            </>
+                        }
+                    </TouchableOpacity>
                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }}>
                         <Text style={styles.detailViewTitle}>Học Phí:</Text>
                         <Text style={styles.boldText}>{formatPrice(totalPrice())}đ</Text>
@@ -200,6 +269,13 @@ export default function MultiplePaymentScreen({ route, navigation }) {
             <ChooseVourcherModal visible={modalVisible.vourcher} vourcherList={vourcherList} navigation={navigation} onChoose={handleChooseVourcher} onCancle={handleCancleVourcherModal} discount={vourcherValue() ? vourcherDiscount() : 0} />
             <InputOtpModal visible={modalVisible.otp} phone={"12345689"} onCancle={hanldeCloseOtpModal} onSubmit={handleSubmitOtp} />
             <PaymentSuccessModal visible={modalVisible.notifi} onSubmit={handleCloseNotifiModal} />
+            <ChoosePaymentMethod
+                visible={modalVisible.paymentMethod}
+                paymentMethodList={paymentMethodList}
+                setPaymentMethodList={setPaymentMethodList}
+                navigation={navigation}
+                onCancle={handleClosePaymentModal}
+            />
         </>
     )
 

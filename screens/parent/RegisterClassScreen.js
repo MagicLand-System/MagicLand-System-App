@@ -7,6 +7,8 @@ import DropdownComponent from '../../components/DropdownComponent';
 import FavoriteHeader from '../../components/header/FavoriteHeader';
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../store/selector';
+import { getStudents } from '../../api/student';
+import { useFocusEffect } from '@react-navigation/native';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -28,6 +30,7 @@ const dateDefault = [
 
 export default function RegisterClassScreen({ route, navigation }) {
 
+    const [studentList, setStudentList] = useState([])
     const [courseList, setCourseList] = useState(route?.params?.courseList)
     const [visible, setVisible] = useState({ submit: true })
     const user = useSelector(userSelector);
@@ -36,11 +39,22 @@ export default function RegisterClassScreen({ route, navigation }) {
         loadSchedule()
     }, [route?.params?.courseList])
 
+    useFocusEffect(
+        React.useCallback(() => {
+            loadStudentData()
+        }, [])
+    );
+
     const loadSchedule = async () => {
         courseList.map(item => {
             checkExistedSchedule(item) &&
                 setSchedule(item)
         })
+    }
+
+    const loadStudentData = async () => {
+        const studentList = await getStudents()
+        setStudentList(studentList)
     }
 
     const handleNavigate = () => {
@@ -174,7 +188,7 @@ export default function RegisterClassScreen({ route, navigation }) {
                                         {
                                             <DropdownComponent
                                                 dropdownStyle={styles.dropdownStyle}
-                                                studentList={user.students}
+                                                studentList={studentList}
                                                 labelField={"fullName"}
                                                 valueField={"id"}
                                                 dropdownItem={(item) => item.fullName}

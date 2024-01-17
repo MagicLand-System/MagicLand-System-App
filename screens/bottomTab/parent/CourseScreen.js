@@ -152,8 +152,7 @@ export default function CourseScreen({ navigation }) {
 
     const hanldeFilter = (array) => {
         let updateArray = [...array]
-        // rate > 0 && updateArray.filter(item => item)
-        filterValue.type !== "ALL" && (updateArray = updateArray.filter(item => item.subject === filterValue.type))
+        filterValue.type !== "ALL" && (updateArray = updateArray.filter(item => item.courseDetail.subject === filterValue.type))
         updateArray = updateArray.filter(item => item.price >= priceRange.min && item.price <= priceRange.max)
         return updateArray
     }

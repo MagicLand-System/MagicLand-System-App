@@ -30,3 +30,21 @@ export const getClassByCourseId = async (courseID) => {
     }
 };
 
+export const registerClass = async (studentsIdList, classId) => {
+
+    const data = [{
+        studentIdList: studentsIdList,
+        classId: classId
+    }]
+
+    // console.log(data);
+
+    try {
+        const response = await api.post(`/api/v1/users/checkout`, data);
+        return response;
+    } catch (error) {
+        console.log("registerClass in api/class.js error : ", error);
+        return error;
+    }
+};
+

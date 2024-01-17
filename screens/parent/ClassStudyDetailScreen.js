@@ -4,6 +4,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import Header from '../../components/header/Header';
 import NotificationModal from '../../components/modal/NotificationModal';
+import { formatDate } from '../../util/util';
 
 // import ThuyTienAvt from "../assets/images/ThuyTienAvt.png"
 import ProcessBar from '../../components/ProcessBar';
@@ -17,6 +18,7 @@ const programEducationDefault = [
         name: "Giới thiệu khái quát Toán Tư Duy.",
         expand: false,
         complete: true,
+        date: "2023-12-31T00:00:00",
         list: [
             {
                 name: "Giới thiệu khóa học"
@@ -33,6 +35,7 @@ const programEducationDefault = [
         name: "Rèn kỹ năng so sánh, thống kê, cân thăng bằng. ",
         expand: false,
         complete: true,
+        date: "2024-01-09T00:00:00",
         list: [
             {
                 name: "Cân thăng bằng"
@@ -58,6 +61,7 @@ const programEducationDefault = [
         name: "Làm quen các số từ 0 đến 10, tập đếm đến 20, ... ",
         expand: false,
         complete: false,
+        date: "2024-01-10T00:00:00",
         list: [
             {
                 name: "Số nào ở đâu?"
@@ -89,6 +93,7 @@ const programEducationDefault = [
         name: "Sáng tạo với hình học, xếp vòng.",
         expand: false,
         complete: false,
+        date: "2024-01-11T00:00:00",
         list: [
             {
                 name: "Khối trụ"
@@ -111,6 +116,7 @@ const programEducationDefault = [
         name: "Các bài toán vận dụng thực tiễn.",
         expand: false,
         complete: false,
+        date: "2024-01-11T00:00:00",
         list: [
             {
                 name: "Câu đố hoa quả"
@@ -144,7 +150,7 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
     }, [route?.params?.classDetail])
 
     const handleViewDetail = () => {
-        navigation.push("ClassContentScreen", { classDetail : classDetail })
+        navigation.push("ClassContentScreen", { classDetail: classDetail })
     }
 
     return (
@@ -208,7 +214,7 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                     <Text style={styles.title}>Nội dung buổi học:</Text>
                 </View>
                 <View style={styles.programcontent}>
-                    <Text style={styles.boldText}>Buổi 7:</Text>
+                    <Text style={styles.boldText}>Buổi 7: {formatDate("2024-01-11T00:00:00")}</Text>
                     <Text style={styles.boldText} numberOfLines={1}>Chủ đề 3 - Làm quen các số từ 0 đến 10, tập đếm đến 20, ... </Text>
                     <Text style={{ marginLeft: 10 }} >Bài 10: Số nào ở đâu?</Text>
                     <Text style={{ marginLeft: 10 }}>Bài 11:  Que tính kỳ diệu</Text>
@@ -276,7 +282,7 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                                             setProgramEducation(updatedProgramEducation);
                                         }}
                                     >
-                                        <Text style={styles.mainText} numberOfLines={1}>{"Buổi " + (index + 1) + ":"}</Text>
+                                        <Text style={styles.mainText} numberOfLines={1}>{"Buổi " + (index + 1) + " - " + formatDate(item.date)}</Text>
                                         {
                                             item.complete ?
                                                 <Icon name={"check-circle"} color={"#2C8535"} size={25} />
@@ -397,7 +403,7 @@ const styles = StyleSheet.create({
     },
     program: {
         width: WIDTH * 0.9,
-        maxHeight: HEIGHT * 0.4,
+        // maxHeight: HEIGHT * 0.4,
         // paddingBottom: 20,
         borderWidth: 1,
         borderRadius: 10,
