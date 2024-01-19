@@ -4,7 +4,7 @@ import BottomTabNavigator from './BottomTabNavigator'
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { userSelector } from '../store/selector';
-import { fetchUser } from '../store/features/authSlice';
+import { fetchUser, removeUser } from '../store/features/authSlice';
 import { ActivityIndicator, View } from 'react-native';
 
 import StartedScreen from '../screens/StartedScreen';
@@ -60,6 +60,8 @@ const StackNavigator = () => {
     useEffect(() => {
         if (accessToken) {
             dispatch(fetchUser())
+        } else {
+            dispatch(removeUser())
         }
     }, [accessToken])
     return (

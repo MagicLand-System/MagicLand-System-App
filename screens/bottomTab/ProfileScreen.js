@@ -1,16 +1,17 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { removeUser } from '../../store/features/authSlice';
 import { useDispatch } from 'react-redux';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase.config';
 
 export default function ProfileScreen() {
 
   const dispatch = useDispatch()
 
   const handleLogout = async () => {
+    await signOut(auth)
     await AsyncStorage.removeItem('accessToken')
-      .then(dispatch(removeUser())) 
   }
 
   return (

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase.config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const URL = process.env.EXPO_PUBLIC_API_LINK;
 
@@ -17,9 +18,10 @@ instance.interceptors.response.use(
   },
   async (err) => {
     if (err.response) {
-      if (err.response.status === 401) {
+      if (err.response.status === 401 || err.response.status === 500) {
         alert('Hãy đăng nhập để tiếp tục!')
         await signOut(auth)
+        await AsyncStorage.removeItem("accessToken");
       }
     }
     return Promise.reject(err);
