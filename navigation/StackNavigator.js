@@ -18,6 +18,8 @@ import WorkScheduleScreen from '../screens/bottomTab/teacher/WorkScheduleScreen'
 import RateStudentScreen from '../screens/bottomTab/teacher/RateStudentScreen';
 
 import AddStudentScreen from '../screens/parent/AddStudentScreen';
+import StudentMenuScreen from '../screens/parent/StudentMenuScreen';
+import StudentClassScreen from '../screens/parent/StudentClassScreen';
 import CourseDetailScreen from '../screens/parent/CourseDetailScreen';
 import ClassScreen from '../screens/parent/ClassScreen';
 import ClassDetailScreen from '../screens/parent/ClassDetailScreen';
@@ -33,12 +35,17 @@ import MultiplePaymentScreen from '../screens/parent/MultiplePaymentScreen';
 import ClassStudyDetailScreen from '../screens/parent/ClassStudyDetailScreen';
 import ClassContentScreen from '../screens/parent/ClassContentScreen';
 import MutilpleChoiceScreen from '../screens/parent/MutilpleChoiceScreen';
+import RechargeScreen from '../screens/parent/RechargeScreen';
+import TransactionWalletScreen from '../screens/parent/TransactionWalletScreen';
+import TransactionHistoryScreen from '../screens/parent/TransactionHistoryScreen';
+import TransactionDetailSceen from '../screens/parent/TransactionDetailSceen';
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
-import LoadingModal from '../components/LoadingModal';
+import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
+
     const [loading, setLoading] = useState(false)
     const dispatch = useDispatch();
     const [accessToken, setAccessToken] = useState(null)
@@ -64,63 +71,77 @@ const StackNavigator = () => {
             dispatch(removeUser())
         }
     }, [accessToken])
+    if (loading) {
+        return (
+            <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size={"large"} />
+            </View>
+        )
+    }
+
     return (
-        <>
-            {loading && <LoadingModal />}
-            <Stack.Navigator initialRouteName='Started'>
-                {user?.role.name === 'PARENT' ? (
-                    <>
-                        {/* Parent */}
-                        <Stack.Screen
-                            name="Root"
-                            component={BottomTabNavigator}
-                            options={{ headerShown: false }}
-                        />
-                        <Stack.Screen name="AddStudent" component={AddStudentScreen} options={{ headerTitle: 'Thêm bé' }} />
+        //Screen màn hình chính
+        <Stack.Navigator initialRouteName='Started'>
+            {user?.role.name === 'PARENT' ? (
+                <>
+                    {/* Parent */}
+                    <Stack.Screen
+                        name="Root"
+                        component={BottomTabNavigator}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name="AddStudent" component={AddStudentScreen} options={{ headerTitle: 'Thêm học viên' }} />
+                    <Stack.Screen name="StudentMenu" component={StudentMenuScreen} options={{ headerTitle: 'Học viên' }} />
+                    <Stack.Screen name="StudentClass" component={StudentClassScreen} options={{ headerTitle: 'Lớp học' }} />
 
-                        <Stack.Screen name="CourseScreen" component={CourseScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="CourseDetailScreen" component={CourseDetailScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="ClassScreen" component={ClassScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="ClassDetailScreen" component={ClassDetailScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="ClassRegisterScreen" component={ClassRegisterScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="ClassConfirmScreen" component={ClassConfirmScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="RegisterConfirmScreen" component={RegisterConfirmScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="PaymentScreen" component={PaymentScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="CartScreen" component={CartScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="ChooseVoucherScreen" component={ChooseVoucherScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="TransactionDetailScreen" component={TransactionDetailScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="RegisterClassScreen" component={RegisterClassScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="MultiplePaymentScreen" component={MultiplePaymentScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="ClassStudyDetailScreen" component={ClassStudyDetailScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="ClassContentScreen" component={ClassContentScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ headerShown: false }} />
-                    </>
-                ) : user?.role.name === 'LECTURER' ? (
-                    <>
-                        {/* Teacher */}
-                        <Stack.Screen
-                            name="Root"
-                            component={BottomTabNavigator}
-                            options={{ headerShown: false }}
-                        />
-                        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="WorkScheduleScreen" component={WorkScheduleScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="RateStudentScreen" component={RateStudentScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CourseScreen" component={CourseScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CourseDetailScreen" component={CourseDetailScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ClassScreen" component={ClassScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ClassDetailScreen" component={ClassDetailScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ClassRegisterScreen" component={ClassRegisterScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ClassConfirmScreen" component={ClassConfirmScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="RegisterConfirmScreen" component={RegisterConfirmScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="PaymentScreen" component={PaymentScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CartScreen" component={CartScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ChooseVoucherScreen" component={ChooseVoucherScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="TransactionDetailScreen" component={TransactionDetailScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="RegisterClassScreen" component={RegisterClassScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="MultiplePaymentScreen" component={MultiplePaymentScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ClassStudyDetailScreen" component={ClassStudyDetailScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ClassContentScreen" component={ClassContentScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="RechargeScreen" component={RechargeScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="TransactionWalletScreen" component={TransactionWalletScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="TransactionHistoryScreen" component={TransactionHistoryScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="TransactionDetailSceen" component={TransactionDetailSceen} options={{ headerShown: false }} />
+                </>
+            ) : user?.role.name === 'LECTURER' ? (
+                <>
+                    {/* Teacher */}
+                    <Stack.Screen
+                        name="Root"
+                        component={BottomTabNavigator}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="WorkScheduleScreen" component={WorkScheduleScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="RateStudentScreen" component={RateStudentScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ClassOptionScreen" component={ClassOptionScreen} options={{ headerShown: false }} />
 
-                    </>
-                ) : (
-                    <>
-                        {/* Unlogin */}
-                        <Stack.Screen name="Started" component={StartedScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="FillInfo" component={FillInfoScreen} options={{ headerShown: false }} />
-                    </>
-                )
-                }
-            </Stack.Navigator >
-        </>
+                </>
+
+            ) : (
+                <>
+                    {/* Unlogin */}
+                    <Stack.Screen name="Started" component={StartedScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="FillInfo" component={FillInfoScreen} options={{ headerShown: false }} />
+                </>
+            )
+            }
+        </Stack.Navigator >
     )
 }
 

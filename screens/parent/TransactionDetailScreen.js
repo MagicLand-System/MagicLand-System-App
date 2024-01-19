@@ -15,12 +15,10 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function TransactionDetailScreen({ route, navigation }) {
 
-    let total = route?.params?.total
+    let total = route?.params?.total ? route?.params?.total : 0
+    let lable = route?.params?.lable ? route?.params?.lable : "-"
+    let handleClose = route?.params?.handleClose ? () => navigation.popToTop() : () => navigation.navigate("Document")
     const user = useSelector(userSelector);
-
-    const handleClose = () => {
-        navigation.popToTop()
-    }
 
     return (
         <>
@@ -32,7 +30,7 @@ export default function TransactionDetailScreen({ route, navigation }) {
                         <Image style={styles.monneyImage} source={monneyIcon} />
                     </View>
                     <Text style={{ ...styles.boldText, fontSize: 20, color: "#C71212", fontWeight: "700" }}>
-                        - {formatPrice(total)}đ
+                        {lable} {formatPrice(total)}đ
                     </Text>
                 </View>
                 <View style={{ ...styles.flexColumnBetween, alignItems: "center", marginVertical: 10 }}>

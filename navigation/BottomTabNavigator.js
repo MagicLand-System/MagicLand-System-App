@@ -31,6 +31,7 @@ import MutilpleChoiceScreen from '../screens/parent/MutilpleChoiceScreen';
 
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
+import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -60,23 +61,30 @@ const BottomTabNavigator = () => {
                     },
                     tabBarLabel: 'Trang Chủ',
                 }} />
-            <Tab.Screen name="Document" component={user?.role.name === 'LECTURER' ? WorkScheduleScreen : DocumentScreen} options={{
-                tabBarIcon: ({ focused }) => {
-                    return <Icon name={"school"} color={focused ? activeColor : inactiveColor} size={28} />
-                },
-                tabBarLabel: user?.role.name === 'LECTURER' ? 'Lịch Làm Việc' : 'Học Viên',
-            }} />
-            <Tab.Screen name="Scan" component={ScanScreen} options={{
-                tabBarIcon: ({ focused }) => {
-                    return <Icon name={"camera"} color={focused ? activeColor : inactiveColor} size={28} />
-                },
-                tabBarLabel: 'Camera',
-            }} />
-            <Tab.Screen name="Schedule" component={user?.role.name === 'LECTURER' ? RateStudentScreen : ScheduleScreen} options={{
+            {
+                user?.role.name !== 'LECTURER' &&
+                <Tab.Screen name="Document" component={DocumentScreen} options={{
+                    tabBarIcon: ({ focused }) => {
+                        return <Icon name={"school"} color={focused ? activeColor : inactiveColor} size={28} />
+                    },
+                    tabBarLabel: 'Học Viên',
+                }} />
+            }
+            {
+                user?.role.name !== 'LECTURER' &&
+                <Tab.Screen name="Scan" component={ScanScreen} options={{
+                    tabBarIcon: ({ focused }) => {
+                        let icon = focused == true ? require('./../assets/images/scan_active_icon.png') : require('./../assets/images/scan_icon.png');
+                        return <Image source={icon} style={styles.tabIcon} />
+                    },
+                    tabBarLabel: 'Quét QR',
+                }} />
+            }
+            <Tab.Screen name="Schedule" component={user?.role.name === 'LECTURER' ? WorkScheduleScreen : ScheduleScreen} options={{
                 tabBarIcon: ({ focused }) => {
                     return <Icon name={"calendar-month"} color={focused ? activeColor : inactiveColor} size={28} />
                 },
-                tabBarLabel: user?.role.name === 'LECTURER' ? 'Đánh Giá' : 'Lịch học',
+                tabBarLabel: user?.role.name === 'LECTURER' ? 'Lịch Làm Việc' : 'Lịch học',
             }} />
             <Tab.Screen name="Profile" component={ProfileScreen} options={{
                 tabBarIcon: ({ focused }) => {
@@ -101,6 +109,7 @@ const BottomTabNavigator = () => {
             <Tab.Screen name="ClassContentScreen" component={ClassContentScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="ClassOptionScreen" component={ClassOptionScreen} options={{ tabBarButton: () => null }} />
         </Tab.Navigator>
     )
 }

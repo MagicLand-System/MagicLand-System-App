@@ -1,13 +1,16 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Animated } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import StudentView from '../../../components/StudentView';
-import PersonalClassCard from '../../../components/PersonalClassCard';
 import ClassCard from '../../../components/ClassCard';
-import { useSelector } from 'react-redux';
+import { getClassesByStudentId, getStudents, getschedule } from '../../../api/student';
+import ClassCartCard from '../../../components/ClassCartCard';
+import { useFocusEffect } from '@react-navigation/native';
 import { userSelector } from '../../../store/selector';
-import { getStudents } from '../../../api/student';
+import { useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SpinnerLoading from '../../../components/SpinnerLoading';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -21,13 +24,17 @@ const classListData = [
     startDate: "2024-01-03T00:00:00",
     endDate: "2024-02-03T00:00:00",
     address: "Hồ Chí Minh Tân Bình 138 Lương Định Của",
-    status: "UPCOMMING",
+    status: "UPCOMING",
     method: "OFFLINE",
     limitNumberStudent: 30,
     leastNumberStudent: 1,
     numberStudentRegistered: 0,
+    coursePrice: 300000,
     image: "img.png",
     video: "vid.mp4",
+    courseDetail: {
+      subject: "math"
+    },
     lecture: {
       id: "573cc370-aeab-4d9a-ba2c-42b28e4f70dc",
       fullName: "Mai Thị Phương",
@@ -272,13 +279,17 @@ const classListData = [
     startDate: "2024-01-03T00:00:00",
     endDate: "2024-02-03T00:00:00",
     address: "Hồ Chí Minh Tân Bình 138 Lương Định Của",
-    status: "UPCOMMING",
+    status: "UPCOMING",
     method: "OFFLINE",
     limitNumberStudent: 30,
     leastNumberStudent: 1,
     numberStudentRegistered: 0,
+    coursePrice: 200000,
     image: "img.png",
     video: "vid.mp4",
+    courseDetail: {
+      subject: "math"
+    },
     lecture: {
       id: "573cc370-aeab-4d9a-ba2c-42b28e4f70dc",
       fullName: "Mai Thị Phương",
@@ -303,8 +314,12 @@ const classListData = [
     limitNumberStudent: 30,
     leastNumberStudent: 1,
     numberStudentRegistered: 0,
+    coursePrice: 240000,
     image: "img.png",
     video: "vid.mp4",
+    courseDetail: {
+      subject: "math"
+    },
     lecture: {
       id: "573cc370-aeab-4d9a-ba2c-42b28e4f70dc",
       fullName: "Mai Thị Phương",
@@ -329,8 +344,12 @@ const classListData = [
     limitNumberStudent: 30,
     leastNumberStudent: 1,
     numberStudentRegistered: 0,
+    coursePrice: 400000,
     image: "img.png",
     video: "vid.mp4",
+    courseDetail: {
+      subject: "math"
+    },
     lecture: {
       id: "573cc370-aeab-4d9a-ba2c-42b28e4f70dc",
       fullName: "Mai Thị Phương",
@@ -355,8 +374,12 @@ const classListData = [
     limitNumberStudent: 30,
     leastNumberStudent: 1,
     numberStudentRegistered: 0,
+    coursePrice: 250000,
     image: "img.png",
     video: "vid.mp4",
+    courseDetail: {
+      subject: "math"
+    },
     lecture: {
       id: "573cc370-aeab-4d9a-ba2c-42b28e4f70dc",
       fullName: "Mai Thị Phương",
@@ -381,8 +404,12 @@ const classListData = [
     limitNumberStudent: 30,
     leastNumberStudent: 1,
     numberStudentRegistered: 0,
+    coursePrice: 200000,
     image: "img.png",
     video: "vid.mp4",
+    courseDetail: {
+      subject: "math"
+    },
     lecture: {
       id: "573cc370-aeab-4d9a-ba2c-42b28e4f70dc",
       fullName: "Mai Thị Phương",
@@ -401,20 +428,94 @@ export default function DocumentScreen({ navigation }) {
 
   const [studentList, setStudentList] = useState([])
   const [classList, setClassList] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [loadingClassList, setLoadingClassList] = useState(true)
   const [type, setType] = useState("PROGRESSING")
+  const [animation] = useState(new Animated.Value(0));
   const user = useSelector(userSelector);
-
-  // console.log(user.students);
 
   useEffect(() => {
     loadStudentData()
   }, [user])
 
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     loadStudentData()
+  //   }, [])
+  // );
+
+  useEffect(() => {
+    switch (type) {
+      case "UPCOMING":
+        animateBorder(0); // Set the width to 0 when "UPCOMING"
+        break;
+      case "PROGRESSING":
+        animateBorder(1); // Set the width to 1 when "PROGRESSING"
+        break;
+      case "COMPLETED":
+        animateBorder(2); // Set the width to 2 when "COMPLETED"
+        break;
+      default:
+        break;
+    }
+  }, [type]);
+
+  const animateBorder = (toValue) => {
+    Animated.spring(animation, {
+      toValue,
+      duration: 500,
+      useNativeDriver: true,
+      overshootClamping: true
+    }).start();
+  };
+
+  const interpolatedValue = animation.interpolate({
+    inputRange: [0, 1, 2],
+    outputRange: [-WIDTH * 0.041, WIDTH * 0.27, WIDTH * 0.586],
+  });
+
+  const animatedStyle = {
+    transform: [{ translateX: interpolatedValue }],
+  };
+
+  // const getAccesstoken = async () => {
+  //   const accessToken = await AsyncStorage.getItem("accessToken");
+  //   console.log(accessToken); 
+  // }
+  // getAccesstoken()
+
   const loadStudentData = async () => {
-    setStudentList(user?.students)
+    setLoading(true)
+    const studentList = await getStudents()
+    if (studentList.length !== 0) {
+      studentList[studentList.length - 1].check = true
+      const scheduleData = await loadClassData(studentList[studentList.length - 1].id)
+      setClassList(scheduleData)
+    }
+    setStudentList(studentList.reverse())
+    setLoading(false)
   }
 
-  const selectStudent = (id) => {
+  const loadClassData = async (id) => {
+    setLoadingClassList(true)
+    let updateStudentList = [...studentList]
+    const index = studentList.findIndex(obj => obj.id === id);
+    if (!updateStudentList[index]?.schedule) {
+      const response = await getClassesByStudentId(id);
+      if (response.status === 200) {
+        setLoadingClassList(false)
+        return response.data
+      } else {
+        console.log("Tải thông tin lớp học thất bại");
+        setLoadingClassList(false)
+        return []
+      }
+    }
+    setLoadingClassList(false)
+    return undefined
+  }
+
+  const selectStudent = async (id) => {
     setStudentList((prevStudentList) => {
       const index = prevStudentList.findIndex(obj => obj.id === id);
       return prevStudentList.map((item, i) => ({
@@ -422,8 +523,9 @@ export default function DocumentScreen({ navigation }) {
         check: i === index ? !item.check : false,
       }));
     });
+    const scheduleData = await loadClassData(id)
+    setClassList(scheduleData)
   };
-
 
 
   const handleClassNavigate = (classDetail) => {
@@ -435,34 +537,38 @@ export default function DocumentScreen({ navigation }) {
   }
 
   const getClassList = () => {
-    const updateArray = studentList.filter(item => item.check === true)
-    return updateArray[0].classList
+    const updateArray = studentList?.filter(item => item.check === true)
+    if (!updateArray[0]) {
+      selectStudent(studentList[0].id)
+      return studentList[0].schedule
+    }
+    return updateArray[0] ? updateArray[0].schedule ? updateArray[0].schedule : [] : []
   }
 
   const filterClassList = (array) => {
-    const updateArray = array.filter(item => item.status === type)
-    return updateArray
+    const updateArray = array?.filter(item => item.status === type)
+    return updateArray ? updateArray : []
   }
 
   const renderClassCard = (type, item, index) => {
     switch (type) {
-      case "UPCOMMING":
+      case "UPCOMING":
         return (
-          <ClassCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
+          <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
         )
       case "PROGRESSING":
         return (
-          <ClassCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#FACE9B"} key={index} />
+          <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#FACE9B"} key={index} />
         )
 
       case "COMPLETED":
         return (
-          <ClassCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#BFE3C6"} key={index} />
+          <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#BFE3C6"} key={index} />
         )
 
       default:
         return (
-          <ClassCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} key={index} />
+          <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"white"} key={index} />
         )
     }
   }
@@ -474,6 +580,7 @@ export default function DocumentScreen({ navigation }) {
       </View>
       <ScrollView showsHorizontalScrollIndicator={false} horizontal style={styles.studentList}>
         {
+          !loading &&
           studentList?.map((item, index) => {
             return (
               <StudentView student={item} index={index} key={index} onClick={selectStudent} />
@@ -495,12 +602,25 @@ export default function DocumentScreen({ navigation }) {
         <Text style={styles.title}>Các khóa học đã đăng ký:</Text>
       </View>
       <View style={styles.classList}>
-        <View style={{ ...styles.flexColumnAround, position: "relative" }}>
-          {/* <View style={{ ...styles.buttonBorder }}>
-
-          </View> */}
+        <View style={{ ...styles.flexColumnAround, position: "relative", transform: [{ translateY: 4.5 }], zIndex: 100 }}>
+          <Animated.View style={[
+            styles.buttonBorderContainer,
+            animatedStyle,
+          ]} >
+            <View style={[styles.buttonBorder,
+            {
+              borderColor: type === "UPCOMING" ?
+                "#C8A9F1"
+                :
+                type === "PROGRESSING" ?
+                  "#FACE9B"
+                  :
+                  "#BFE3C6",
+              borderBottomWidth: 0
+            }]} />
+          </Animated.View>
           <TouchableOpacity
-            onPress={() => setType("UPCOMMING")}
+            onPress={() => setType("UPCOMING")}
             style={{ ...styles.typeButton, backgroundColor: "#C8A9F1" }}
           >
             <Text style={{ ...styles.typeText, color: "#250056" }}>
@@ -524,32 +644,40 @@ export default function DocumentScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
         </View>
-        <View
+        <ScrollView
           style={{
             ...styles.classItemList,
-            borderColor: type === "UPCOMMING" ?
+            borderColor: type === "UPCOMING" ?
               "#C8A9F1"
               :
               type === "PROGRESSING" ?
                 "#FACE9B"
                 :
-                "#BFE3C6"
+                "#BFE3C6",
+            borderTopLeftRadius: type !== "UPCOMING" ? 10 : 0,
+            borderTopRightRadius: type !== "COMPLETED" ? 10 : 0,
           }}
         >
           {/* getClassList() */}
           {
-            filterClassList(classListData).map((item, index) => {
-              return (
-                renderClassCard(type, item, index)
-              )
-            })
+            !loading && !loadingClassList ?
+              filterClassList(classList)[0] ?
+                filterClassList(classList)?.map((item, index) => {
+                  return (
+                    renderClassCard(type, item, index)
+                  )
+                })
+                :
+                <Text style={{fontWeight: 600, textAlign: "center" }}>Bé chưa đăng ký khóa học</Text>
+              :
+              <SpinnerLoading />
           }
-        </View>
+        </ScrollView>
       </View>
       <View style={styles.titleView}>
         <Text style={styles.title}>Các sự kiện đã tham gia:</Text>
       </View>
-    </ScrollView>
+    </ScrollView >
   )
 }
 
@@ -623,26 +751,42 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 7,
     borderRadius: 10,
+    zIndex: 101
+  },
+  buttonBorderContainer: {
+    position: "absolute",
+    width: WIDTH * 0.95,
+    height: "150%",
+
+    marginHorizontal: WIDTH * 0.025,
+    justifyContent: "center",
+    borderBottomColor: "white",
+    // backgroundColor: "blue",
+    zIndex: 100,
   },
   buttonBorder: {
-    position: "absolute",
-    width: "32%",
-    height: "150%",
-    borderWidth: 1,
-    borderBottomWidth: 0,
+    width: "33%",
+    height: "100%",
+    borderWidth: 1.5,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomColor: "white",
     backgroundColor: "white",
-    transform: [{ translateX: -10 }]
+    // transform: [{ translateX: -5 }],
   },
   typeText: {
     textAlign: "center",
   },
   classItemList: {
+    maxHeight: HEIGHT * 0.42,
     padding: 10,
     // paddingHorizontal: 10,
     borderWidth: 1,
+    borderRadius: 10,
     marginTop: 10,
-    justifyContent: "center",
-    alignItems: "center",
+    // justifyContent: "center",
+    // alignItems: "center",
+    zIndex: 99,
     // borderTopWidth: 0,
   },
 
