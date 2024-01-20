@@ -89,3 +89,28 @@ export function compareDates(dateString1, dateString2) {
     // Compare date components and return a boolean value
     return year1 === year2 && month1 === month2 && day1 === day2;
 }
+
+export function obfuscateEmail(email) {
+    // Split the email into username and domain
+    const [username, domain] = email.split('@');
+
+    // Obfuscate the username
+    const obfuscatedUsername = username.length > 2
+        ? username[0] + '*'.repeat(username.length - 2) + username.slice(-2)
+        : username + '*';
+
+    // Return the obfuscated email
+    return obfuscatedUsername + '@' + domain;
+}
+
+export function obfuscatePhoneNumber(phoneNumber) {
+    // Convert the phoneNumber to a string
+    const phoneNumberStr = phoneNumber.toString();
+
+    // Obfuscate the phoneNumber
+    const obfuscatedPhoneNumber = phoneNumberStr.length > 4
+        ? phoneNumberStr.slice(0, 3) + '*'.repeat(phoneNumberStr.length - 4) + phoneNumberStr.slice(-1)
+        : phoneNumberStr.slice(0, -4) + '*'.repeat(4);
+
+    return obfuscatedPhoneNumber;
+}

@@ -1,12 +1,18 @@
 import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
+import { useSelector } from 'react-redux';
+import { userSelector } from '../../store/selector';
 
 import Header from '../../components/header/Header';
 import SearchBar from '../../components/SearchBar';
+import CustomToast from "../../components/CustomToast";
+import SpinnerLoading from '../../components/SpinnerLoading';
+import { formatDate, formatPrice, formatTime } from '../../util/util';
 
 import WalletIcon from "../../assets/images/Wallet.png"
-import { formatPrice, getIndexById } from '../../util/util';
+import { getWalletTransactions } from '../../api/transaction';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -28,9 +34,29 @@ const transactionDataDefault = [
 
 export default function TransactionHistoryScreen({ navigation }) {
 
+    const [transactionList, setTransactionList] = useState([])
     const [searchValue, setSearchValue] = useState("")
     const [filterVisible, setFilterVisible] = useState(false)
     const [historyType, setHistoryType] = useState("all")
+    const [loading, setLoading] = useState(true)
+    const user = useSelector(userSelector);
+    const showToast = CustomToast();
+
+    useEffect(() => {
+        loadTransactionData()
+    }, [])
+
+    const loadTransactionData = async () => {
+        setLoading(true)
+        // user?.phone
+        const response = await getWalletTransactions("%2B84907625914")
+        if (response?.status === 200) {
+            setTransactionList(response?.data)
+        } else {
+            showToast("Lỗi", response?.response?.data, "error");
+        }
+        setLoading(false)
+    }
 
     const handleSearch = (value) => {
         setSearchValue(value)
@@ -52,10 +78,11 @@ export default function TransactionHistoryScreen({ navigation }) {
     ]
 
     const filterFunction = () => {
+        // console.log(transactionList);
         if (historyType === "all") {
-            return transactionDataDefault
+            return transactionList
         } else {
-            return transactionDataDefault.filter(item => item.type === historyType)
+            return transactionList.filter(item => item.type === historyType)
         }
     }
 
@@ -88,60 +115,66 @@ export default function TransactionHistoryScreen({ navigation }) {
                         placeHolder={"Tìm kiếm khóa học..."}
                     />
                 </View>
-                <View style={[styles.flexColumnAround, styles.filterOptionContainer]}>
-                    {
-                        historyTypeList.map((item, index) => (
-                            <TouchableOpacity
-                                style={{
-                                    ...styles.filterOption,
-                                    borderBottomWidth: historyType === item.type ? 2.5 : 0
-                                }}
-                                onPress={() => setHistoryType(item.type)}
-                                key={index}>
-                                <Text
-                                    style={{
-                                        ...styles.boldText,
-                                        color: historyType === item.type ? "#241468" : "black"
-                                    }}
-                                >
-                                    {item.name}
-                                </Text>
-                            </TouchableOpacity>
-                        ))
-                    }
-                </View>
-                <View>
-                    {
-                        filterFunction().map((item, key) => (
-                            <TouchableOpacity
-                                onPress={() => hanldeViewDetail(item)}
-                                style={[styles.flexColumnBetween, styles.tracsactionTab, { borderTopWidth: key !== 0 ? 1 : 0 }]}
-                                key={key}>
-                                <View style={styles.flexColumn}>
-                                    <View
-                                        style={styles.tracsactionImage}
-                                    >
-                                        <Image
-                                            source={WalletIcon}
-                                        />
-                                    </View>
-
-                                    <View>
-                                        <Text style={styles.boldText}>{getTransactionType(item.type)}</Text>
-                                        <Text style={{ marginVertical: 5 }}>Từ : {item.from} </Text>
-                                        <Text>09 : 15ph - 03/01/2024</Text>
-                                    </View>
-                                </View>
-                                <View>
-                                    <Text>{item.type === "rechange" ? "+" : "-"} {formatPrice(item.amount)}đ</Text>
-                                </View>
-                                <View style={styles.tracsactionIcon}>
-                                    <Icon name={"chevron-right"} color={"#000000"} size={30} />
-                                </View>
-                            </TouchableOpacity>
-                        ))
-                    }
-                </View>
+                {
+                    loading ?
+                        <SpinnerLoading />
+                        :
+                        <>
+                            <View style={[styles.flexColumnAround, styles.filterOptionContainer]}>
+                                {
+                                    historyTypeList.map((item, index) => (
+                                        <TouchableOpacity
+                                            style={{
+                                                ...styles.filterOption,
+                                                borderBottomWidth: historyType === item.type ? 2.5 : 0
+                                            }}
+                                            onPress={() => setHistoryType(item.type)}
+                                            key={index}>
+                                            <Text
+                                                style={{
+                                                    ...styles.boldText,
+                                                    color: historyType === item.type ? "#241468" : "black"
+                                                }}
+                                            >
+                                                {item.name}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))
+                                }
+                            </View>
+                            <View>
+                                {
+                                    filterFunction().map((item, key) => (
+                                        <TouchableOpacity
+                                            onPress={() => hanldeViewDetail(item)}
+                                            style={[styles.flexColumnBetween, styles.tracsactionTab, { borderTopWidth: key !== 0 ? 1 : 0 }]}
+                                            key={key}>
+                                            <View style={styles.flexColumn}>
+                                                {/* <View
+                                                    style={styles.tracsactionImage}
+                                                >
+                                                    <Image
+                                                        source={WalletIcon}
+                                                    />
+                                                </View> */}
+                                                <View>
+                                                    <Text style={{...styles.boldText, fontSize: 18}}>{getTransactionType(item.type)}</Text>
+                                                    <Text style={{ marginVertical: 5 }}>Từ : {item.from} </Text>
+                                                    <Text>{formatTime(item?.createdTime) + " - " + formatDate(item?.createdTime)}</Text>
+                                                </View>
+                                            </View>
+                                            <View>
+                                                <Text>{item.type === "rechange" ? "+" : "-"} {formatPrice(item.money)}đ</Text>
+                                            </View>
+                                            <View style={styles.tracsactionIcon}>
+                                                <Icon name={"chevron-right"} color={"#000000"} size={30} />
+                                            </View>
+                                        </TouchableOpacity>
+                                    ))
+                                }
+                            </View>
+                        </>
+                }
             </View >
         </>
     )
@@ -188,10 +221,22 @@ const styles = StyleSheet.create({
     tracsactionTab: {
         position: "relative",
         width: WIDTH * 0.9,
+        padding: 10,
+        borderColor: "#D9D9D9",
+        borderRadius: 10,
         marginHorizontal: WIDTH * 0.05,
         marginVertical: 5,
-        paddingVertical: 10,
-        borderColor: "#D9D9D9",
+        backgroundColor: "rgba(222, 229, 239, 1)",
+
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5,
     },
     tracsactionImage: {
         padding: 15,

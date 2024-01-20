@@ -41,15 +41,25 @@ export default function LoginScreen() {
       setLoading(true)
       const response = await checkExist({ phone: phoneNumber })
       if (response.status === 200) {
-        const phoneProvider = new PhoneAuthProvider(auth);
-        const verificationId = await phoneProvider.verifyPhoneNumber(
-          phoneNumber,
-          recaptchaVerifier.current
-        );
-        setVerificationId(verificationId)
+        // const phoneProvider = new PhoneAuthProvider(auth);
+        // const verificationId = await phoneProvider.verifyPhoneNumber(
+        //   phoneNumber,
+        //   recaptchaVerifier.current
+        // );
+        // setVerificationId(verificationId)
+
+        const data = await authUser({ phone: phoneNumber })
+        const accessToken = data.accessToken;
+        await AsyncStorage.setItem('accessToken', accessToken)
+          .then(dispatch(fetchUser()))
+          .then(setLoading(false))
+          .then(Alert.alert('Đăng nhập thành công'))
+
         setLoading(false)
         setErrorMessage('')
-        setShowOtp(true)
+        // setShowOtp(true)
+
+
       }
     } catch (error) {
       console.error(error);
