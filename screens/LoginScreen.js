@@ -43,6 +43,7 @@ export default function LoginScreen() {
       if (data) {
         if (data.role === "STAFF" || data.role === "ADMIN") {
           setErrorMessage('Tài khoản của bạn không được hỗ trợ trên nền tảng này')
+          setLoading(false)
         } else {
           const phoneProvider = new PhoneAuthProvider(auth);
           const verificationId = await phoneProvider.verifyPhoneNumber(
@@ -60,6 +61,8 @@ export default function LoginScreen() {
       setLoading(false)
       if (error.response?.status === 404) {
         setErrorMessage("Tài khoản của bạn không tồn tại, hãy đăng kí để tiếp tục");
+      } else {
+        setErrorMessage("Số điện thoại không hợp lệ");
       }
     }
   };
@@ -73,6 +76,7 @@ export default function LoginScreen() {
       const data = await authUser({ phone: phoneNumber })
       const accessToken = data.accessToken;
       await AsyncStorage.setItem('accessToken', accessToken)
+        .then(dispatch(fetchUser()))
         .then(setLoading(false))
         .then(Alert.alert('Đăng nhập thành công'))
     } catch (error) {
