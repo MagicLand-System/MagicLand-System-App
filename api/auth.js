@@ -22,5 +22,5 @@ export const checkExist = async ({ phone }) => {
             phone: phone
         }
     });
-    return response;
+    return response.data;
 };

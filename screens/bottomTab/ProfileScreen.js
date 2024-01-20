@@ -1,22 +1,24 @@
 import { View, Text, TouchableOpacity, Dimensions, StyleSheet } from 'react-native'
 import React from 'react'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { removeUser } from '../../store/features/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import Header from '../../components/header/Header';
 import { userSelector } from '../../store/selector';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase.config';
+import { removeUser } from '../../store/features/authSlice';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function ProfileScreen({ navigation }) {
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const user = useSelector(userSelector);
 
   const handleLogout = async () => {
+    await signOut(auth)
     await AsyncStorage.removeItem('accessToken')
       .then(dispatch(removeUser()))
   }
