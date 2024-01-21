@@ -44,7 +44,7 @@ export default function ChoosePaymentMethod({ visible, paymentMethodList, setPay
         >
             <View style={styles.container}>
                 <View style={styles.safeArea} />
-                <Header navigation={navigation} background={"#241468"} goback={onCancle} title={"Phương thức thanh toán"} />
+                <Header navigation={navigation} goback={onCancle} title={"Phương thức thanh toán"} />
                 <ScrollView showsVerticalScrollIndicator={false} style={styles.paymentMethodList}>
                     {
                         paymentMethodList.map((item, index) => {

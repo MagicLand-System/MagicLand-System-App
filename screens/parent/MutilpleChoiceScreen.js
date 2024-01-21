@@ -36,7 +36,7 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} goback={navigation.pop} title={"Chủ đề 3 - Bài 10 + 11"} />
+            <Header navigation={navigation} goback={navigation.pop} title={"Chủ đề 3 - Bài 10 + 11"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <View>
                     {/* <Text style={styles.questionMark}>{homeworkData.homeworkList[homeworkListIndex].mark} Điểm</Text> */}

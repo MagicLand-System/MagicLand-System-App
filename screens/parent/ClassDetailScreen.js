@@ -183,7 +183,7 @@ export default function ClassDetailScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} goback={navigation.pop} title={"Thông Tin Chi Tiết Của Lớp Học"} />
+            <Header navigation={navigation} goback={navigation.pop} title={"Thông Tin Chi Tiết Của Lớp Học"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Khóa học:</Text>

@@ -105,7 +105,7 @@ export default function TransactionHistoryScreen({ navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} title={"Lịch sử giao dịch"} goback={navigation.pop} />
+            <Header navigation={navigation} title={"Lịch sử giao dịch"} goback={navigation.pop} />
             <View style={styles.container}>
                 <View style={styles.searchBar}>
                     <SearchBar

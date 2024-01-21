@@ -96,7 +96,7 @@ export function obfuscateEmail(email) {
 
     // Obfuscate the username
     const obfuscatedUsername = username.length > 2
-        ? username[0] + '*'.repeat(username.length - 2) + username.slice(-2)
+        ? username[0] + username[1] + username[2] + '*'.repeat(username.length - 5) + username.slice(-3)
         : username + '*';
 
     // Return the obfuscated email
@@ -109,7 +109,7 @@ export function obfuscatePhoneNumber(phoneNumber) {
 
     // Obfuscate the phoneNumber
     const obfuscatedPhoneNumber = phoneNumberStr.length > 4
-        ? phoneNumberStr.slice(0, 3) + '*'.repeat(phoneNumberStr.length - 4) + phoneNumberStr.slice(-1)
+        ? phoneNumberStr.slice(0, 3) + '*'.repeat(phoneNumberStr.length - 6) + phoneNumberStr.slice(-3)
         : phoneNumberStr.slice(0, -4) + '*'.repeat(4);
 
     return obfuscatedPhoneNumber;

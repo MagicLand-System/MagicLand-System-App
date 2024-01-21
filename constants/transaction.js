@@ -1,3 +1,6 @@
 const transactionType = {
-    SystemWallet : "Thanh Toán"
+    SystemWallet: "Thanh Toán",
+    Refund: "Hoàn trả",
+    Payment: "Thanh Toán",
+    TopUp: ""
 }

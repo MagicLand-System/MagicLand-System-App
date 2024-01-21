@@ -67,7 +67,7 @@ export default function AttendanceScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} title={classDetail?.title} goback={() => navigation.pop()} />
+            <Header navigation={navigation} title={classDetail?.title} goback={() => navigation.pop()} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Bài kiểm tra</Text>

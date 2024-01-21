@@ -154,7 +154,6 @@ export default function RegisterClassScreen({ route, navigation }) {
         <>
             <FavoriteHeader
                 navigation={navigation}
-                background={"#241468"}
                 title={"Đăng Ký Khóa Học"}
                 type={visible?.submit}
                 setType={() => setVisible({ ...visible, submit: !visible.submit })}

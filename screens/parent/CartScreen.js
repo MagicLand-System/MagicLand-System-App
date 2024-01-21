@@ -354,7 +354,7 @@ export default function CartScreen({ navigation }) {
 
     return (
         <>
-            <FavoriteHeader navigation={navigation} background={"#241468"} title={`Khóa Học Bạn Quan Tâm (${classCardDetail.length})`} type={bottomModalVisible.total} setType={hanldeChangeStatus} />
+            <FavoriteHeader navigation={navigation} title={`Khóa Học Bạn Quan Tâm (${classCardDetail.length})`} type={bottomModalVisible.total} setType={hanldeChangeStatus} />
             <TouchableOpacity
                 onPress={() => setFilterVisible(true)}
                 style={{ ...styles.filterButton, bottom: bottomModalVisible.total ? bottomModalVisible.confirm ? 195 : 135 : 80 }}

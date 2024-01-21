@@ -176,7 +176,7 @@ export default function ClassContentScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} goback={navigation.pop} title={"Chủ đề 3 - Bài 10 + 11"} />
+            <Header navigation={navigation} goback={navigation.pop} title={"Chủ đề 3 - Bài 10 + 11"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <Text style={{ ...styles.boldText, marginHorizontal: WIDTH * 0.05, color: "#241468", textAlign: "center", marginVertical: 30, fontSize: 20 }}>Chủ đề 3: Làm quen các số từ 0 đến 10, tập đếm đến 20 </Text>
                 {

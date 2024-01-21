@@ -39,6 +39,7 @@ import RechargeScreen from '../screens/parent/RechargeScreen';
 import TransactionWalletScreen from '../screens/parent/TransactionWalletScreen';
 import TransactionHistoryScreen from '../screens/parent/TransactionHistoryScreen';
 import TransactionDetailSceen from '../screens/parent/TransactionDetailSceen';
+import AccountSettingScreen from '../screens/parent/AccountSettingScreen';
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
 import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
@@ -112,6 +113,7 @@ const StackNavigator = () => {
                     <Stack.Screen name="TransactionWalletScreen" component={TransactionWalletScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="TransactionHistoryScreen" component={TransactionHistoryScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="TransactionDetailSceen" component={TransactionDetailSceen} options={{ headerShown: false }} />
+                    <Stack.Screen name="AccountSettingScreen" component={AccountSettingScreen} options={{ headerShown: false }} />
                 </>
             ) : user?.role.name === 'LECTURER' ? (
                 <>

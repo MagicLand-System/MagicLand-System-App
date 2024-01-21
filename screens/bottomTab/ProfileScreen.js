@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import Header from '../../components/header/Header';
 import { userSelector } from '../../store/selector';
+import { obfuscatePhoneNumber } from '../../util/util';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -32,59 +33,58 @@ export default function ProfileScreen({ navigation }) {
   const optionList = [
     {
       name: "Danh sách bé",
-      icon: "",
+      icon: <Icon name={"account-group"} color={"black"} size={30} />,
       onClick: () => console.log("comming soon"),
     },
     {
       name: "Khóa học đăng ký",
-      icon: "",
+      icon: <Icon name={"file-document"} color={"black"} size={30} />,
       onClick: () => console.log("comming soon"),
     },
     {
       name: "Khóa học quan tâm",
-      icon: "",
+      icon: <Icon name={"file-star"} color={"black"} size={30} />,
       onClick: () => console.log("comming soon"),
     },
     {
       name: "Ví điện tử",
-      icon: "",
+      icon: <Icon name={"wallet"} color={"black"} size={30} />,
       onClick: () => console.log("comming soon"),
     },
     {
       name: "Lịch sử giao dịch",
-      icon: "",
+      icon: <Icon name={"timer-sand-full"} color={"black"} size={30} />,
       onClick: () => navigation.push("TransactionHistoryScreen"),
     },
     {
-      name: "Quản lý tài khoản",
-      icon: "",
-      onClick: () => console.log("comming soon"),
-    },
-    {
       name: "Đăng xuất",
-      icon: "",
+      icon: <Icon name={"logout"} color={"black"} size={30} />,
       onClick: handleLogout,
     },
   ]
 
   return (
     <>
-      <Header navigation={navigation} background={"#241468"} title={"Tài khoản"} goback={navigation.goBack} />
+      <Header navigation={navigation} title={"Tài khoản"} goback={navigation.goBack} />
       <View style={styles.container}>
-        <View style={styles.userDetail}>
-          <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
-            <Text style={styles.userName}>
-              {
-                user.role.name === "LECTURER" ?
-                  "GV: "
-                  :
-                  "PH: "
-              }
-              {user.fullName}</Text>
+        <TouchableOpacity style={styles.userDetail} onPress={() => navigation.navigate("AccountSettingScreen")}>
+          <View style={{ ...styles.flexColumnBetween, alignItems: "center", paddingRight: 8 }}>
+            <View>
+              <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
+                <Text style={styles.userName}>
+                  {
+                    user.role.name === "LECTURER" ?
+                      "GV: "
+                      :
+                      "PH: "
+                  }
+                  {user.fullName}</Text>
+              </View>
+              <Text >Sđt: {obfuscatePhoneNumber(convertPhoneNumber(user.phone))}</Text>
+            </View>
+            <Icon name={"chevron-right"} color={"black"} size={30} />
           </View>
-          <Text >Sđt: {convertPhoneNumber(user.phone)}</Text>
-          {/* <Text >Sđt: {user.phone}</Text> */}
-        </View>
+        </TouchableOpacity>
         <View style={styles.userOption}>
           <Text style={styles.boldText}>Tài khoản:</Text>
           {
@@ -95,7 +95,8 @@ export default function ProfileScreen({ navigation }) {
                 key={index}
               >
                 <View style={styles.flexColumn}>
-                  <Text style={styles.boldText}>
+                  {item.icon}
+                  <Text style={{ ...styles.boldText, marginHorizontal: 10 }}>
                     {item.name}
                   </Text>
                 </View>

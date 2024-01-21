@@ -104,7 +104,7 @@ export default function AttendanceScreen({ navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} title={"Lớp TTD - Điểm danh"} goback={navigation.pop} />
+            <Header navigation={navigation} title={"Lớp TTD - Điểm danh"} goback={navigation.pop} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Danh sách lớp:</Text>

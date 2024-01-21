@@ -8,3 +8,13 @@ export const getWalletTransactions = async (phone) => {
         return error;
     }
 };
+
+export const getWalletBalance = async () => {
+    try {
+        const response = await api.get("/api/v1/walletTransactions/walletBalance");
+        return response;
+    } catch (error) {
+        console.log("getWalletBalance in api/transaction.js error : ", error);
+        return error;
+    }
+};
