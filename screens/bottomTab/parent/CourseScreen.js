@@ -14,6 +14,7 @@ import SpinnerLoading from '../../../components/SpinnerLoading';
 import { userSelector, courseSelector } from '../../../store/selector';
 import { useSelector } from 'react-redux';
 import { getMinMaxPrice } from '../../../util/util';
+import { constants } from '../../../constants/constants';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -23,8 +24,6 @@ const priceDefault = {
     min: 0,
     max: 2000
 }
-
-
 
 export default function CourseScreen({ navigation }) {
 
@@ -398,7 +397,7 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        backgroundColor: "#241468",
+        backgroundColor: constants.background,
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
     },

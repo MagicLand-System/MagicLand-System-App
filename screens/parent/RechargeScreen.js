@@ -59,7 +59,7 @@ export default function RechargeScreen({ route, navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.safeArea} />
-            <Header navigation={navigation} background={"#241468"} goback={navigation.pop} title={"Nạp Tiền"} />
+            <Header navigation={navigation} goback={navigation.pop} title={"Nạp Tiền"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.paymentMethodList}>
                 <View style={styles.priceInput}>
                     <Text style={{ ...styles.boldText, color: "#241468" }}>Số tiền nạp:</Text>

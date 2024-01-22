@@ -2,6 +2,7 @@ import { View, Text, Image, TouchableOpacity, ScrollView, Dimensions, StyleSheet
 import React from 'react'
 import Icon from "react-native-vector-icons/MaterialIcons";
 
+import { constants } from '../../constants/constants';
 import defaultAvt from "../../assets/header/defaultAvt.png"
 
 const WIDTH = Dimensions.get('window').width;
@@ -10,7 +11,7 @@ const HEIGHT = Dimensions.get('window').height;
 export default function FavoriteHeader({ goback, navigation, background, title, type, setType, defaultType, editType }) {
 
     return (
-        <View style={[styles.container, { backgroundColor: background }]}>
+        <View style={[styles.container, { backgroundColor: background ? background : constants.background }]}>
             <TouchableOpacity
                 style={styles.backButton}
                 onPress={() => {

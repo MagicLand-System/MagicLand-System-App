@@ -54,7 +54,7 @@ export default function RegisterClassScreen({ route, navigation }) {
 
     const loadStudentData = async () => {
         const studentList = await getStudents()
-        setStudentList(studentList)
+        setStudentList(studentList?.filter(item => item?.isActive))
     }
 
     const handleNavigate = () => {
@@ -154,7 +154,6 @@ export default function RegisterClassScreen({ route, navigation }) {
         <>
             <FavoriteHeader
                 navigation={navigation}
-                background={"#241468"}
                 title={"Đăng Ký Khóa Học"}
                 type={visible?.submit}
                 setType={() => setVisible({ ...visible, submit: !visible.submit })}

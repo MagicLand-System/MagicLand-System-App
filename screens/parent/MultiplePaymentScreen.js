@@ -184,7 +184,7 @@ export default function MultiplePaymentScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} title={"Thông tin thanh toán"} />
+            <Header navigation={navigation} title={"Thông tin thanh toán"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <View style={styles.checkPayment}>
                     <Icon name={"alert-circle"} color={"#241468"} size={28} />

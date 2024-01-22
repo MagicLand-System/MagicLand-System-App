@@ -38,7 +38,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
 
     const loadStudentData = async () => {
         const studentList = await getStudents()
-        setStudentList(studentList.reverse())
+        setStudentList(studentList?.filter(item => item?.isActive)?.reverse())
     }
 
     const hanldeConfirm = () => {
@@ -75,7 +75,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} goback={navigation.popToTop} title={"Đăng Ký Khóa Học"} />
+            <Header navigation={navigation} goback={navigation.popToTop} title={"Đăng Ký Khóa Học"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Chọn Cháu:</Text>

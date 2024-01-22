@@ -22,7 +22,7 @@ export default function TransactionDetailScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} goback={navigation.popToTop} title={"Chi tiết giao dịch"} />
+            <Header navigation={navigation} goback={navigation.popToTop} title={"Chi tiết giao dịch"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 {/* <Text style={{ ...styles.boldText, textAlign: "center", fontSize: 30 }}>Thanh Toán</Text> */}
                 <View style={{ ...styles.flexColumnCenter, marginVertical: 20 }}>

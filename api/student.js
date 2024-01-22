@@ -8,6 +8,35 @@ export const getStudents = async () => {
     return response.data;
 };
 
+export const updateStudent = async ({ student, fullName, dateOfBirth, gender, avatarImage, email }) => {
+
+    const data = {
+        fullName: fullName ? fullName : student?.fullName,
+        dateOfBirth: dateOfBirth ? dateOfBirth : student?.dateOfBirth,
+        gender: gender ? gender : student?.gender,
+        avatarImage: avatarImage ? avatarImage : student?.avatarImage,
+        email: email ? email : student?.email,
+    }
+
+    try {
+        const response = await api.put(`/api/v1/students/update`, data);
+        return response;
+    } catch (error) {
+        console.log("updateStudent in api/student.js error : " + error + ", data : " + error?.response?.data);
+        return error;
+    }
+};
+
+export const deleteStudent = async (id) => {
+    try {
+        const response = await api.delete(`/api/v1/students/${id}/delete`);
+        return response;
+    } catch (error) {
+        console.log("deleteStudent in api/student.js error : " + error + ", data : " + error?.response?.data);
+        return error;
+    }
+};
+
 export const getClasses = async ({ id, status }) => {
     const response = await api.get("/api/v1/students/getclass", {
         params: {

@@ -492,7 +492,7 @@ export default function DocumentScreen({ navigation }) {
       const scheduleData = await loadClassData(studentList[studentList.length - 1].id)
       setClassList(scheduleData)
     }
-    setStudentList(studentList.reverse())
+    setStudentList(studentList?.filter(item => item?.isActive)?.reverse())
     setLoading(false)
   }
 
@@ -506,7 +506,7 @@ export default function DocumentScreen({ navigation }) {
         setLoadingClassList(false)
         return response.data
       } else {
-        console.log("Tải thông tin lớp học thất bại");
+        console.log("Tải thông tin lớp học thất bại : ", response.response.data);
         setLoadingClassList(false)
         return []
       }
@@ -520,7 +520,7 @@ export default function DocumentScreen({ navigation }) {
       const index = prevStudentList.findIndex(obj => obj.id === id);
       return prevStudentList.map((item, i) => ({
         ...item,
-        check: i === index ? !item.check : false,
+        check: i === index ? true : false,
       }));
     });
     const scheduleData = await loadClassData(id)
@@ -668,7 +668,7 @@ export default function DocumentScreen({ navigation }) {
                   )
                 })
                 :
-                <Text style={{fontWeight: 600, textAlign: "center" }}>Bé chưa đăng ký khóa học</Text>
+                <Text style={{ fontWeight: 600, textAlign: "center" }}>Bé chưa đăng ký khóa học</Text>
               :
               <SpinnerLoading />
           }

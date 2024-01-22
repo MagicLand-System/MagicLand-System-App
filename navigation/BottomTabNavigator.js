@@ -34,6 +34,7 @@ import AttendanceScreen from '../screens/teacher/AttendanceScreen';
 import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { constants } from '../constants/constants';
 
 const Tab = createBottomTabNavigator();
 
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         borderTopRightRadius: 20,
         borderTopLeftRadius: 20,
-        backgroundColor: '#241468'
+        backgroundColor: constants.background
     }
 });
 

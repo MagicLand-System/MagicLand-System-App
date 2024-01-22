@@ -28,7 +28,7 @@ export default function ChooseClassModal({ visible, classList, setClassList, set
         >
             <View style={styles.container}>
                 <View style={styles.safeArea} />
-                <Header navigation={navigation} background={"#241468"} goback={onCancle} title={"Vui Lòng Chọn Lịch Học"} />
+                <Header navigation={navigation} goback={onCancle} title={"Vui Lòng Chọn Lịch Học"} />
                 <ScrollView showsVerticalScrollIndicator={false} style={styles.cardList}>
                     <View style={styles.srollHeader}></View>
                     {

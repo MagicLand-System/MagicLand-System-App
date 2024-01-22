@@ -37,7 +37,7 @@ export default function TransactionWalletScreen({ route, navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.safeArea} />
-            <Header navigation={navigation} background={"#241468"} goback={navigation.pop} title={"Nạp Tiền"} />
+            <Header navigation={navigation} goback={navigation.pop} title={"Nạp Tiền"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.paymentMethodList}>
                 <View style={styles.priceInput}>
                     <View style={styles.flexDirectionBetween}>

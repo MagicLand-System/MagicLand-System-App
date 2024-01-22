@@ -19,7 +19,7 @@ export default function TransactionDetailSceen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} title={"Chi tiết giao dịch"} goback={navigation.pop} />
+            <Header navigation={navigation} title={"Chi tiết giao dịch"} goback={navigation.pop} />
             <View style={styles.container}>
                 <View style={styles.top}>
                     <Text style={styles.boldText}>{paymentDetail.type === "rechange" ? "+" : "-"} {formatPrice(paymentDetail.amount)}đ</Text>

@@ -37,7 +37,7 @@ export default function ChooseVourcherModal({ visible, vourcherList, onCancle, o
         >
             <View style={styles.container}>
                 <View style={styles.safeArea} />
-                <Header navigation={navigation} background={"#241468"} goback={onCancle} title={"Chọn mã giảm giá"} />
+                <Header navigation={navigation} goback={onCancle} title={"Chọn mã giảm giá"} />
                 <ScrollView showsVerticalScrollIndicator={false} style={styles.vourcherList}>
                     {
                         vourcherList.map((item, index) => {

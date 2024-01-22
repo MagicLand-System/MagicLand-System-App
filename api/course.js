@@ -29,3 +29,13 @@ export const getCourseCategories = async () => {
         return error;
     }
 };
+
+export const getSyllabus = async (CouseId) => {
+    try {
+        const response = await api.get(`/api/v1/Syllabus/getByCourse?CouseId=${CouseId}`);
+        return response;
+    } catch (error) {
+        console.log("getSyllabus in api/course.js error : ", error);
+        return error;
+    }
+};

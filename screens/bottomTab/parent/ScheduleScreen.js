@@ -38,7 +38,7 @@ export default function ScheduleScreen({ navigation }) {
       const scheduleData = await loadScheduleData(studentList[studentList.length - 1].id)
       setScheduleList(scheduleData)
     }
-    setStudentList(studentList.reverse())
+    setStudentList(studentList?.filter(item => item?.isActive)?.reverse())
     setLoading(false)
   }
 
@@ -149,7 +149,7 @@ export default function ScheduleScreen({ navigation }) {
 
   return (
     <>
-      <Header navigation={navigation} background={"#241468"} title={"Lịch Học"} goback={navigation.goBack} />
+      <Header navigation={navigation} title={"Lịch Học"} goback={navigation.goBack} />
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         <View style={styles.titleView}>
           <Text style={styles.title}>Danh sách các cháu:</Text>

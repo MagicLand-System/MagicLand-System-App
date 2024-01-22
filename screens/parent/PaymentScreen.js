@@ -183,7 +183,7 @@ export default function PaymentScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} title={"Thông tin thanh toán"} goback={navigation.popToTop} />
+            <Header navigation={navigation} title={"Thông tin thanh toán"} goback={navigation.popToTop} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <View style={styles.checkPayment}>
                     <Icon name={"alert-circle"} color={"#241468"} size={28} />

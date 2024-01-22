@@ -155,7 +155,7 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} background={"#241468"} goback={navigation.pop} title={classDetail.title} />
+            <Header navigation={navigation} goback={navigation.pop} title={classDetail.title} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
 
 
