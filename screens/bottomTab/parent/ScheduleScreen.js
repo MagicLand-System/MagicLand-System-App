@@ -38,7 +38,7 @@ export default function ScheduleScreen({ navigation }) {
       const scheduleData = await loadScheduleData(studentList[studentList.length - 1].id)
       setScheduleList(scheduleData)
     }
-    setStudentList(studentList.reverse())
+    setStudentList(studentList?.filter(item => item?.isActive)?.reverse())
     setLoading(false)
   }
 

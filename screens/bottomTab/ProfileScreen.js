@@ -34,7 +34,7 @@ export default function ProfileScreen({ navigation }) {
     {
       name: "Danh sách bé",
       icon: <Icon name={"account-group"} color={"black"} size={30} />,
-      onClick: () => console.log("comming soon"),
+      onClick: () => navigation.push("StudentListScreen"),
     },
     {
       name: "Khóa học đăng ký",

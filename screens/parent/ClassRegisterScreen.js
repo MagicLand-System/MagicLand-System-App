@@ -38,7 +38,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
 
     const loadStudentData = async () => {
         const studentList = await getStudents()
-        setStudentList(studentList.reverse())
+        setStudentList(studentList?.filter(item => item?.isActive)?.reverse())
     }
 
     const hanldeConfirm = () => {

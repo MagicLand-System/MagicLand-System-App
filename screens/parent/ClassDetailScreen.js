@@ -7,6 +7,7 @@ import NotificationModal from '../../components/modal/NotificationModal';
 import CircularProgressBar from '../../components/CircularProgressBar';
 
 import { formatDate } from '../../util/util';
+import { getSyllabus } from '../../api/course';
 
 // import ThuyTienAvt from "../assets/images/ThuyTienAvt.png"
 // import ProcessBar from '../components/ProcessBar';
@@ -170,11 +171,20 @@ export default function ClassDetailScreen({ route, navigation }) {
     const [programEducation, setProgramEducation] = useState(programEducationDefault)
     const [currentPage, setCurrentPage] = useState(0);
     let count = 0
-    
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
+        // loadSyllabusData()
     }, [route?.params?.classDetail])
+
+    // const loadSyllabusData = async () => {
+    //     const response = await getSyllabus(classDetail?.courseId)
+    //     if (response.status === 200) {
+    //         setProgramEducation(response?.data)
+    //     } else {
+    //         console.log("getSyllabus fail : ", response.response);
+    //     }
+    // }
 
     const handleScroll = (event) => {
         const page = Math.round(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
@@ -298,11 +308,11 @@ export default function ClassDetailScreen({ route, navigation }) {
                                 >
                                     <TouchableOpacity
                                         style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
-                                        onPress={() => {
-                                            const updatedProgramEducation = [...programEducation];
-                                            updatedProgramEducation[index].expand = !updatedProgramEducation[index].expand;
-                                            setProgramEducation(updatedProgramEducation);
-                                        }}
+                                    onPress={() => {
+                                        const updatedProgramEducation = [...programEducation];
+                                        updatedProgramEducation[index].expand = !updatedProgramEducation[index].expand;
+                                        setProgramEducation(updatedProgramEducation);
+                                    }}
                                     >
                                         <Text style={styles.mainText}>
                                             <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.name}</Text>

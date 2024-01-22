@@ -54,7 +54,7 @@ export default function RegisterClassScreen({ route, navigation }) {
 
     const loadStudentData = async () => {
         const studentList = await getStudents()
-        setStudentList(studentList)
+        setStudentList(studentList?.filter(item => item?.isActive))
     }
 
     const handleNavigate = () => {
