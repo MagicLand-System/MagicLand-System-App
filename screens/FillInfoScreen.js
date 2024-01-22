@@ -12,6 +12,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import LoadingModal from "../components/LoadingModal";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { format } from 'date-fns';
+import { firebaseConfig } from "../firebase.config";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -30,6 +32,8 @@ export default function FillInfoScreen() {
   const [isShowDatePicker, setShowDatePicker] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState(new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate()))
   const [gender, setGender] = useState('Khác')
+  const [address, setAddress] = useState(null)
+  const [addressError, setAddressError] = useState(null)
 
   if (!fontsLoaded) {
     return null
@@ -37,28 +41,33 @@ export default function FillInfoScreen() {
   const registerValidationSchema = Yup.object().shape({
     fullName: Yup.string().required("Vui lòng nhập họ và tên").matches(/(\w.+\s).+/, 'Vui lòng nhập ít nhất 2 từ'),
     email: Yup.string().email("Vui lòng nhập đúng email").required("Vui lòng nhập email"),
-    city: Yup.string().required("Vui lòng nhập địa chỉ"),
-    district: Yup.string().required("Vui lòng nhập địa chỉ"),
-    street: Yup.string().required("Vui lòng nhập địa chỉ"),
   })
   return (
-    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+    <KeyboardAwareScrollView keyboardShouldPersistTaps="always" contentContainerStyle={styles.container}>
       {loading && (<LoadingModal />)}
       <Formik
         initialValues={{
           fullName: '',
           email: '',
-          city: '',
-          district: '',
-          street: '',
         }}
         onSubmit={async values => {
-          setLoading(true)
-          const data = await register({ ...values, phone, gender, dateOfBirth: dateOfBirth.toISOString() })
-          if (data) {
-            setLoading(true)
-            Alert.alert("Đăng kí thành công")
-            navigation.navigate('Login')
+          try {
+            if (address && address !== '') {
+              setLoading(true)
+              setAddressError(null)
+              const data = await register({ ...values, phone, gender, dateOfBirth: dateOfBirth.toISOString(), address })
+              if (data) {
+                setLoading(false)
+                Alert.alert("Đăng kí thành công")
+                navigation.navigate('Login')
+              }
+            } else {
+              setAddressError("Vui lòng nhập địa chỉ")
+            }
+          } catch (error) {
+            setLoading(false)
+            Alert.alert("Đăng kí thất bại")
+            console.log(error)
           }
         }}
         validationSchema={registerValidationSchema}>
@@ -159,50 +168,27 @@ export default function FillInfoScreen() {
               </View>
             </View>
             <View style={styles.input}>
-              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Tỉnh / Thành phố</Text>
-              <TextInput
-                placeholder="Tỉnh / Thành phố"
-                name='city'
-                value={values.city}
-                onBlur={handleBlur('city')}
-                onChangeText={handleChange('city')}
-                style={styles.textInput}
+              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Địa chỉ</Text>
+              <GooglePlacesAutocomplete
+                styles={{
+                  textInput: styles.textInput,
+                  poweredContainer: {height: 0},
+                  powered: {width: 0, height: 0}
+                }}
+                placeholder='Địa chỉ'
+                onPress={(data, details = null) => {
+                  setAddress(data.description)
+                }}
+                query={{
+                  key: firebaseConfig.apiKey,
+                  language: 'vi',
+                  components: 'country:vn',
+                }}
+                onFail={error => console.log(error)}
               />
               <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-                {errors.city && touched.city &&
-                  <Text style={{ fontSize: 12, color: 'red' }}>{errors.city}</Text>
-                }
-              </View>
-            </View>
-            <View style={styles.input}>
-              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Quận / Huyện</Text>
-              <TextInput
-                placeholder="Quận / Huyện"
-                name='district'
-                value={values.district}
-                onBlur={handleBlur('district')}
-                onChangeText={handleChange('district')}
-                style={styles.textInput}
-              />
-              <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-                {errors.district && touched.district &&
-                  <Text style={{ fontSize: 12, color: 'red' }}>{errors.district}</Text>
-                }
-              </View>
-            </View>
-            <View style={styles.input}>
-              <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Số nhà - Tên đường</Text>
-              <TextInput
-                placeholder="Số nhà - Tên đường"
-                name='street'
-                value={values.street}
-                onBlur={handleBlur('street')}
-                onChangeText={handleChange('street')}
-                style={styles.textInput}
-              />
-              <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-                {errors.street && touched.street &&
-                  <Text style={{ fontSize: 12, color: 'red' }}>{errors.street}</Text>
+                {addressError &&
+                  <Text style={{ fontSize: 12, color: 'red' }}>{addressError}</Text>
                 }
               </View>
             </View>

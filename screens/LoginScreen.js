@@ -39,33 +39,30 @@ export default function LoginScreen() {
     try {
       setErrorMessage('')
       setLoading(true)
-      const response = await checkExist({ phone: phoneNumber })
-      if (response.status === 200) {
-        // const phoneProvider = new PhoneAuthProvider(auth);
-        // const verificationId = await phoneProvider.verifyPhoneNumber(
-        //   phoneNumber,
-        //   recaptchaVerifier.current
-        // );
-        // setVerificationId(verificationId)
-
-        const data = await authUser({ phone: phoneNumber })
-        const accessToken = data.accessToken;
-        await AsyncStorage.setItem('accessToken', accessToken)
-          .then(dispatch(fetchUser()))
-          .then(setLoading(false))
-          .then(Alert.alert('Đăng nhập thành công'))
-
-        setLoading(false)
-        setErrorMessage('')
-        // setShowOtp(true)
-
-
+      const data = await checkExist({ phone: phoneNumber })
+      if (data) {
+        if (data.role === "STAFF" || data.role === "ADMIN") {
+          setErrorMessage('Tài khoản của bạn không được hỗ trợ trên nền tảng này')
+          setLoading(false)
+        } else {
+          const phoneProvider = new PhoneAuthProvider(auth);
+          const verificationId = await phoneProvider.verifyPhoneNumber(
+            phoneNumber,
+            recaptchaVerifier.current
+          );
+          setVerificationId(verificationId)
+          setLoading(false)
+          setErrorMessage('')
+          setShowOtp(true)
+        }
       }
     } catch (error) {
       console.error(error);
       setLoading(false)
       if (error.response?.status === 404) {
         setErrorMessage("Tài khoản của bạn không tồn tại, hãy đăng kí để tiếp tục");
+      } else {
+        setErrorMessage("Số điện thoại không hợp lệ");
       }
     }
   };
@@ -98,6 +95,7 @@ export default function LoginScreen() {
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
+        attemptInvisibleVerification={true}
       />
       {!showOtp ? (
         <>

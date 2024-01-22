@@ -80,6 +80,7 @@ export default function RegisterScreen() {
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
+        attemptInvisibleVerification={true}
       />
       {!showOtp ? (
         <>
