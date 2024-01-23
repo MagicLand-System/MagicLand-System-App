@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PhoneAuthProvider, signInWithCredential, } from "firebase/auth";
 import { auth, firebaseConfig } from "../firebase.config"
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
@@ -30,6 +30,15 @@ export default function RegisterScreen() {
     Inter_400Regular,
     Baloo2_700Bold,
   })
+  const [isInit, setisInit] = useState(false)
+  useEffect(() => {
+    setTimeout(function () {
+      setisInit(true)
+    }, 1000)
+    return () => {
+      setisInit(false)
+    }
+  }, [])
 
   const register = async () => {
     try {
@@ -77,11 +86,13 @@ export default function RegisterScreen() {
   return (
     <KeyboardAwareScrollView contentContainerStyle={styles.container}>
       {loading && (<LoadingModal />)}
-      <FirebaseRecaptchaVerifierModal
+      {isInit && <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
         attemptInvisibleVerification={true}
-      />
+        androidHardwareAccelerationDisabled={true}
+        androidLayerType="software"
+      />}
       {!showOtp ? (
         <>
           <Text style={styles.title}>Đăng kí</Text>
