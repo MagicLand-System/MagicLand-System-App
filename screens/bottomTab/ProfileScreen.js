@@ -36,31 +36,37 @@ export default function ProfileScreen({ navigation }) {
     {
       name: "Danh sách bé",
       icon: <Icon name={"account-group"} color={"black"} size={30} />,
+      role: ["PARENT"],
       onClick: () => navigation.push("StudentListScreen"),
     },
     {
       name: "Khóa học đăng ký",
       icon: <Icon name={"file-document"} color={"black"} size={30} />,
+      role: ["PARENT"],
       onClick: () => console.log("comming soon"),
     },
     {
       name: "Khóa học quan tâm",
       icon: <Icon name={"file-star"} color={"black"} size={30} />,
+      role: ["PARENT"],
       onClick: () => console.log("comming soon"),
     },
     {
       name: "Ví điện tử",
       icon: <Icon name={"wallet"} color={"black"} size={30} />,
+      role: ["PARENT"],
       onClick: () => console.log("comming soon"),
     },
     {
       name: "Lịch sử giao dịch",
       icon: <Icon name={"timer-sand-full"} color={"black"} size={30} />,
+      role: ["PARENT"],
       onClick: () => navigation.push("TransactionHistoryScreen"),
     },
     {
       name: "Đăng xuất",
       icon: <Icon name={"logout"} color={"black"} size={30} />,
+      role: ["PARENT", "LECTURER"],
       onClick: handleLogout,
     },
   ]
@@ -90,21 +96,25 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.userOption}>
           <Text style={styles.boldText}>Tài khoản:</Text>
           {
-            optionList.map((item, index) => (
-              <TouchableOpacity
-                style={{ ...styles.flexColumnBetween, paddingVertical: 10, borderBottomWidth: 1, borderColor: "#D9D9D9" }}
-                onPress={item.onClick}
-                key={index}
-              >
-                <View style={styles.flexColumn}>
-                  {item.icon}
-                  <Text style={{ ...styles.boldText, marginHorizontal: 10 }}>
-                    {item.name}
-                  </Text>
-                </View>
-                <Icon name={"chevron-right"} color={"black"} size={30} />
-              </TouchableOpacity>
-            ))
+            optionList.map((item, index) => {
+              return (
+                (item.role.includes(user.role.name)) &&
+                < TouchableOpacity
+                  style={{ ...styles.flexColumnBetween, paddingVertical: 10, borderBottomWidth: 1, borderColor: "#D9D9D9" }}
+                  onPress={item.onClick}
+                  key={index}
+                >
+                  <View style={styles.flexColumn}>
+                    {item.icon}
+                    <Text style={{ ...styles.boldText, marginHorizontal: 10 }}>
+                      {item.name}
+                    </Text>
+                  </View>
+                  <Icon name={"chevron-right"} color={"black"} size={30} />
+                </TouchableOpacity>
+              )
+
+            })
           }
 
 

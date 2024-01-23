@@ -122,3 +122,9 @@ export const convertPhoneNumber = (phoneNumber) => {
     }
     return convertedNumber
 }
+
+export const mutilplePop = (navigate, time) => {
+    for (let index = 0; index < time; index++) {
+        navigate.pop()
+    }
+}

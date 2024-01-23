@@ -3,7 +3,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useState, useEffect } from 'react'
 
 import Header from '../../components/header/Header';
-import { formatPrice } from '../../util/util';
+import { formatPrice, mutilplePop } from '../../util/util';
 import InputOtpModal from '../../components/modal/InputOtpModal';
 import { checkBillStatus, postWalletTopup } from '../../api/transaction';
 import CustomToast from "../../components/CustomToast";
@@ -32,7 +32,7 @@ export default function TransactionWalletScreen({ route, navigation }) {
                 navigation.push("TransactionDetailScreen", {
                     total: price,
                     lable: "+",
-                    handleClose: "TransactionHistoryScreen",
+                    handleClose: 3,
                     transactionDetail: response.data
                 });
                 clearInterval(intervalId); // Stop the interval once the condition is met
