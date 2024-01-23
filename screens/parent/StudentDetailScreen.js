@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import FavoriteHeader from '../../components/header/FavoriteHeader';
 import { formatDate } from '../../util/util';
+import { getStudentByid } from '../../api/student';
+import { useFocusEffect } from '@react-navigation/native';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -12,16 +14,24 @@ export default function StudentDetailScreen({ route, navigation }) {
     const [loading, setLoading] = useState(true)
     const [screenStatus, setScreenStatus] = useState({ edit: false })
 
-    useEffect(() => {
-        setStudentDetail(route?.params?.studentDetail)
-    }, [route?.params?.studentDetail])
+    useFocusEffect(
+        React.useCallback(() => {
+            loadStudentData()
+        }, [])
+    );
+
+    const loadStudentData = async () => {
+        // console.log("get in");
+        const response = await getStudentByid(route?.params?.studentDetail?.id)
+        if (response?.status === 200) {
+            setStudentDetail(response?.data)
+        } else {
+            console.log(response?.response?.data);
+        }
+    }
 
     const hanldeChangeStatus = () => {
-        if (screenStatus.edit) {
-            setScreenStatus({ edit: false })
-        } else {
-            setScreenStatus({ edit: true })
-        }
+        navigation.push("EditStudentScreen", { studentDetail: studentDetail })
     }
 
     return (

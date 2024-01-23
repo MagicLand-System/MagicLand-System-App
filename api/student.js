@@ -8,6 +8,16 @@ export const getStudents = async () => {
     return response.data;
 };
 
+export const getStudentByid = async (id) => {
+    try {
+        const response = await api.get(`/api/v1/students/${id}`);
+        return response;
+    } catch (error) {
+        console.log("getStudentByid in api/student.js error : " + error + ", data : " + error?.response?.data);
+        return error;
+    }
+};
+
 export const updateStudent = async ({ student, fullName, dateOfBirth, gender, avatarImage, email }) => {
 
     const data = {

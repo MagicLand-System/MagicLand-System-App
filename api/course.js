@@ -20,6 +20,16 @@ export const getCourseByCourseId = async () => {
     }
 };
 
+export const getCourseByStudentId = async (id) => {
+    try {
+        const response = await api.get(`/api/v1/students/${id}/getcourses`);
+        return response;
+    } catch (error) {
+        console.log("getCourseByCourseId in api/course.js error : ", error);
+        return error;
+    }
+};
+
 export const getCourseCategories = async () => {
     try {
         const response = await api.get(`/api/v1/courses/categories`);
@@ -39,3 +49,5 @@ export const getSyllabus = async (CouseId) => {
         return error;
     }
 };
+
+

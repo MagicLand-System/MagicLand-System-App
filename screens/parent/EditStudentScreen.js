@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, StyleSheet, Alert, ActivityIndicator, TouchableOpacity, Dimensions } from "react-native";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFonts, Inter_400Regular } from '@expo-google-fonts/inter';
 import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
 import { Formik } from 'formik';
@@ -21,13 +21,14 @@ import LoadingModal from "../../components/LoadingModal"
 import { useNavigation } from "@react-navigation/native";
 import { callGoogleVisionAsync } from "../../api/google";
 import SpinnerLoading from "../../components/SpinnerLoading";
+import Header from "../../components/header/Header";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function EditStudentScreen({ route }) {
     const navigation = useNavigation()
-    const [image, setImage] = useState(null)
+    const [image, setImage] = useState(route?.params?.studentDetail?.avatarImage)
     const [loading, setLoading] = useState(false)
     const [fontsLoaded] = useFonts({
         Inter_400Regular,
@@ -36,8 +37,12 @@ export default function EditStudentScreen({ route }) {
     const dispatch = useDispatch()
     const [isShowDatePicker, setShowDatePicker] = useState(false);
     const [dateOfBirth, setDateOfBirth] = useState(new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate()))
-    const [gender, setGender] = useState('Khác')
+    const [gender, setGender] = useState(route?.params?.studentDetail?.gender)
     const [imageError, setImageError] = useState(null)
+
+    useEffect(() => {
+        loadImage(route?.params?.studentDetail?.avatarImage)
+    }, [route?.params?.studentDetail])
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -70,9 +75,21 @@ export default function EditStudentScreen({ route }) {
             }
         }
     }
+
+    const loadImage = async (ref) => {
+        try {
+            const metadata = await getDownloadURL(ref);
+            return metadata;
+        } catch (error) {
+            console.log('Error getting metadata:', error);
+            throw error;
+        }
+    };
+
     const registerValidationSchema = Yup.object().shape({
         fullName: Yup.string().required("Vui lòng nhập họ và tên").matches(/(\w.+\s).+/, 'Vui lòng nhập ít nhất 2 từ')
     })
+
     if (!fontsLoaded) {
         return null
     }
@@ -81,7 +98,7 @@ export default function EditStudentScreen({ route }) {
             {loading && (<SpinnerLoading />)}
             <Formik
                 initialValues={{
-                    fullName: '',
+                    fullName: route?.params?.studentDetail?.fullName,
                 }}
                 onSubmit={async values => {
                     setLoading(true)
@@ -104,11 +121,12 @@ export default function EditStudentScreen({ route }) {
                             const imageRef = ref(storage, `childrens/${filename}`)
                             uploadBytes(imageRef, blob).then(() => {
                                 getDownloadURL(imageRef).then((url) => {
-                                    addStudent({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url })
-                                        .then(dispatch(fetchUser()))
-                                        .then(setLoading(false))
-                                        .then(Alert.alert("Đăng kí thành công"))
-                                        .then(navigation.goBack())
+                                    console.log("asdsa");
+                                    // addStudent({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url })
+                                    //     .then(dispatch(fetchUser()))
+                                    //     .then(setLoading(false))
+                                    //     .then(Alert.alert("Đăng kí thành công"))
+                                    //     .then(navigation.goBack())
                                 })
                             })
                         } else {
