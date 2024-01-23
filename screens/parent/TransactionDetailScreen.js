@@ -18,12 +18,12 @@ export default function TransactionDetailScreen({ route, navigation }) {
     let total = route?.params?.total ? route?.params?.total : 0
     let lable = route?.params?.lable ? route?.params?.lable : "-"
     let transactionDetail = route?.params?.transactionDetail
-    let handleClose = route?.params?.handleClose ? () => navigation.navigate(`${route?.params?.handleClose}`) : () => navigation.navigate("Document")
+    let handleClose = route?.params?.handleClose ? () => navigation.pop(route?.params?.handleClose) : () => navigation.navigate("Document")
     const user = useSelector(userSelector);
 
     return (
         <>
-            <Header navigation={navigation} goback={navigation.popToTop} title={"Chi tiết giao dịch"} />
+            <Header navigation={navigation} goback={() => navigation.pop(route?.params?.handleClose)} title={"Chi tiết giao dịch"} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 {/* <Text style={{ ...styles.boldText, textAlign: "center", fontSize: 30 }}>Thanh Toán</Text> */}
                 <View style={{ ...styles.flexColumnCenter, marginVertical: 20 }}>
