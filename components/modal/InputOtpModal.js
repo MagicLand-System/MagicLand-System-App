@@ -4,6 +4,9 @@ import OTPTextInput from "react-native-otp-textinput"
 import Icon from "react-native-vector-icons/MaterialIcons";
 import CountdownTimer from '../CountdownTimer';
 import SpinnerLoading from '../SpinnerLoading';
+import { userSelector } from '../../store/selector';
+import { useSelector } from 'react-redux';
+import { convertPhoneNumber } from '../../util/util';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -11,7 +14,8 @@ const HEIGHT = Dimensions.get('window').height;
 export default function InputOtpModal({ visible, phone, onCancle, onSubmit, loading }) {
 
     const [otp, setOtp] = useState()
-    // const [timer, setTimer] = useState(600)
+    const [timer, setTimer] = useState(600)
+    const user = useSelector(userSelector);
 
     const handleSubmit = async (otp) => {
         // console.log("17", loading);
@@ -34,11 +38,11 @@ export default function InputOtpModal({ visible, phone, onCancle, onSubmit, load
                     </TouchableOpacity>
                 </View>
                 <View style={styles.modalHeader}>
-                    <Text style={styles.phoneNumber}>MÃ XÁC NHẬN GỬI QUA SỐ ĐIỆN THOẠI {phone}</Text>
+                    <Text style={styles.phoneNumber}>MÃ XÁC NHẬN GỬI QUA SỐ ĐIỆN THOẠI {convertPhoneNumber(user?.phone)}</Text>
                 </View>
-                {/* <View style={styles.modalHeader}>
+                <View style={styles.modalHeader}>
                     <Text style={styles.phoneNumber}>MÃ XÁC NHẬN HẾT HIỆU LỰC SAU <CountdownTimer color={"#3A0CA3"} fontsize={15} timer={timer} setTimer={setTimer} /></Text>
-                </View> */}
+                </View>
                 <View style={styles.modalContent}>
                     <OTPTextInput
                         inputCount={6}

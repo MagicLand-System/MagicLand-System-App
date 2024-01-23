@@ -48,7 +48,7 @@ export default function StudentListScreen({ navigation }) {
         }
     };
 
-    const hanldeChangeStatus = () => {
+    const hanldeChangeStatus = async () => {
         if (screenStatus.edit) {
             if (countingCheckStudent() !== 0) {
                 let flag = false
@@ -65,7 +65,7 @@ export default function StudentListScreen({ navigation }) {
                 if (flag) {
                     console.log("delete complete");
                 }
-                loadStudentData()
+                await loadStudentData()
             }
             setScreenStatus({ edit: false })
         } else {

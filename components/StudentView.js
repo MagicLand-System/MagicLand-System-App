@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
         top: 0,
         padding: 2,
         borderRadius: 50,
+        zIndex: 999
     },
     studentAvt: {
         width: "100%",

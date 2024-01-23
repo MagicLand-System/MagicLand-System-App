@@ -275,7 +275,7 @@ export default function CourseScreen({ navigation }) {
                                     >
                                         <Image source={item.img} style={styles.courseImage} resizeMode="cover" />
                                     </View>
-                                    <Text style={styles.courseName}>{item.vietName}</Text>
+                                    <Text style={styles.courseName}>{item.name}</Text>
                                 </TouchableOpacity>
                             )
                         })

@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 
 import Header from '../../components/header/Header';
 import { formatPrice } from '../../util/util';
+import { postWalletTopup } from '../../api/transaction';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -46,9 +47,13 @@ export default function RechargeScreen({ route, navigation }) {
         return '';
     };
 
-    const handleNavigate = () => {
+    const handleNavigate = async () => {
+
         if (price && price !== 0) {
-            navigation.push("TransactionWalletScreen", { paymentMethod: paymentMethod, price: price })
+            const response = await postWalletTopup(price)
+            if (response.status === 200) {
+                navigation.push("TransactionWalletScreen", { paymentMethod: paymentMethod, paymentDetail: response?.data, price: price })
+            }
         }
     }
 

@@ -36,7 +36,7 @@ export default function CourseCard({ cardDetail, onClick, choose }) {
             <TouchableOpacity style={styles.card} onPress={() => { onClick(cardDetail) }}>
                 <Image source={{ uri: cardDetail.image }} style={styles.image} resizeMode='cover' />
                 <View style={{ ...styles.flexBetweenColumn, marginBottom: 10 }}>
-                    <Text style={{ textTransform: "capitalize", fontSize: 11 }}>{getCourseType(cardDetail.courseDetail.subject)}</Text>
+                    <Text style={{ textTransform: "capitalize", fontSize: 11 }}>{cardDetail.courseDetail.subject}</Text>
                     <View style={styles.priceView}>
                         <Text style={styles.priceText}>{formatPrice(cardDetail.price)} đ</Text>
                     </View>

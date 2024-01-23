@@ -114,3 +114,11 @@ export function obfuscatePhoneNumber(phoneNumber) {
 
     return obfuscatedPhoneNumber;
 }
+
+export const convertPhoneNumber = (phoneNumber) => {
+    let convertedNumber = phoneNumber.replace(/[^\d]/g, '');
+    if (phoneNumber.startsWith('+')) {
+        convertedNumber = '0' + convertedNumber.slice(2);
+    }
+    return convertedNumber
+}

@@ -21,6 +21,7 @@ export const getStudentByid = async (id) => {
 export const updateStudent = async ({ student, fullName, dateOfBirth, gender, avatarImage, email }) => {
 
     const data = {
+        studentId: student.studentId,
         fullName: fullName ? fullName : student?.fullName,
         dateOfBirth: dateOfBirth ? dateOfBirth : student?.dateOfBirth,
         gender: gender ? gender : student?.gender,

@@ -22,7 +22,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
 
     const getCourseType = (courseName) => {
         const courseFound = course.find(course => course?.name?.toUpperCase() === courseName?.toUpperCase());
-        return courseFound ? courseFound?.vietName : "khoá học";
+        return courseFound ? courseFound?.vietName : "Khoá học";
     }
 
     const getSchedule = (item) => {
@@ -83,12 +83,12 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                         style={styles.cardImageValue}
                     />
                     <View style={styles.classType}>
-                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{getCourseType(cardDetail?.classSubject)}</Text>
+                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{cardDetail?.classSubject}</Text>
                     </View>
                 </View>
                 <View style={styles.cardDetail}>
                     <View style={{ ...styles.flexColumnBetween, marginTop: 5, paddingRight: 10 }}>
-                        <Text style={styles.cardName}>{
+                        <Text style={{...styles.cardName, maxWidth: "70%"}} numberOfLines={1}>{
                             cardDetail?.name ?
                                 cardDetail?.name
                                 :
@@ -96,7 +96,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                                     cardDetail?.className
                                     :
                                     "Toán cấp 1"}</Text>
-                        <Text style={{ ...styles.cardName, color: "#241468" }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
+                        <Text style={{ ...styles.cardName, color: "#241468", fontSize : 11 }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
                     </View>
                     <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>
                     <View style={styles.flexColumn}>

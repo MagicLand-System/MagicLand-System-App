@@ -17,12 +17,22 @@ export default function TransactionDetailSceen({ route, navigation }) {
 
     const paymentDetail = route.params.paymentDetail
 
+    const getTransactionFrom = (method) => {
+        switch (method) {
+            case "SystemWallet":
+                return "Ví cá nhân"
+
+            default:
+                return method
+        }
+    }
+
     return (
         <>
             <Header navigation={navigation} title={"Chi tiết giao dịch"} goback={navigation.pop} />
             <View style={styles.container}>
                 <View style={styles.top}>
-                    <Text style={styles.boldText}>{paymentDetail.type === "rechange" ? "+" : "-"} {formatPrice(paymentDetail.amount)}đ</Text>
+                    <Text style={styles.boldText}>{paymentDetail.type === "TopUp" ? "+" : "-"} {formatPrice(paymentDetail.money)}đ</Text>
                     <View style={styles.flexColumn}>
                         <Icon name={"check-circle"} color={"#2C8535"} size={30} />
                         <Text style={{ ...styles.boldText, color: "#2C8535", marginVertical: 20 }}> Thành công</Text>
@@ -33,13 +43,13 @@ export default function TransactionDetailSceen({ route, navigation }) {
                     <Text style={styles.boldText}>Thông tin đơn hàng</Text>
                     <View style={styles.flexColumn}>
                         <Text style={{ color: "#888888", marginVertical: 15, transform: [{ translateX: -3 }] }}> Nội dung:
-                            <Text style={{ ...styles.boldText, marginVertical: 15, color: "black" }}> {paymentDetail.content}</Text>
+                            <Text style={{ ...styles.boldText, marginVertical: 15, color: "black" }}> {paymentDetail.description}</Text>
                         </Text>
 
                     </View>
                     <View style={styles.flexColumn}>
-                        <Text style={{ color: "#888888", marginVertical: 15, transform: [{ translateX: -3 }]  }}> Hình thức thanh toán:
-                            <Text style={{ ...styles.boldText, marginVertical: 15, color: "black" }}> {paymentDetail.from}</Text>
+                        <Text style={{ color: "#888888", marginVertical: 15, transform: [{ translateX: -3 }] }}> Hình thức thanh toán:
+                            <Text style={{ ...styles.boldText, marginVertical: 15, color: "black" }}> {getTransactionFrom(paymentDetail.method)}</Text>
                         </Text>
 
                     </View>

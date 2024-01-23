@@ -32,10 +32,9 @@ export default function ScheduleScreen({ navigation }) {
 
   const loadStudentData = async () => {
     setLoading(true)
-    const studentList = await getStudents()
+    const studentList = (await getStudents()).map((item, i) => ({ ...item, check: i === 0 ? true : false }));
     if (studentList.length !== 0) {
-      studentList[studentList.length - 1].check = true
-      const scheduleData = await loadScheduleData(studentList[studentList.length - 1].id)
+      const scheduleData = await loadScheduleData(studentList[0].id)
       setScheduleList(scheduleData)
     }
     setStudentList(studentList?.filter(item => item?.isActive)?.reverse())

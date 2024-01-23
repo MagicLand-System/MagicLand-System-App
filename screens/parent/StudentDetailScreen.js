@@ -5,12 +5,15 @@ import FavoriteHeader from '../../components/header/FavoriteHeader';
 import { formatDate } from '../../util/util';
 import { getStudentByid } from '../../api/student';
 import { useFocusEffect } from '@react-navigation/native';
+import { getCourseByStudentId } from '../../api/course';
+import CourseCard from '../../components/CourseCard';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function StudentDetailScreen({ route, navigation }) {
     const [studentDetail, setStudentDetail] = useState({})
+    const [courseList, setCourseList] = useState([])
     const [loading, setLoading] = useState(true)
     const [screenStatus, setScreenStatus] = useState({ edit: false })
 
@@ -19,6 +22,10 @@ export default function StudentDetailScreen({ route, navigation }) {
             loadStudentData()
         }, [])
     );
+
+    useEffect(() => {
+        loadCourseData()
+    }, [])
 
     const loadStudentData = async () => {
         // console.log("get in");
@@ -30,8 +37,21 @@ export default function StudentDetailScreen({ route, navigation }) {
         }
     }
 
+    const loadCourseData = async () => {
+        const response = await getCourseByStudentId(route?.params?.studentDetail?.id)
+        if (response?.status === 200) {
+            setCourseList(response?.data)
+        } else {
+            console.log(response?.response?.data);
+        }
+    }
+
     const hanldeChangeStatus = () => {
         navigation.push("EditStudentScreen", { studentDetail: studentDetail })
+    }
+
+    const hanldeCoursePress = (course) => {
+        navigation.navigate("CourseDetailScreen", { course: course })
     }
 
     return (
@@ -69,6 +89,15 @@ export default function StudentDetailScreen({ route, navigation }) {
             <View style={styles.titleView}>
                 <Text style={styles.title}>Khóa học đã đăng ký</Text>
             </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {
+                    courseList.map((item, index) => {
+                        return (
+                            <CourseCard cardDetail={item} onClick={hanldeCoursePress} navigation={navigation} key={index} />
+                        )
+                    })
+                }
+            </ScrollView>
         </ScrollView >
     )
 }
