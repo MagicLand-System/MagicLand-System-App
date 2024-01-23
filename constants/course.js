@@ -12,19 +12,19 @@ const categoriesList = async () => {
 
 const getCourseDefaultImage = (type) => {
     switch (type) {
-        case "LANGUAGE":
+        case "Ngôn Ngữ":
             return require("../assets/home/courseImage/courseTranslation.png")
-        case "MATH":
+        case "Toán":
             return require("../assets/home/courseImage/courseMath.png")
-        case "DANCE":
+        case "Nhảy":
             return require("../assets/home/courseImage/courseBallet.png")
-        case "SINGING":
+        case "Hát":
             return require("../assets/home/courseImage/courseMusic.png")
-        case "PHYSIC":
+        case "Vật Lý":
             return require("../assets/home/courseImage/coursePhysics.png")
-        case "PROGRAM":
+        case "Lập Trình":
             return require("../assets/home/courseImage/courseCoding.png")
-        case "DRAWING ":
+        case "Hội Họa ":
             return require("../assets/home/courseImage/courseArt.png")
         default:
             return require("../assets/home/courseImage/couseDefault.png")

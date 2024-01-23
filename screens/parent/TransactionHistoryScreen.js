@@ -69,11 +69,11 @@ export default function TransactionHistoryScreen({ navigation }) {
         },
         {
             name: "Nạp tiền",
-            type: "rechange",
+            type: "TopUp",
         },
         {
             name: "Thanh toán",
-            type: "payment",
+            type: "Payment",
         },
     ]
 
@@ -88,14 +88,24 @@ export default function TransactionHistoryScreen({ navigation }) {
 
     const getTransactionType = (type) => {
         switch (type) {
-            case "rechange":
+            case "TopUp":
                 return "Nạp tiền"
 
-            case "payment":
+            case "Payment":
                 return "Thanh toán"
 
             default:
                 return "Giao dịch"
+        }
+    }
+
+    const getTransactionFrom = (method) => {
+        switch (method) {
+            case "SystemWallet":
+                return "Ví"
+
+            default:
+                return method
         }
     }
 
@@ -105,7 +115,7 @@ export default function TransactionHistoryScreen({ navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} title={"Lịch sử giao dịch"} goback={navigation.pop} />
+            <Header navigation={navigation} title={"Lịch sử giao dịch"} goback={() => navigation.navigate("Profile")} />
             <View style={styles.container}>
                 <View style={styles.searchBar}>
                     <SearchBar
@@ -158,13 +168,13 @@ export default function TransactionHistoryScreen({ navigation }) {
                                                     />
                                                 </View> */}
                                                 <View>
-                                                    <Text style={{...styles.boldText, fontSize: 18}}>{getTransactionType(item.type)}</Text>
-                                                    <Text style={{ marginVertical: 5 }}>Từ : {item.from} </Text>
+                                                    <Text style={{ ...styles.boldText, fontSize: 18 }}>{getTransactionType(item.type)}</Text>
+                                                    <Text style={{ marginVertical: 5 }}>Từ : {getTransactionFrom(item.method)} </Text>
                                                     <Text>{formatTime(item?.createdTime) + " - " + formatDate(item?.createdTime)}</Text>
                                                 </View>
                                             </View>
                                             <View>
-                                                <Text>{item.type === "rechange" ? "+" : "-"} {formatPrice(item.money)}đ</Text>
+                                                <Text>{item.type === "TopUp" ? "+" : "-"} {formatPrice(item.money)}đ</Text>
                                             </View>
                                             <View style={styles.tracsactionIcon}>
                                                 <Icon name={"chevron-right"} color={"#000000"} size={30} />

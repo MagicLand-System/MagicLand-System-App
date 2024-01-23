@@ -17,7 +17,8 @@ export default function TransactionDetailScreen({ route, navigation }) {
 
     let total = route?.params?.total ? route?.params?.total : 0
     let lable = route?.params?.lable ? route?.params?.lable : "-"
-    let handleClose = route?.params?.handleClose ? () => navigation.popToTop() : () => navigation.navigate("Document")
+    let transactionDetail = route?.params?.transactionDetail
+    let handleClose = route?.params?.handleClose ? () => navigation.navigate(`${route?.params?.handleClose}`) : () => navigation.navigate("Document")
     const user = useSelector(userSelector);
 
     return (
@@ -50,6 +51,10 @@ export default function TransactionDetailScreen({ route, navigation }) {
                 <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
                     <Text style={{ ...styles.boldText }}>Tên Người Thanh Toán:</Text>
                     <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{user.fullName}</Text>
+                </View>
+                <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
+                    <Text style={{ ...styles.boldText }}>Nội dung: </Text>
+                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{transactionDetail?.message}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={{ ...styles.button, backgroundColor: "#4582E6" }} onPress={handleClose}>

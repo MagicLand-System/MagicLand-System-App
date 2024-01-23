@@ -1,10 +1,12 @@
-import { View, Text, Image, TouchableOpacity, Dimensions, ScrollView, StyleSheet, Modal, TextInput } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Dimensions, ScrollView, StyleSheet, Modal, TextInput, Clipboard } from 'react-native'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import Header from '../../components/header/Header';
 import { formatPrice } from '../../util/util';
 import InputOtpModal from '../../components/modal/InputOtpModal';
+import { checkBillStatus, postWalletTopup } from '../../api/transaction';
+import CustomToast from "../../components/CustomToast";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -12,13 +14,34 @@ const HEIGHT = Dimensions.get('window').height;
 export default function TransactionWalletScreen({ route, navigation }) {
 
     const paymentMethod = route.params.paymentMethod
+    const paymentDetail = route.params.paymentDetail
     const price = route.params.price
     const [modalVisible, setModalVisible] = useState({ otp: false, notifi: false })
+    const showToast = CustomToast();
 
     const hanldeCloseOtpModal = () => {
         setModalVisible({ ...modalVisible, otp: false })
 
     }
+
+    useEffect(() => {
+        const intervalId = setInterval(async () => {
+            const response = await checkBillStatus(paymentDetail?.transactionId);
+            if (response.status === 200 && response.data?.status) {
+                hanldeCloseOtpModal();
+                navigation.push("TransactionDetailScreen", {
+                    total: price,
+                    lable: "+",
+                    handleClose: "TransactionHistoryScreen",
+                    transactionDetail: response.data
+                });
+                clearInterval(intervalId); // Stop the interval once the condition is met
+            }
+        }, 3000);
+
+        // Clean up the interval when the component is unmounted
+        return () => clearInterval(intervalId);
+    }, []);
 
     const handleSubmitOtp = async (otp) => {
         // classDetail?.map(async (classItem) => {
@@ -30,9 +53,20 @@ export default function TransactionWalletScreen({ route, navigation }) {
         //         console.log(`Đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name} thất bại`);
         //     }
         // })
-        hanldeCloseOtpModal()
-        navigation.push("TransactionDetailScreen", { total: price, lable: "+", handleClose: true })
+
+        if (response?.status === 200) {
+            hanldeCloseOtpModal()
+            navigation.push("TransactionDetailScreen", { total: price, lable: "+", handleClose: "TransactionHistoryScreen" })
+        } else {
+            console.log("Tạo giao dịch thất bại");
+        }
+
     }
+
+    const handleCopyLink = () => {
+        Clipboard.setString(paymentDetail.paymentGatewayUrl);
+        showToast("Thông Báo", `Đã sao chép đường dẫn`, "success");
+    };
 
     return (
         <View style={styles.container}>
@@ -52,13 +86,22 @@ export default function TransactionWalletScreen({ route, navigation }) {
                         <Text style={{ ...styles.boldText, color: "#888888" }}>Số tiền:</Text>
                         <Text style={{ ...styles.boldText, color: "#241468" }}>{formatPrice(price)}đ</Text>
                     </View>
+                    <View style={styles.flexDirectionBetween}>
+                        <Text style={{ ...styles.boldText, color: "#888888" }}>Đường dẫn thanh toán:</Text>
+                        <TouchableOpacity style={styles.flexColumn} onPress={handleCopyLink}>
+                            <Text style={{ ...styles.boldText, color: "#241468", textDecorationLine: "underline", marginHorizontal: 10 }}>
+                                VN Pay
+                            </Text>
+                            <Icon name={"content-copy"} color={"black"} size={20} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
-            <View style={styles.bottomButonContainer}>
+            {/* <View style={styles.bottomButonContainer}>
                 <TouchableOpacity style={styles.bottomButton} onPress={() => setModalVisible({ ...modalVisible, otp: true })}>
                     <Text style={{ ...styles.boldText, color: "white" }}>Xác Nhận</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
             <InputOtpModal
                 visible={modalVisible.otp}
                 phone={"12345689"}

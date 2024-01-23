@@ -1,6 +1,10 @@
 import { View, Text, Image, TouchableOpacity, Dimensions, ScrollView, StyleSheet, Modal } from 'react-native'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+import { getWalletBalance } from "../../api/transaction"
+
+import { formatPrice } from "../../util/util"
 
 import Header from '../header/Header';
 
@@ -10,6 +14,18 @@ const HEIGHT = Dimensions.get('window').height;
 export default function ChoosePaymentMethod({ visible, paymentMethodList, setPaymentMethodList, onCancle, navigation }) {
 
     const [dropdownButton, setDropdownButton] = useState(Array(paymentMethodList.length).fill(false));
+    const [wallet, setWallet] = useState({})
+
+    useEffect(() => {
+        loadWalletData()
+    }, [])
+
+    const loadWalletData = async () => {
+        const response = await getWalletBalance()
+        if (response?.status === 200) {
+            setWallet(response?.data)
+        }
+    }
 
     const handleChoosePaymentMethod = (id, index) => {
         setPaymentMethodList((prevStudentList) => {
@@ -34,6 +50,7 @@ export default function ChoosePaymentMethod({ visible, paymentMethodList, setPay
 
     const handleNavigate = (item) => {
         navigation.push("RechargeScreen", { paymentMethod: item })
+        onCancle()
     }
 
     return (
@@ -106,7 +123,7 @@ export default function ChoosePaymentMethod({ visible, paymentMethodList, setPay
                                                 borderColor: "#D9D9D9"
                                             }}>
                                                 <Text style={styles.boldText}>Tổng số tiền trong Ví:</Text>
-                                                <Text style={{ ...styles.boldText, color: "#241468" }}>500.000đ</Text>
+                                                <Text style={{ ...styles.boldText, color: "#241468" }}>{formatPrice(wallet?.balance)}đ</Text>
                                             </View>
                                             <View style={{
                                                 justifyContent: "flex-end",

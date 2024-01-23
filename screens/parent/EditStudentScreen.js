@@ -103,17 +103,16 @@ export default function EditStudentScreen({ route, navigation }) {
             const imageRef = ref(storage, `childrens/${filename}`)
             try {
                 await uploadBytes(imageRef, blob).then(() => {
-                    data = {
-                        student: route?.params?.studentDetail,
-                        fullName: studentDetail?.fullName,
-                        dateOfBirth: studentDetail?.dateOfBirth,
-                        gender: studentDetail?.gender,
-                        avatarImage: studentDetail?.image
-                    }
                     getDownloadURL(imageRef).then(async (url) => {
-                        console.log({ ...data, dateOfBirth: studentDetail?.dateOfBirth?.toISOString() });
 
-                        const response = await updateStudent({ ...data, dateOfBirth: studentDetail?.dateOfBirth?.toISOString(), avatarImage: url })
+                        const response = await updateStudent({
+                            fullName: studentDetail?.fullName,
+                            dateOfBirth: studentDetail?.dateOfBirth?.toISOString(),
+                            avatarImage: url,
+                            student: route?.params?.studentDetail,
+                            fullName: studentDetail?.fullName,
+                            gender: studentDetail?.gender,
+                        })
                         if (response.status === 200) {
                             console.log("update successfull");
                             navigation.pop()
