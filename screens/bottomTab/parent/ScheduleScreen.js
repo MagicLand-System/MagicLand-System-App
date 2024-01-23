@@ -11,6 +11,7 @@ import { getStudents, getschedule } from '../../../api/student';
 
 import SpinnerLoading from "../../../components/SpinnerLoading"
 import ClassCartCard from '../../../components/ClassCartCard';
+import { useFocusEffect } from '@react-navigation/native';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -29,6 +30,12 @@ export default function ScheduleScreen({ navigation }) {
   useEffect(() => {
     loadStudentData()
   }, [user])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadStudentData()
+    }, [])
+  );
 
   const loadStudentData = async () => {
     setLoading(true)
@@ -69,7 +76,7 @@ export default function ScheduleScreen({ navigation }) {
       const index = prevStudentList.findIndex(obj => obj.id === id);
       return prevStudentList.map((item, i) => ({
         ...item,
-        check: i === index ? !item.check : false,
+        check: i === index ? true : false,
       }));
     });
     setCalendarLoading(true)

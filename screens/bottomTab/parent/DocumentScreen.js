@@ -438,6 +438,12 @@ export default function DocumentScreen({ navigation }) {
     loadStudentData()
   }, [user])
 
+  useFocusEffect(
+    React.useCallback(() => {
+      loadStudentData()
+    }, [])
+  );
+
   // useFocusEffect(
   //   React.useCallback(() => {
   //     loadStudentData()
