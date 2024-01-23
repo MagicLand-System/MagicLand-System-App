@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as ImagePicker from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
-import { addStudent } from "../../api/student";
+import { addStudent, updateStudent } from "../../api/student";
 import { fetchUser } from "../../store/features/authSlice";
 import { Icon, Button } from "@rneui/themed";
 import { storage } from "../../firebase.config";
@@ -26,23 +26,26 @@ import Header from "../../components/header/Header";
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-export default function EditStudentScreen({ route }) {
-    const navigation = useNavigation()
-    const [image, setImage] = useState(route?.params?.studentDetail?.avatarImage)
-    const [loading, setLoading] = useState(false)
-    const [fontsLoaded] = useFonts({
-        Inter_400Regular,
-        Baloo2_700Bold,
+export default function EditStudentScreen({ route, navigation }) {
+
+    const [studentDetail, setStudentDetail] = useState({
+        image: "",
+        fullName: route?.params?.studentDetail?.fullName,
+        dateOfBirth: new Date(
+            new Date(route?.params?.studentDetail?.dateOfBirth).getFullYear(),
+            new Date(route?.params?.studentDetail?.dateOfBirth).getMonth(),
+            new Date(route?.params?.studentDetail?.dateOfBirth).getDate()
+        ),
+        gender: route?.params?.studentDetail?.gender,
     })
-    const dispatch = useDispatch()
+    const [loading, setLoading] = useState(false)
+    const [selectImageLoading, setSelectImageLoading] = useState(false)
     const [isShowDatePicker, setShowDatePicker] = useState(false);
-    const [dateOfBirth, setDateOfBirth] = useState(new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate()))
-    const [gender, setGender] = useState(route?.params?.studentDetail?.gender)
     const [imageError, setImageError] = useState(null)
 
-    useEffect(() => {
-        loadImage(route?.params?.studentDetail?.avatarImage)
-    }, [route?.params?.studentDetail])
+    // useEffect(() => {
+    //     loadImage(route?.params?.studentDetail?.avatarImage)
+    // }, [route?.params?.studentDetail])
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -53,6 +56,7 @@ export default function EditStudentScreen({ route }) {
         })
         if (!result.canceled) {
             try {
+                setSelectImageLoading(true)
                 const base64Data = await FileSystem.readAsStringAsync(result.assets[0].uri, {
                     encoding: FileSystem.EncodingType.Base64,
                 });
@@ -60,7 +64,7 @@ export default function EditStudentScreen({ route }) {
                 const faces = data.responses[0].faceAnnotations
                 if (faces && faces.length === 1) {
                     setImageError(null)
-                    setImage(result.assets[0].uri)
+                    setStudentDetail({ ...studentDetail, image: result.assets[0].uri })
                 } else if (faces && faces.length > 0) {
                     setImageError("Vui lòng chỉ chọn hình của một mình bé")
                     setLoading(false);
@@ -68,175 +72,179 @@ export default function EditStudentScreen({ route }) {
                     setImageError("Vui lòng chọn hình rõ mặt bé")
                     setLoading(false);
                 }
+                setSelectImageLoading(false)
             } catch (error) {
                 console.log(error)
                 setImageError("Vui lòng chọn hình ảnh khác")
+                setSelectImageLoading(false)
                 setLoading(false);
             }
         }
     }
 
-    const loadImage = async (ref) => {
-        try {
-            const metadata = await getDownloadURL(ref);
-            return metadata;
-        } catch (error) {
-            console.log('Error getting metadata:', error);
-            throw error;
-        }
-    };
-
-    const registerValidationSchema = Yup.object().shape({
-        fullName: Yup.string().required("Vui lòng nhập họ và tên").matches(/(\w.+\s).+/, 'Vui lòng nhập ít nhất 2 từ')
-    })
-
-    if (!fontsLoaded) {
-        return null
-    }
-    return (
-        <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-            {loading && (<SpinnerLoading />)}
-            <Formik
-                initialValues={{
-                    fullName: route?.params?.studentDetail?.fullName,
-                }}
-                onSubmit={async values => {
-                    setLoading(true)
-                    try {
-                        if (image) {
-                            const { uri } = await FileSystem.getInfoAsync(image);
-                            const blob = await new Promise((resolve, reject) => {
-                                const xhr = new XMLHttpRequest();
-                                xhr.onload = () => {
-                                    resolve(xhr.response)
-                                };
-                                xhr.onerror = (e) => {
-                                    reject(new TypeError('Network request failed'))
-                                };
-                                xhr.responseType = 'blob';
-                                xhr.open('GET', uri, true);
-                                xhr.send(null);
-                            })
-                            const filename = image.substring(image.lastIndexOf('/') + 1);
-                            const imageRef = ref(storage, `childrens/${filename}`)
-                            uploadBytes(imageRef, blob).then(() => {
-                                getDownloadURL(imageRef).then((url) => {
-                                    console.log("asdsa");
-                                    // addStudent({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url })
-                                    //     .then(dispatch(fetchUser()))
-                                    //     .then(setLoading(false))
-                                    //     .then(Alert.alert("Đăng kí thành công"))
-                                    //     .then(navigation.goBack())
-                                })
-                            })
-                        } else {
-                            setImageError("Hãy cung cấp hình ảnh học viên")
-                        }
-                    } catch (e) {
-                        console.log(e)
-                        setLoading(false)
+    const handleSubmit = async () => {
+        setLoading(true);
+        let data = {}
+        if (studentDetail.image) {
+            const { uri } = await FileSystem.getInfoAsync(studentDetail?.image);
+            const blob = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.onload = () => {
+                    resolve(xhr.response)
+                };
+                xhr.onerror = (e) => {
+                    reject(new TypeError('Network request failed'))
+                };
+                xhr.responseType = 'blob';
+                xhr.open('GET', uri, true);
+                xhr.send(null);
+            })
+            const filename = studentDetail?.image.substring(studentDetail?.image.lastIndexOf('/') + 1);
+            const imageRef = ref(storage, `childrens/${filename}`)
+            try {
+                await uploadBytes(imageRef, blob).then(() => {
+                    data = {
+                        student: route?.params?.studentDetail,
+                        fullName: studentDetail?.fullName,
+                        dateOfBirth: studentDetail?.dateOfBirth,
+                        gender: studentDetail?.gender,
+                        avatarImage: studentDetail?.image
                     }
+                    getDownloadURL(imageRef).then(async (url) => {
+                        console.log({ ...data, dateOfBirth: studentDetail?.dateOfBirth?.toISOString() });
 
+                        const response = await updateStudent({ ...data, dateOfBirth: studentDetail?.dateOfBirth?.toISOString(), avatarImage: url })
+                        if (response.status === 200) {
+                            console.log("update successfull");
+                            navigation.pop()
+                        } else {
+                            console.log(response?.response?.data);
+                        }
+                    })
+                })
+            } catch (error) {
+                console.error("Error during image upload or URL retrieval:", error);
+            }
+        } else {
+            data = {
+                student: route?.params?.studentDetail,
+                fullName: studentDetail?.fullName,
+                dateOfBirth: studentDetail?.dateOfBirth,
+                gender: studentDetail?.gender,
+            }
+            const response = await updateStudent({ ...data })
+            if (response.status === 200) {
+                console.log("update successfull");
+                navigation.pop()
+            } else {
+                console.log(response?.response?.data);
+            }
+        }
+        setLoading(false);
+    }
+
+    return (
+        <>
+            {loading && (<LoadingModal />)}
+            <Header navigation={navigation} goback={() => navigation.pop()} title={"Thay đổi thông tin học sinh"} />
+            <View style={styles.container}>
+                {/* {loading && (<SpinnerLoading />)} */}
+                <Image style={{ width: 180, height: 180 }} source={studentDetail.image ?
+                    { uri: studentDetail.image }
+                    : route?.params?.studentDetail?.avatarImage ?
+                        { uri: route?.params?.studentDetail?.avatarImage }
+                        :
+                        require('../../assets/images/empty_avatar.png')} />
+                <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
+                    {imageError &&
+                        <Text style={{ fontSize: 12, color: 'red' }}>{imageError}</Text>
+                    }
+                </View>
+                <Button radius={"xl"} type="solid" onPress={pickImage} containerStyle={{
+                    width: 200,
+                    marginBottom: 10
                 }}
-                validationSchema={registerValidationSchema}>
-                {({
-                    handleChange,
-                    handleSubmit,
-                    handleBlur,
-                    values,
-                    errors,
-                    touched,
-                    isValid,
-                }) => (
-                    <>
-                        <Image style={{ width: 180, height: 180 }} source={image ? { uri: image } : require('../../assets/images/empty_avatar.png')}></Image>
-                        <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-                            {imageError &&
-                                <Text style={{ fontSize: 12, color: 'red' }}>{imageError}</Text>
-                            }
-                        </View>
-                        <Button radius={"xl"} type="solid" onPress={pickImage} containerStyle={{
-                            width: 200,
-                            marginBottom: 10
-                        }}
-                            buttonStyle={{ backgroundColor: '#F2C955' }}
-                            titleStyle={{ color: 'black', marginHorizontal: 20 }}>
-                            Tải hình lên
-                            <Icon name="cloud-upload" color="black" />
-                        </Button>
-                        <View style={styles.input}>
-                            <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Họ và tên</Text>
-                            <TextInput
-                                placeholder="Họ và tên"
-                                name='fullName'
-                                value={values.fullName}
-                                onChangeText={handleChange('fullName')}
-                                onBlur={handleBlur('fullName')}
-                                style={styles.textInput}
+                    buttonStyle={{ backgroundColor: '#F2C955' }}
+                    titleStyle={{ color: 'black', marginHorizontal: 20 }}>
+                    Tải hình lên
+                    <Icon name="cloud-upload" color="black" />
+                </Button>
+                <View style={styles.input}>
+                    <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Họ và tên</Text>
+                    <TextInput
+                        placeholder="Họ và tên"
+                        name='fullName'
+                        value={studentDetail.fullName}
+                        onChangeText={(text) => { setStudentDetail({ ...studentDetail, fullName: text }) }}
+                        // onBlur={handleBlur('fullName')}
+                        style={styles.textInput}
+                    />
+                    {/* <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
+                        {errors.fullName && touched.fullName &&
+                            <Text style={{ fontSize: 12, color: 'red' }}>{errors.fullName}</Text>
+                        }
+                    </View> */}
+                </View>
+                <View style={styles.input}>
+                    <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Ngày sinh</Text>
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
+                        <Text style={styles.dateText}>{format(studentDetail.dateOfBirth, 'dd/MM/yyyy')}</Text>
+                    </TouchableOpacity>
+                    {isShowDatePicker && (
+                        <DateTimePicker
+                            value={studentDetail.dateOfBirth}
+                            maximumDate={new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate())}
+                            onChange={(event, selectedDate) => {
+                                setShowDatePicker(false)
+                                setStudentDetail({ ...studentDetail, dateOfBirth: selectedDate })
+                            }}
+                            mode='date'
+                        />
+                    )}
+                </View>
+                <View style={styles.input}>
+                    <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Giới tính</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <CheckBox
+                                checked={studentDetail.gender === 'Nữ'}
+                                onPress={() => setStudentDetail({ ...studentDetail, gender: 'Nữ' })}
+                                iconType="material-community"
+                                checkedIcon="radiobox-marked"
+                                uncheckedIcon="radiobox-blank"
                             />
-                            <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
-                                {errors.fullName && touched.fullName &&
-                                    <Text style={{ fontSize: 12, color: 'red' }}>{errors.fullName}</Text>
-                                }
-                            </View>
+                            <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular' }}>Nữ</Text>
                         </View>
-                        <View style={styles.input}>
-                            <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Ngày sinh</Text>
-                            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
-                                <Text style={styles.dateText}>{format(dateOfBirth, 'dd/MM/yyyy')}</Text>
-                            </TouchableOpacity>
-                            {isShowDatePicker && (
-                                <DateTimePicker
-                                    value={dateOfBirth}
-                                    maximumDate={new Date(new Date().getFullYear() - 3, new Date().getMonth(), new Date().getDate())}
-                                    onChange={(event, selectedDate) => {
-                                        setShowDatePicker(false)
-                                        setDateOfBirth(selectedDate)
-                                    }}
-                                    mode='date'
-                                />
-                            )}
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <CheckBox
+                                checked={studentDetail.gender === 'Nam'}
+                                onPress={() => setStudentDetail({ ...studentDetail, gender: 'Nam' })}
+                                iconType="material-community"
+                                checkedIcon="radiobox-marked"
+                                uncheckedIcon="radiobox-blank"
+                            />
+                            <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular' }}>Nam</Text>
                         </View>
-                        <View style={styles.input}>
-                            <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Giới tính</Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <CheckBox
-                                        checked={gender === 'Nữ'}
-                                        onPress={() => setGender('Nữ')}
-                                        iconType="material-community"
-                                        checkedIcon="radiobox-marked"
-                                        uncheckedIcon="radiobox-blank"
-                                    />
-                                    <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular' }}>Nữ</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <CheckBox
-                                        checked={gender === 'Nam'}
-                                        onPress={() => setGender('Nam')}
-                                        iconType="material-community"
-                                        checkedIcon="radiobox-marked"
-                                        uncheckedIcon="radiobox-blank"
-                                    />
-                                    <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular' }}>Nam</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <CheckBox
-                                        checked={gender === 'Khác'}
-                                        onPress={() => setGender('Khác')}
-                                        iconType="material-community"
-                                        checkedIcon="radiobox-marked"
-                                        uncheckedIcon="radiobox-blank"
-                                    />
-                                    <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular', marginRight: 20 }}>Khác</Text>
-                                </View>
-                            </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <CheckBox
+                                checked={studentDetail.gender === 'Khác'}
+                                onPress={() => setStudentDetail({ ...studentDetail, gender: 'Khác' })}
+                                iconType="material-community"
+                                checkedIcon="radiobox-marked"
+                                uncheckedIcon="radiobox-blank"
+                            />
+                            <Text style={{ fontSize: 15, fontFamily: 'Inter_400Regular', marginRight: 20 }}>Khác</Text>
                         </View>
+                    </View>
+                </View>
+                {
+                    selectImageLoading ?
+                        <MainButton onPress={() => { console.log("Đang tải ảnh") }} title="Đang tải ảnh..." />
+                        :
                         <MainButton onPress={handleSubmit} title="Xác nhận" />
-                    </>
-                )}
-            </Formik>
-        </KeyboardAwareScrollView>
+                }
+            </View>
+        </>
     )
 }
 const styles = StyleSheet.create({

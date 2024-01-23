@@ -485,16 +485,18 @@ export default function DocumentScreen({ navigation }) {
   // getAccesstoken()
 
   const loadStudentData = async () => {
-    setLoading(true)
-    const studentList = await getStudents()
+    setLoading(true);
+    const studentList = (await getStudents()).map((item, i) => ({ ...item, check: i === 0 ? true : false }));
+
     if (studentList.length !== 0) {
-      studentList[studentList.length - 1].check = true
-      const scheduleData = await loadClassData(studentList[studentList.length - 1].id)
-      setClassList(scheduleData)
+      const scheduleData = await loadClassData(studentList[0].id);
+      setClassList(scheduleData);
     }
-    setStudentList(studentList?.filter(item => item?.isActive)?.reverse())
-    setLoading(false)
-  }
+
+    setStudentList(studentList?.filter(item => item?.isActive)?.reverse());
+    setLoading(false);
+  };
+  // console.log(studentList[studentList.length - 1].check);
 
   const loadClassData = async (id) => {
     setLoadingClassList(true)
