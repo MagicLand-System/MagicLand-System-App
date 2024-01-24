@@ -7,6 +7,7 @@ import { getWalletBalance } from "../../api/transaction"
 import { formatPrice } from "../../util/util"
 
 import Header from '../header/Header';
+import { useFocusEffect } from '@react-navigation/native';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -16,9 +17,15 @@ export default function ChoosePaymentMethod({ visible, paymentMethodList, setPay
     const [dropdownButton, setDropdownButton] = useState(Array(paymentMethodList.length).fill(false));
     const [wallet, setWallet] = useState({})
 
-    useEffect(() => {
-        loadWalletData()
-    }, [])
+    // useEffect(() => {
+
+    // }, [])
+
+    useFocusEffect(
+        React.useCallback(() => {
+            loadWalletData()
+        }, [])
+    );
 
     const loadWalletData = async () => {
         const response = await getWalletBalance()

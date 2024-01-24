@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity, Dimensions, ScrollView, StyleSheet, Modal, TextInput, Clipboard } from 'react-native'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useState, useEffect } from 'react'
+import * as Linking from 'expo-linking';
 
 import Header from '../../components/header/Header';
 import { formatPrice, mutilplePop } from '../../util/util';
@@ -63,10 +64,15 @@ export default function TransactionWalletScreen({ route, navigation }) {
 
     }
 
-    const handleCopyLink = () => {
-        Clipboard.setString(paymentDetail.paymentGatewayUrl);
-        showToast("Thông Báo", `Đã sao chép đường dẫn`, "success");
+    // const handleCopyLink = () => {
+    //     Clipboard.setString(paymentDetail.paymentGatewayUrl);
+    //     showToast("Thông Báo", `Đã sao chép đường dẫn`, "success");
+    // };
+
+    const handleOpenLink = () => {
+        Linking.openURL(paymentDetail.paymentGatewayUrl);
     };
+
 
     return (
         <View style={styles.container}>
@@ -88,21 +94,21 @@ export default function TransactionWalletScreen({ route, navigation }) {
                     </View>
                     <View style={styles.flexDirectionBetween}>
                         <Text style={{ ...styles.boldText, color: "#888888" }}>Đường dẫn thanh toán:</Text>
-                        <TouchableOpacity style={styles.flexColumn} onPress={handleCopyLink}>
+                        <TouchableOpacity style={styles.flexColumn} onPress={() => Linking.openURL(paymentDetail.paymentGatewayUrl)}>
                             <Text style={{ ...styles.boldText, color: "#241468", textDecorationLine: "underline", marginHorizontal: 10 }}>
                                 VN Pay
                             </Text>
-                            <Icon name={"content-copy"} color={"black"} size={20} />
+                            {/* <Icon name={"content-copy"} color={"black"} size={20} /> */}
                         </TouchableOpacity>
                     </View>
                 </View>
-            </ScrollView>
+            </ScrollView >
             {/* <View style={styles.bottomButonContainer}>
                 <TouchableOpacity style={styles.bottomButton} onPress={() => setModalVisible({ ...modalVisible, otp: true })}>
                     <Text style={{ ...styles.boldText, color: "white" }}>Xác Nhận</Text>
                 </TouchableOpacity>
             </View> */}
-            <InputOtpModal
+            < InputOtpModal
                 visible={modalVisible.otp}
                 phone={"12345689"}
                 onCancle={hanldeCloseOtpModal}
