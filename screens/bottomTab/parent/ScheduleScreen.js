@@ -12,6 +12,7 @@ import { getStudents, getschedule } from '../../../api/student';
 import SpinnerLoading from "../../../components/SpinnerLoading"
 import ClassCartCard from '../../../components/ClassCartCard';
 import { useFocusEffect } from '@react-navigation/native';
+import DateItem from '../../../components/DateItem';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -95,48 +96,6 @@ export default function ScheduleScreen({ navigation }) {
     setCalendarType("day")
   }
 
-  const renderCustomDay = ({ date }) => {
-
-    const currentDate = getCurrentDate(date)
-
-    return (
-      <TouchableOpacity style={[styles.customDate, dateSelected === date.dateString && styles.selectedDate]} onPress={() => { selectedDate(date.dateString) }}>
-        <Text style={{ ...styles.boldText }}>{date.day}</Text>
-        {
-          currentDate && currentDate?.map((item, index) => {
-            return (
-              <View
-                style={{
-                  ...styles.scheduleItem,
-                  backgroundColor: index === 0 ?
-                    "#FF95CE80" :
-                    index === 1 ?
-                      "#52ACFF80"
-                      :
-                      "#92C88D80"
-                }}
-                key={index}
-              >
-                <Text
-                  style={{
-                    ...styles.scheduleText,
-                    fontSize: 10,
-                    color: index === 0 ?
-                      "#F52798" :
-                      index === 1 ?
-                        "#4582E6"
-                        :
-                        "#15CA00"
-                  }}
-                  numberOfLines={1}>{item.className}</Text>
-              </View>
-            )
-          })
-        }
-      </TouchableOpacity>
-    );
-  };
-
   function formatScheduleDate(inputDate) {
     const daysOfWeek = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
     const months = [
@@ -209,7 +168,14 @@ export default function ScheduleScreen({ navigation }) {
                     onDayPress={(day) => {
                       setDateSelected(day.dateString);
                     }}
-                    dayComponent={renderCustomDay}
+                    dayComponent={
+                      (date) =>
+                        <DateItem
+                          date={date}
+                          dateSelected={dateSelected}
+                          scheduleList={scheduleList}
+                          selectedDate={selectedDate}
+                        />}
                   />
                   <View style={styles.noteView}>
                     <View style={{ ...styles.noteHaft, backgroundColor: "#F6F2E5" }}>
@@ -386,27 +352,6 @@ const styles = StyleSheet.create({
   changeTypeButton: {
     padding: 10,
     borderRightWidth: 1
-  },
-  customDate: {
-    width: "95%",
-    height: HEIGHT * 0.09,
-    padding: 3,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: "#C2C2C2"
-  },
-  selectedDate: {
-    backgroundColor: "rgba(0,0,0,0.1)"
-  },
-  scheduleItem: {
-    backgroundColor: "#FF95CE80",
-    paddingHorizontal: 1,
-    borderRadius: 5,
-    marginBottom: 3,
-  },
-  scheduleText: {
-    color: "#F52798",
-    fontWeight: "600"
   },
   classWeekCard: {
     padding: 20,
