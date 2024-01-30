@@ -8,6 +8,7 @@ import { userSelector } from '../../../store/selector';
 import SearchBar from '../../../components/SearchBar';
 import ClassCartCard from '../../../components/ClassCartCard';
 import NofiticationCard from '../../../components/NofiticationCard';
+import { getAllAttendanceClass } from '../../../api/teacher';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -571,18 +572,31 @@ const noficationListDefault = [
 export default function HomeScreen({ navigation }) {
 
   const [searchValue, setSearchValue] = useState("")
-  const [classList, setClassList] = useState(classDetailDefault)
+  const [classList, setClassList] = useState([])
   const [noficationList, setNoficationList] = useState(noficationListDefault)
   const [filterVisible, setFilterVisible] = useState(false)
   const [filterValue, setFilterValue] = useState({ type: undefined })
   const user = useSelector(userSelector);
 
+  useEffect(() => {
+    loadClassData()
+  }, [])
+
+  const loadClassData = async () => {
+    const response = await getAllAttendanceClass()
+    if (response?.status === 200) {
+      setClassList(response?.data)
+    } else {
+      console.log("get class list fail");
+    }
+  }
+
   const handleSearch = (value) => {
     setSearchValue(value)
   }
 
-  const hanldeViewWorkSchedule = (item) => {
-
+  const hanldeViewWorkSchedule = (classDetail) => {
+    navigation.push("ClassOptionScreen", { classDetail: classDetail })
   }
 
   return (

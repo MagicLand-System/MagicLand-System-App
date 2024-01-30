@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, ScrollView, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import StudentView from '../../../components/StudentView';
-import { Calendar, CalendarProvider, WeekCalendar } from 'react-native-calendars';
+import { Agenda, Calendar, CalendarProvider, LocaleConfig, WeekCalendar } from 'react-native-calendars';
 import Header from '../../../components/header/Header';
+import { getWorkSchedule } from '../../../api/teacher';
+import { formatTime, shortedTime } from '../../../util/util';
+import ClassCartCard from '../../../components/ClassCartCard';
 
 const dateListDefault = [
   {
@@ -44,61 +47,56 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function WorkScheduleScreen({ navigation }) {
 
-  const [dateList, setDateList] = useState(dateListDefault)
+  const [dateList, setDateList] = useState([])
   const [dateSelected, setDateSelected] = useState(new Date);
   const [calendarType, setCalendarType] = useState("month")
+
+  LocaleConfig.locales['fr'] = {
+    // 'Tháng 1','Tháng 2','Tháng 3','Tháng 5','Tháng 7','Tháng 9','Tháng 11','Tháng 12'
+    monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 5', 'Tháng 7', 'Tháng 9', 'Tháng 11', 'Tháng 12'],
+    monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+    dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+    dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+    today: 'Aujourd\'hui'
+  };
+  LocaleConfig.defaultLocale = 'fr';
+
+  useEffect(() => {
+    loadScheduleData()
+  }, [])
+
+  const loadScheduleData = async () => {
+    const response = await getWorkSchedule()
+    if (response?.status === 200) {
+      setDateList(response?.data)
+    } else {
+      console.log("loadScheduleData fail");
+    }
+  }
 
   const handleClassNavigate = (classDetail) => {
     navigation.push("ClassOptionScreen", { classDetail: classDetail })
   }
 
   const getCurrentDate = (date) => {
-    const currentDate = dateList.filter(item => item.date.substring(0, 10) === date?.dateString)
+    const currentDate = dateList.filter(item => item.date === date?.dateString)
+    // const currentDate = []
+    // console.log(dateList.map(item => item.date === date?.dateString));
     return currentDate
   }
 
-  const renderCustomDay = ({ date }) => {
+  const formatDataAgenda = () => {
+    const formattedAgendaData = {};
 
-    const currentDate = getCurrentDate(date)
-
-    return (
-      <TouchableOpacity style={[styles.customDate, dateSelected === date.dateString && styles.selectedDate]} onPress={() => { setDateSelected(date.dateString), setCalendarType("day") }}>
-        <Text style={styles.boldText}>{date.day}</Text>
-        {
-          currentDate && currentDate[0]?.classList?.map((item, index) => {
-            return (
-              <View
-                style={{
-                  ...styles.scheduleItem,
-                  backgroundColor: index === 0 ?
-                    "#FF95CE80" :
-                    index === 1 ?
-                      "#52ACFF80"
-                      :
-                      "#92C88D80"
-                }}
-                key={index}
-              >
-                <Text
-                  style={{
-                    ...styles.scheduleText,
-                    fontSize: 10,
-                    color: index === 0 ?
-                      "#F52798" :
-                      index === 1 ?
-                        "#4582E6"
-                        :
-                        "#15CA00"
-                  }}
-                  numberOfLines={1}>{item.title}</Text>
-              </View>
-            )
-          })
-        }
-      </TouchableOpacity>
-    );
-  };
-
+    dateList.forEach(item => {
+      const agendaDate = item.date.split("T")[0];
+      if (!formattedAgendaData[agendaDate]) {
+        formattedAgendaData[agendaDate] = [];
+      }
+      formattedAgendaData[agendaDate].push(item);
+    });
+    return formattedAgendaData
+  }
 
   function formatScheduleDate(inputDate) {
     const daysOfWeek = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
@@ -116,10 +114,27 @@ export default function WorkScheduleScreen({ navigation }) {
     return `${dayOfWeek}, ngày ${dayOfMonth} ${month} năm ${year}`;
   }
 
+  const renderAttendanceStatus = (attendanceStatus) => {
+    // switch (attendanceStatus) {
+    //   case value:
+
+    //     break;
+
+    //   default:
+    //     break;
+    // }
+    return (
+      <Text style={{
+        textTransform: "capitalize",
+        color: "#888",
+      }}>   {attendanceStatus}</Text>
+    );
+  };
+
   return (
     <>
       <Header navigation={navigation} title={"Lich Làm Việc"} goback={() => navigation.navigate("Root")} />
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+      <View showsVerticalScrollIndicator={false} style={styles.container}>
         <View style={styles.titleView}>
           <Text style={styles.title}>Lịch học:</Text>
         </View>
@@ -138,11 +153,19 @@ export default function WorkScheduleScreen({ navigation }) {
           {
             calendarType === "month" &&
             <>
-              <Calendar
-                onDayPress={(day) => {
-                  setDateSelected(day.dateString);
-                }}
-                dayComponent={renderCustomDay}
+              <Agenda
+                onDayPress={(date) => { setDateSelected(date.dateString) }}
+                selected={dateSelected}
+                items={
+                  formatDataAgenda()
+                }
+                renderItem={(item) => (
+                  <TouchableOpacity style={styles.item} onPress={() => { setDateSelected(item?.date); }}>
+                    <Text style={{ ...styles.boldText }}>{shortedTime(item?.slot?.startTime)} - {shortedTime(item?.slot?.endTime)}</Text>
+                    <Text style={{ ...styles.boldText }}>{item?.className} - <Text style={{ textTransform: "capitalize" }}> {item?.method} </Text> {renderAttendanceStatus(item?.attendanceStatus)} </Text>
+                    <Text style={{ ...styles.itemText }}>Phòng {item?.room?.name ? item.room.name : 'N/A'} - Lầu {item?.room?.floor ? item.room.floor : 'N/A'}</Text>
+                  </TouchableOpacity>
+                )}
               />
               <View style={styles.noteView}>
                 <View style={{ ...styles.noteHaft, backgroundColor: "#F6F2E5" }}>
@@ -173,35 +196,15 @@ export default function WorkScheduleScreen({ navigation }) {
 
           {
             calendarType === "day" &&
-            getCurrentDate({ dateString: dateSelected })[0]?.classList?.map((item, key) => {
+            getCurrentDate({ dateString: dateSelected }).map((item, index) => {
               return (
-                <TouchableOpacity
-                  onPress={() => handleClassNavigate(item)}
-                  style={{ ...styles.classWeekCard, ...styles.flexColumnBetween, alignItems: "flex-start" }}
-                  key={key}
-                >
-
-                  <Text style={{ ...styles.boldText, width: "30%", color: "#241468" }}>{item.time}</Text>
-                  <View style={{ width: "50%" }}>
-                    <Text style={{ ...styles.boldText, color: "#241468" }}>{item.title}</Text>
-                    <Text style={{ ...styles.boldText, color: "#3C87FF" }}>Phòng {item.room}</Text>
-                  </View>
-                  <View style={{ ...styles.flexColumn, width: "20%" }}>
-                    <View style={{ ...styles.statusCircle, backgroundColor: item?.method === "ONLINE" ? "#3AAC45" : "#888888" }} />
-                    {
-                      item?.method === "ONLINE" ?
-                        <Text style={styles.cardDetailText}>Online</Text>
-                        :
-                        <Text style={styles.cardDetailText}>Offline</Text>
-                    }
-                  </View>
-                </TouchableOpacity>
+                <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
               )
             })
           }
 
         </View>
-      </ScrollView>
+      </View>
     </>
   )
 }
@@ -304,6 +307,7 @@ const styles = StyleSheet.create({
 
   calendarView: {
     width: WIDTH * 0.95,
+    height: HEIGHT * 0.82,
     padding: 5,
     borderWidth: 1,
     borderColor: "#C2C2C2",
@@ -346,7 +350,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    marginTop: 10
   },
   noteHaft: {
     width: "49%",
@@ -365,5 +370,17 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 15,
     marginRight: 10
+  },
+  item: {
+    backgroundColor: 'rgb(197,217,254)',
+    flex: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 17,
+  },
+  itemText: {
+    color: '#888',
+    fontSize: 16,
   }
 });

@@ -62,6 +62,7 @@ export default function StudentView({ student, index, onClick }) {
 const styles = StyleSheet.create({
     container: {
         // width: WIDTH * 0.7,
+        maxHeight: HEIGHT * 0.15,
         marginRight: 30,
         justifyContent: "center",
         alignItems: "center",
