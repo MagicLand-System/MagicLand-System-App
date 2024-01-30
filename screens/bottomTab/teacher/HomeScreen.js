@@ -595,8 +595,8 @@ export default function HomeScreen({ navigation }) {
     setSearchValue(value)
   }
 
-  const hanldeViewWorkSchedule = (classDetail) => {
-    navigation.push("ClassOptionScreen", { classDetail: classDetail })
+  const hanldeViewWorkSchedule = (classId) => {
+    navigation.push("ClassOptionScreen", { classId: classId })
   }
 
   return (

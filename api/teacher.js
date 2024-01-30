@@ -12,10 +12,10 @@ export const getAllAttendanceClass = async () => {
 
 export const getAttendanceList = async (classId) => {
     try {
-        const response = await api.get("/api/v1/lectures/student/classes/attendance");
+        const response = await api.get(`/api/v1/lectures/student/attendance?classId=${classId}`);
         return response;
     } catch (error) {
-        console.log("getAllAttendanceClass in api/teacher.js error : ", error);
+        console.log("getAttendanceList in api/teacher.js error : ", error);
         return error;
     }
 };

@@ -75,7 +75,7 @@ export default function WorkScheduleScreen({ navigation }) {
   }
 
   const handleClassNavigate = (classDetail) => {
-    navigation.push("ClassOptionScreen", { classDetail: classDetail })
+    navigation.push("ClassOptionScreen", { classId: classDetail, date: dateSelected })
   }
 
   const getCurrentDate = (date) => {
@@ -160,7 +160,7 @@ export default function WorkScheduleScreen({ navigation }) {
                   formatDataAgenda()
                 }
                 renderItem={(item) => (
-                  <TouchableOpacity style={styles.item} onPress={() => { setDateSelected(item?.date); }}>
+                  <TouchableOpacity style={styles.item} onPress={() => { setDateSelected(item?.date); setCalendarType("day") }}>
                     <Text style={{ ...styles.boldText }}>{shortedTime(item?.slot?.startTime)} - {shortedTime(item?.slot?.endTime)}</Text>
                     <Text style={{ ...styles.boldText }}>{item?.className} - <Text style={{ textTransform: "capitalize" }}> {item?.method} </Text> {renderAttendanceStatus(item?.attendanceStatus)} </Text>
                     <Text style={{ ...styles.itemText }}>Phòng {item?.room?.name ? item.room.name : 'N/A'} - Lầu {item?.room?.floor ? item.room.floor : 'N/A'}</Text>

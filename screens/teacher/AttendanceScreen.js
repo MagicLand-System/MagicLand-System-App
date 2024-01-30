@@ -1,11 +1,12 @@
 import { View, Text, Image, StyleSheet, Dimensions, TextInput, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../../components/header/Header';
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 import unhappyIcon from "../../assets/rateIcon/unhapppyIcon.png"
 import happyIcon from "../../assets/rateIcon/happyIcon.png"
 import ContentedIcon from "../../assets/rateIcon/ContentedIcon.png"
+import { getAttendanceList } from '../../api/teacher';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -61,13 +62,25 @@ const studentListDefault = [
     },
 ]
 
-export default function AttendanceScreen({ navigation }) {
+export default function AttendanceScreen({ route, navigation }) {
 
-    const [studentList, setStudentList] = useState(JSON.parse(JSON.stringify(studentListDefault)))
-    const [studentTmpList, setStudentTmpList] = useState(JSON.parse(JSON.stringify(studentListDefault)))
+    const classDetail = route.params.classDetail
+    const [studentList, setStudentList] = useState([])
+    const [studentTmpList, setStudentTmpList] = useState([])
     const [edittingMode, setEdittingMode] = useState(false)
     const [searchValue, setSearchValue] = useState("")
+    // JSON.parse(JSON.stringify(studentListDefault))
+    useEffect(() => {
+        loadStudnetData()
+    }, [route.params.classDetail])
 
+    const loadStudnetData = async () => {
+        const response = await getAttendanceList(classDetail.classId)
+        if (response?.status === 200) {
+            setStudentList(response?.data)
+            setStudentTmpList(response?.data)
+        }
+    }
     const handleCheckAttend = (id) => {
         if (edittingMode) {
             const index = studentTmpList.findIndex(obj => obj.id === id);
@@ -104,7 +117,7 @@ export default function AttendanceScreen({ navigation }) {
 
     return (
         <>
-            <Header navigation={navigation} title={"Lớp TTD - Điểm danh"} goback={navigation.pop} />
+            <Header navigation={navigation} title={"Lớp " + classDetail?.classCode + " - Điểm danh"} goback={navigation.pop} />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Danh sách lớp:</Text>
@@ -113,42 +126,49 @@ export default function AttendanceScreen({ navigation }) {
                     <Icon name={"search"} color={"#908484"} size={28} />
                     <TextInput value={searchValue} onChangeText={setSearchValue} style={styles.searchField} placeholder={"Tìm kiếm học viên..."} placeholderTextColor="#B8B8D2" />
                 </View>
-                <View style={styles.studentList}>
-                    <View style={{ ...styles.tableColumn, backgroundColor: "#2414686B" }}>
-                        <Text style={styles.columnNumber}>STT</Text>
-                        <Text style={styles.columnName}>Tên học viên</Text>
-                        <Text style={styles.columnStatus}>Trạng thái</Text>
-                        <Text style={styles.columnNote}>Ghi chú</Text>
-                    </View>
-                    {
-                        (edittingMode ? studentTmpList : studentList).map((item, index) => {
-                            return (
-                                <TouchableOpacity
-                                    onPress={() => handleCheckAttend(item.id)}
-                                    style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#707070" }}
-                                    key={index}>
-                                    <View style={styles.columnNumber}>
-                                        <Text style={{ ...styles.boldText, marginHorizontal: 10, marginRight: 2 }}>{index + 1}</Text>
-                                        <Icon name={"account-circle"} color={"#908484"} size={WIDTH * 0.13} />
-                                    </View>
-                                    <Text style={styles.columnName}>{item?.name}</Text>
-                                    <View style={styles.columnStatus}>
-                                        {
-                                            !item?.status ?
-                                                <Icon name={"circle"} color={"#908484"} size={18} />
-                                                :
-                                                <View style={styles.checkIcon}>
-                                                    <Icon name={"check"} color={"#3AAC45"} size={12} />
-                                                </View>
-                                        }
-                                        {/* <Text style={{ marginHorizontal: 10, color: item?.status ? "#3AAC45" : "black" }}>Có mặt</Text> */}
-                                    </View>
-                                    <Text style={styles.columnNote}>{item.note}</Text>
-                                </TouchableOpacity>
-                            )
-                        })
-                    }
-                </View>
+
+                {
+                    studentList[0] ?
+                        <View style={styles.studentList}>
+                            <View style={{ ...styles.tableColumn, backgroundColor: "#2414686B" }}>
+                                <Text style={styles.columnNumber}>STT</Text>
+                                <Text style={styles.columnName}>Tên học viên</Text>
+                                <Text style={styles.columnStatus}>Trạng thái</Text>
+                                <Text style={styles.columnNote}>Ghi chú</Text>
+                            </View>
+                            {
+                                (edittingMode ? studentTmpList : studentList).map((item, index) => {
+                                    return (
+                                        <TouchableOpacity
+                                            onPress={() => handleCheckAttend(item.id)}
+                                            style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#707070" }}
+                                            key={index}>
+                                            <View style={styles.columnNumber}>
+                                                <Text style={{ ...styles.boldText, marginHorizontal: 10, marginRight: 2 }}>{index + 1}</Text>
+                                                <Icon name={"account-circle"} color={"#908484"} size={WIDTH * 0.13} />
+                                            </View>
+                                            <Text style={styles.columnName}>{item?.name}</Text>
+                                            <View style={styles.columnStatus}>
+                                                {
+                                                    !item?.status ?
+                                                        <Icon name={"circle"} color={"#908484"} size={18} />
+                                                        :
+                                                        <View style={styles.checkIcon}>
+                                                            <Icon name={"check"} color={"#3AAC45"} size={12} />
+                                                        </View>
+                                                }
+                                                {/* <Text style={{ marginHorizontal: 10, color: item?.status ? "#3AAC45" : "black" }}>Có mặt</Text> */}
+                                            </View>
+                                            <Text style={styles.columnNote}>{item.note}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                })
+                            }
+                        </View>
+                        :
+                        <Text style={{...styles.boldText, width: WIDTH, textAlign: "center", margin: 20}}>Lớp học không có học viên</Text>
+                }
+
                 {
                     edittingMode &&
                     <View style={styles.buttonPack}>
@@ -161,8 +181,8 @@ export default function AttendanceScreen({ navigation }) {
                     </View>
                 }
                 {
-                    !edittingMode &&
-                    <TouchableOpacity style={{ ...styles.editButton, bottom: edittingMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing }>
+                    (!edittingMode && studentList[0]) &&
+                    <TouchableOpacity style={{ ...styles.editButton, bottom: edittingMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing}>
                         <Icon name={"edit"} color={"white"} size={28} />
                     </TouchableOpacity>
                 }

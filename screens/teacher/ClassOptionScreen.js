@@ -1,13 +1,34 @@
 import { View, Text, Image, StyleSheet, Dimensions, TextInput, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../../components/header/Header';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { getClassByClassId } from '../../api/class';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function ClassOptionScreen({ route, navigation }) {
-    const classDetail = route.params.classDetail
+    const classId = route.params.classId
+    const date = route.params.date
+    const [classDetail, setClassDetail] = useState()
+
+    useEffect(() => {
+        loadClassData()
+    }, [])
+
+    const loadClassData = async () => {
+        if (date) {
+            console.log(classId);
+            console.log(date);
+        } else {
+            const response = await getClassByClassId(classId)
+            if (response?.status === 200) {
+                setClassDetail(response?.data)
+            } else {
+                console.log(response?.response?.data);
+            }
+        }
+    }
 
     const ClassOption = ({ icon, title, onClick }) => {
         return (
