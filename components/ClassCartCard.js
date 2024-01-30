@@ -83,7 +83,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                         style={styles.cardImageValue}
                     />
                     <View style={styles.classType}>
-                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{cardDetail?.classSubject}</Text>
+                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{cardDetail?.classSubject ? cardDetail?.classSubject : "Khoá Học"}</Text>
                     </View>
                 </View>
                 <View style={styles.cardDetail}>
@@ -95,7 +95,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                                 cardDetail?.className ?
                                     cardDetail?.className
                                     :
-                                    "Toán cấp 1"}</Text>
+                                    "Lớp học"}</Text>
                         <Text style={{ ...styles.cardName, color: "#241468", fontSize : 11 }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
                     </View>
                     <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>

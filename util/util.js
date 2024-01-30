@@ -128,3 +128,8 @@ export const mutilplePop = (navigate, time) => {
         navigate.pop()
     }
 }
+
+export const shortedTime = (inputTime) => {
+    var timeComponents = inputTime.split(":");
+    return timeComponents[0] + ":" + timeComponents[1];
+}

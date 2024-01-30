@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, ScrollView, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Dimensions, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import StudentView from '../../../components/StudentView';
-import { CalendarProvider, Calendar, WeekCalendar, Agenda } from 'react-native-calendars';
+import { CalendarProvider, Calendar, WeekCalendar, Agenda, LocaleConfig } from 'react-native-calendars';
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../../store/selector';
 import Header from '../../../components/header/Header';
@@ -12,6 +12,7 @@ import { getStudents, getschedule } from '../../../api/student';
 import SpinnerLoading from "../../../components/SpinnerLoading"
 import ClassCartCard from '../../../components/ClassCartCard';
 import { useFocusEffect } from '@react-navigation/native';
+import DateItem from '../../../components/DateItem';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -26,6 +27,16 @@ export default function ScheduleScreen({ navigation }) {
   const [calendarType, setCalendarType] = useState("month")
 
   const user = useSelector(userSelector);
+
+  LocaleConfig.locales['fr'] = {
+    // 'Tháng 1','Tháng 2','Tháng 3','Tháng 5','Tháng 7','Tháng 9','Tháng 11','Tháng 12'
+    monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 5', 'Tháng 7', 'Tháng 9', 'Tháng 11', 'Tháng 12'],
+    monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+    dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+    dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+    today: 'Aujourd\'hui'
+  };
+  LocaleConfig.defaultLocale = 'fr';
 
   useEffect(() => {
     loadStudentData()
@@ -91,51 +102,9 @@ export default function ScheduleScreen({ navigation }) {
   }
 
   const selectedDate = (date) => {
-    setDateSelected(date)
+    setDateSelected(date?.split("T")[0])
     setCalendarType("day")
   }
-
-  const renderCustomDay = ({ date }) => {
-
-    const currentDate = getCurrentDate(date)
-
-    return (
-      <TouchableOpacity style={[styles.customDate, dateSelected === date.dateString && styles.selectedDate]} onPress={() => { selectedDate(date.dateString) }}>
-        <Text style={{ ...styles.boldText }}>{date.day}</Text>
-        {
-          currentDate && currentDate?.map((item, index) => {
-            return (
-              <View
-                style={{
-                  ...styles.scheduleItem,
-                  backgroundColor: index === 0 ?
-                    "#FF95CE80" :
-                    index === 1 ?
-                      "#52ACFF80"
-                      :
-                      "#92C88D80"
-                }}
-                key={index}
-              >
-                <Text
-                  style={{
-                    ...styles.scheduleText,
-                    fontSize: 10,
-                    color: index === 0 ?
-                      "#F52798" :
-                      index === 1 ?
-                        "#4582E6"
-                        :
-                        "#15CA00"
-                  }}
-                  numberOfLines={1}>{item.className}</Text>
-              </View>
-            )
-          })
-        }
-      </TouchableOpacity>
-    );
-  };
 
   function formatScheduleDate(inputDate) {
     const daysOfWeek = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
@@ -153,10 +122,40 @@ export default function ScheduleScreen({ navigation }) {
     return `${dayOfWeek}, ngày ${dayOfMonth} ${month} năm ${year}`;
   }
 
+  const formatDataAgenda = () => {
+    const formattedAgendaData = {};
+
+    scheduleList.forEach(item => {
+      const agendaDate = item.date.split("T")[0];
+      if (!formattedAgendaData[agendaDate]) {
+        formattedAgendaData[agendaDate] = [];
+      }
+      formattedAgendaData[agendaDate].push(item);
+    });
+    return formattedAgendaData
+  }
+
+  const renderAttendanceStatus = (attendanceStatus) => {
+    // switch (attendanceStatus) {
+    //   case value:
+        
+    //     break;
+    
+    //   default:
+    //     break;
+    // }
+    return (
+      <Text style={{
+        textTransform: "capitalize",
+        color: "#888",
+      }}>   {attendanceStatus}</Text>
+    );
+  };
+
   return (
     <>
       <Header navigation={navigation} title={"Lịch Học"} goback={navigation.goBack} />
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.titleView}>
           <Text style={styles.title}>Danh sách các cháu:</Text>
         </View>
@@ -182,6 +181,7 @@ export default function ScheduleScreen({ navigation }) {
         <View style={styles.titleView}>
           <Text style={styles.title}>Lịch học:</Text>
         </View>
+
         <View style={styles.calendarView}>
           <View style={{ ...styles.flexColumnBetween, marginVertical: 20 }}>
             <Text style={{ ...styles.boldText, fontSize: 10 }}>{formatScheduleDate(dateSelected)}</Text>
@@ -189,14 +189,13 @@ export default function ScheduleScreen({ navigation }) {
               <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "month" ? "#241468" : "white" }} onPress={() => { setCalendarType("month") }}>
                 <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "month" ? "white" : "#888888" }}>Tháng</Text>
               </TouchableOpacity>
-              {/* <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "week" ? "#241468" : "white" }} onPress={() => { setCalendarType("week") }}>
-                <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "week" ? "white" : "#888888" }}>Tuần</Text>
-              </TouchableOpacity> */}
               <TouchableOpacity style={{ ...styles.changeTypeButton, borderRightWidth: 0, backgroundColor: calendarType === "day" ? "#241468" : "white" }} onPress={() => { setCalendarType("day") }}>
                 <Text style={{ ...styles.boldText, fontSize: 10, color: calendarType === "day" ? "white" : "#888888" }}>Ngày</Text>
               </TouchableOpacity>
             </View>
           </View>
+
+
           {
             !calendarLoading &&
             // <SpinnerLoading />
@@ -205,11 +204,19 @@ export default function ScheduleScreen({ navigation }) {
               {
                 calendarType === "month" &&
                 <>
-                  <Calendar
-                    onDayPress={(day) => {
-                      setDateSelected(day.dateString);
-                    }}
-                    dayComponent={renderCustomDay}
+                  <Agenda
+                    onDayPress={(date) => { selectedDate(date?.dateString) }}
+                    selected={dateSelected}
+                    items={
+                      formatDataAgenda()
+                    }
+                    renderItem={(item) => (
+                      <TouchableOpacity style={styles.item} onPress={() => { selectedDate(item?.date); }}>
+                        <Text style={{ ...styles.boldText }}>{item?.startTime} - {item?.endTime}</Text>
+                        <Text style={{ ...styles.boldText }}>{item?.className} - <Text style={{ textTransform: "capitalize" }}> {item?.method} </Text> {renderAttendanceStatus(item?.attendanceStatus)} </Text>
+                        <Text style={{ ...styles.itemText }}>Phòng {item?.roomName}</Text>
+                      </TouchableOpacity>
+                    )}
                   />
                   <View style={styles.noteView}>
                     <View style={{ ...styles.noteHaft, backgroundColor: "#F6F2E5" }}>
@@ -241,27 +248,6 @@ export default function ScheduleScreen({ navigation }) {
                 calendarType === "day" &&
                 getCurrentDate({ dateString: dateSelected }).map((item, index) => {
                   return (
-                    // <TouchableOpacity
-                    //   onPress={() => handleClassNavigate(item)}
-                    //   style={{ ...styles.classWeekCard, ...styles.flexColumnBetween, alignItems: "flex-start" }}
-                    //   key={index}
-                    // >
-
-                    //   <Text style={{ ...styles.boldText, width: "30%", color: "#241468" }}>{item.startTime}</Text>
-                    //   <View style={{ width: "50%" }}>
-                    //     <Text style={{ ...styles.boldText, color: "#241468" }}>{item.className}</Text>
-                    //     <Text style={{ ...styles.boldText, color: "#3C87FF" }}>Phòng {item.roomName}</Text>
-                    //   </View>
-                    //   <View style={{ ...styles.flexColumn, width: "20%" }}>
-                    //     <View style={{ ...styles.statusCircle, backgroundColor: item?.method === "ONLINE" ? "#3AAC45" : "#888888" }} />
-                    //     {
-                    //       item?.method === "ONLINE" ?
-                    //         <Text style={styles.cardDetailText}>Online</Text>
-                    //         :
-                    //         <Text style={styles.cardDetailText}>Offline</Text>
-                    //     }
-                    //   </View>
-                    // </TouchableOpacity>
                     <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
                   )
                 })
@@ -270,9 +256,9 @@ export default function ScheduleScreen({ navigation }) {
           }
         </View>
 
-      </ScrollView>
-    </>
+      </SafeAreaView>
 
+    </>
   )
 }
 
@@ -296,11 +282,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   studentList: {
+    maxHeight: HEIGHT * 0.2,
     padding: 20,
-    paddingLeft: 20
+    paddingLeft: 20,
   },
   studentView: {
     // width: WIDTH * 0.7,
+    maxHeight: HEIGHT * 0.15,
     marginRight: 30,
     justifyContent: "center",
     alignItems: "center",
@@ -377,6 +365,7 @@ const styles = StyleSheet.create({
 
   calendarView: {
     width: WIDTH * 0.95,
+    height: HEIGHT * 0.6,
     padding: 5,
     borderWidth: 1,
     borderColor: "#C2C2C2",
@@ -386,27 +375,6 @@ const styles = StyleSheet.create({
   changeTypeButton: {
     padding: 10,
     borderRightWidth: 1
-  },
-  customDate: {
-    width: "95%",
-    height: HEIGHT * 0.09,
-    padding: 3,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: "#C2C2C2"
-  },
-  selectedDate: {
-    backgroundColor: "rgba(0,0,0,0.1)"
-  },
-  scheduleItem: {
-    backgroundColor: "#FF95CE80",
-    paddingHorizontal: 1,
-    borderRadius: 5,
-    marginBottom: 3,
-  },
-  scheduleText: {
-    color: "#F52798",
-    fontWeight: "600"
   },
   classWeekCard: {
     padding: 20,
@@ -419,7 +387,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    marginTop: 10
   },
   noteHaft: {
     width: "49%",
@@ -438,6 +407,18 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 15,
     marginRight: 10
-  }
+  },
 
+  item: {
+    backgroundColor: 'rgb(197,217,254)',
+    flex: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 17,
+  },
+  itemText: {
+    color: '#888',
+    fontSize: 16,
+  }
 });
