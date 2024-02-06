@@ -7,97 +7,67 @@ import unhappyIcon from "../../assets/rateIcon/unhapppyIcon.png"
 import happyIcon from "../../assets/rateIcon/happyIcon.png"
 import ContentedIcon from "../../assets/rateIcon/ContentedIcon.png"
 import { getAttendanceList } from '../../api/teacher';
+import { checkCurrentDate } from '../../util/util';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const studentListDefault = [
-    {
-        id: 1,
-        name: "Nguyễn Văn A",
-        note: "Học Bù"
-    },
-    {
-        id: 2,
-        name: "Nguyễn Văn B",
-    },
-    {
-        id: 3,
-        name: "Nguyễn Văn A",
-    },
-    {
-        id: 4,
-        name: "Nguyễn Văn C",
-        note: "Học Bù"
-    },
-    {
-        id: 5,
-        name: "Nguyễn Văn B",
-    },
-    {
-        id: 6,
-        name: "Nguyễn Văn D",
-    },
-    {
-        id: 7,
-        name: "Nguyễn Văn A",
-        note: "Học Bù"
-    },
-    {
-        id: 8,
-        name: "Nguyễn Văn D",
-    },
-    {
-        id: 9,
-        name: "Nguyễn Văn E",
-    },
-    {
-        id: 10,
-        name: "Nguyễn Văn F",
-        note: "Dự thính"
-    },
-    {
-        id: 11,
-        name: "Nguyễn Văn A",
-    },
-]
-
 export default function AttendanceScreen({ route, navigation }) {
 
     const classDetail = route.params.classDetail
+    const date = route.params.date
+    const slot = route.params.date
     const [studentList, setStudentList] = useState([])
     const [studentTmpList, setStudentTmpList] = useState([])
     const [edittingMode, setEdittingMode] = useState(false)
     const [searchValue, setSearchValue] = useState("")
     // JSON.parse(JSON.stringify(studentListDefault))
     useEffect(() => {
-        loadStudnetData()
+        loadStudentData()
     }, [route.params.classDetail])
 
-    const loadStudnetData = async () => {
+    const loadStudentData = async () => {
         const response = await getAttendanceList(classDetail.classId)
         if (response?.status === 200) {
-            setStudentList(response?.data)
-            setStudentTmpList(response?.data)
+
+            if (checkCurrentDate(date)) {
+                const data = response?.data?.map((item) => {
+                    return {
+                        ...item,
+                        isPresent: false
+                    }
+                })
+                setStudentList(data)
+                setStudentTmpList(data)
+            } else {
+                setStudentList(response?.data)
+                setStudentTmpList(response?.data)
+            }
         }
     }
+
     const handleCheckAttend = (id) => {
         if (edittingMode) {
-            const index = studentTmpList.findIndex(obj => obj.id === id);
+            const index = studentTmpList.findIndex(obj => obj.studentId === id);
             const updateArray = JSON.parse(JSON.stringify(studentTmpList))
             // const updateArray = [...studentList]
-            const defaultStatus = updateArray[index].status
-            // updateArray.forEach(item => item.check = false)
-            updateArray[index].status = !defaultStatus;
-            // console.log(updateArray);
+            if (updateArray[index]) {
+                const defaultStatus = updateArray[index].isPresent ? true : false
+                updateArray[index].isPresent = !defaultStatus;
+            }
             setStudentTmpList(updateArray)
         }
 
     }
 
-    const handleCompleteAttend = () => {
-        setStudentList(JSON.parse(JSON.stringify(studentTmpList)))
-        setEdittingMode(false)
+    const handleCompleteAttend = async () => {
+        const response = await takeAttendance(classDetail?.classId, studentTmpList, slot)
+        if (response?.status === 200) {
+            setStudentList(JSON.parse(JSON.stringify(studentTmpList)))
+            setEdittingMode(false)
+        } else {
+            console.log("take attendance fail");
+        }
     }
 
     const handleClearAttend = () => {
@@ -140,22 +110,27 @@ export default function AttendanceScreen({ route, navigation }) {
                                 (edittingMode ? studentTmpList : studentList).map((item, index) => {
                                     return (
                                         <TouchableOpacity
-                                            onPress={() => handleCheckAttend(item.id)}
+                                            onPress={() => handleCheckAttend(item.studentId)}
                                             style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#707070" }}
                                             key={index}>
                                             <View style={styles.columnNumber}>
                                                 <Text style={{ ...styles.boldText, marginHorizontal: 10, marginRight: 2 }}>{index + 1}</Text>
                                                 <Icon name={"account-circle"} color={"#908484"} size={WIDTH * 0.13} />
                                             </View>
-                                            <Text style={styles.columnName}>{item?.name}</Text>
+                                            <Text style={styles.columnName}>{item?.studentName}</Text>
                                             <View style={styles.columnStatus}>
                                                 {
-                                                    !item?.status ?
-                                                        <Icon name={"circle"} color={"#908484"} size={18} />
-                                                        :
+                                                    item?.isPresent ?
                                                         <View style={styles.checkIcon}>
                                                             <Icon name={"check"} color={"#3AAC45"} size={12} />
                                                         </View>
+                                                        :
+                                                        item?.isPresent === false ?
+                                                            <View style={{ transform: [{ rotateZ: "45deg" }] }}>
+                                                                <Icon name={"add-circle-outline"} color={"red"} size={18} />
+                                                            </View>
+                                                            :
+                                                            <Icon name={"circle"} color={"#908484"} size={18} />
                                                 }
                                                 {/* <Text style={{ marginHorizontal: 10, color: item?.status ? "#3AAC45" : "black" }}>Có mặt</Text> */}
                                             </View>
@@ -166,7 +141,7 @@ export default function AttendanceScreen({ route, navigation }) {
                             }
                         </View>
                         :
-                        <Text style={{...styles.boldText, width: WIDTH, textAlign: "center", margin: 20}}>Lớp học không có học viên</Text>
+                        <Text style={{ ...styles.boldText, width: WIDTH, textAlign: "center", margin: 20 }}>Lớp học không có học viên</Text>
                 }
 
                 {
@@ -181,7 +156,7 @@ export default function AttendanceScreen({ route, navigation }) {
                     </View>
                 }
                 {
-                    (!edittingMode && studentList[0]) &&
+                    (!edittingMode && studentList[0] && checkCurrentDate(date)) &&
                     <TouchableOpacity style={{ ...styles.editButton, bottom: edittingMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing}>
                         <Icon name={"edit"} color={"white"} size={28} />
                     </TouchableOpacity>
@@ -290,6 +265,5 @@ const styles = StyleSheet.create({
         width: "85%",
         paddingLeft: 10,
         marginVertical: 15,
-        color: "#B8B8D2"
     }
 })

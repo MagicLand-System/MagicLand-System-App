@@ -68,20 +68,23 @@ export default function WorkScheduleScreen({ navigation }) {
   const loadScheduleData = async () => {
     const response = await getWorkSchedule()
     if (response?.status === 200) {
+      const newDate = new Date().toISOString()
       setDateList(response?.data)
+      setDateSelected(newDate)
     } else {
       console.log("loadScheduleData fail");
     }
   }
 
   const handleClassNavigate = (classDetail) => {
-    navigation.push("ClassOptionScreen", { classId: classDetail, date: dateSelected })
+    // console.log(classDetail);
+    navigation.push("ClassOptionScreen", { classId: classDetail?.classId, date: dateSelected })
   }
 
   const getCurrentDate = (date) => {
-    const currentDate = dateList.filter(item => item.date === date?.dateString)
+    const currentDate = dateList.filter(item => String(item.date).substring(0, 10) === date?.dateString?.substring(0, 10))
     // const currentDate = []
-    // console.log(dateList.map(item => item.date === date?.dateString));
+    // console.log(dateList.map(item => item.date));
     return currentDate
   }
 

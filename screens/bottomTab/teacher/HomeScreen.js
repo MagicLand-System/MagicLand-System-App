@@ -595,8 +595,8 @@ export default function HomeScreen({ navigation }) {
     setSearchValue(value)
   }
 
-  const hanldeViewWorkSchedule = (classId) => {
-    navigation.push("ClassOptionScreen", { classId: classId })
+  const hanldeViewWorkSchedule = (item) => {
+    navigation.push("ClassOptionScreen", { classId: item?.classId })
   }
 
   return (
@@ -626,7 +626,7 @@ export default function HomeScreen({ navigation }) {
         <ScrollView style={styles.classList}>
           {
             classList.map((item, key) => (
-              <ClassCartCard cardDetail={item} index={item?.id} check={false} onClick={hanldeViewWorkSchedule} key={key} />
+              <ClassCartCard cardDetail={item} index={item?.id} check={false} onClick={() => hanldeViewWorkSchedule(item)} key={key} />
             ))
           }
         </ScrollView>
