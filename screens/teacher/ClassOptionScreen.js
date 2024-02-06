@@ -4,30 +4,31 @@ import Header from '../../components/header/Header';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { getClassByClassId } from '../../api/class';
 
+import SpinnerLoading from "../../components/SpinnerLoading"
+
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function ClassOptionScreen({ route, navigation }) {
     const classId = route.params.classId
     const date = route.params.date
+    const slot = route.params.slot
     const [classDetail, setClassDetail] = useState()
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         loadClassData()
     }, [])
 
     const loadClassData = async () => {
-        if (date) {
-            console.log(classId);
-            console.log(date);
+        setLoading(true)
+        const response = await getClassByClassId(classId)
+        if (response?.status === 200) {
+            setClassDetail(response?.data)
         } else {
-            const response = await getClassByClassId(classId)
-            if (response?.status === 200) {
-                setClassDetail(response?.data)
-            } else {
-                console.log(response?.response?.data);
-            }
+            console.log(response?.response?.data);
         }
+        setLoading(false)
     }
 
     const ClassOption = ({ icon, title, onClick }) => {
@@ -48,36 +49,39 @@ export default function ClassOptionScreen({ route, navigation }) {
         {
             title: "Điểm danh",
             icon: <Icon name={"book"} color={"#4582E6"} size={25} />,
-            onClick: () => navigation.push("AttendanceScreen", { classDetail: classDetail })
+            onClick: () => navigation.push("AttendanceScreen", { classDetail: classDetail, date: date, slot: slot })
         },
         {
             title: "Chấm điểm bài tập",
             icon: <Icon name={"book"} color={"#4582E6"} size={25} />,
-            onClick: () => navigation.push("RateStudentScreen", { classDetail: classDetail })
+            onClick: () => navigation.push("RateStudentScreen", { classDetail: classDetail, date: date })
         },
     ]
 
     return (
         <>
+
             <Header navigation={navigation} title={classDetail?.title} goback={navigation.pop} />
-            <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-                <View style={styles.titleView}>
-                    <Text style={styles.title}>Danh sách lớp:</Text>
-                </View>
-                <View style={styles.titleView}>
-                    <Text style={styles.title}>Đánh giá buổi học:</Text>
-                </View>
-                {
-                    optionList.map((item, key) => (
-                        <ClassOption title={item.title} icon={item.icon} onClick={item.onClick} key={key} />
-                    ))
-                }
-                <View style={styles.titleView}>
-                    <Text style={styles.title}>Đánh giá tổng quan: </Text>
-                </View>
-                <Text style={{ opacity: 0.6, marginLeft: WIDTH * 0.04 }}>Đánh giá sau khi các bé hoàn thành khóa học</Text>
-                <ClassOption title={"Đánh giá"} icon={<Icon name={"book"} color={"#4582E6"} size={25} />} onClick={() => navigation.push("RateStudentScreen", { classDetail: classDetail })} />
-            </ScrollView>
+            {
+                loading ? <SpinnerLoading />
+                    :
+                    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+                        <View style={styles.titleView}>
+                            <Text style={styles.title}>Đánh giá buổi học:</Text>
+                        </View>
+                        {
+                            optionList.map((item, key) => (
+                                <ClassOption title={item.title} icon={item.icon} onClick={item.onClick} key={key} />
+                            ))
+                        }
+                        <View style={styles.titleView}>
+                            <Text style={styles.title}>Đánh giá tổng quan: </Text>
+                        </View>
+                        <Text style={{ opacity: 0.6, marginLeft: WIDTH * 0.04 }}>Đánh giá sau khi các bé hoàn thành khóa học</Text>
+                        <ClassOption title={"Đánh giá"} icon={<Icon name={"book"} color={"#4582E6"} size={25} />} onClick={() => navigation.push("RateStudentScreen", { classDetail: classDetail })} />
+
+                    </ScrollView>
+            }
         </>
     )
 }

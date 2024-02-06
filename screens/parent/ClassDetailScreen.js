@@ -8,6 +8,7 @@ import CircularProgressBar from '../../components/CircularProgressBar';
 
 import { formatDate } from '../../util/util';
 import { getSyllabus } from '../../api/course';
+import { getStatus } from '../../constants/class';
 
 // import ThuyTienAvt from "../assets/images/ThuyTienAvt.png"
 // import ProcessBar from '../components/ProcessBar';
@@ -174,17 +175,17 @@ export default function ClassDetailScreen({ route, navigation }) {
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
-        // loadSyllabusData()
+        loadSyllabusData()
     }, [route?.params?.classDetail])
 
-    // const loadSyllabusData = async () => {
-    //     const response = await getSyllabus(classDetail?.courseId)
-    //     if (response.status === 200) {
-    //         setProgramEducation(response?.data)
-    //     } else {
-    //         console.log("getSyllabus fail : ", response.response);
-    //     }
-    // }
+    const loadSyllabusData = async () => {
+        const response = await getSyllabus(classDetail?.courseId)
+        if (response.status === 200) {
+            setProgramEducation(response?.data)
+        } else {
+            console.log("getSyllabus fail : ", response.response);
+        }
+    }
 
     const handleScroll = (event) => {
         const page = Math.round(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
@@ -204,7 +205,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             Khóa học:
                         </Text>
                         <Text style={{ ...styles.classValue, width: "58%", textAlign: "left" }}>
-                            {classDetail?.name}
+                            {classDetail?.name ? classDetail?.name : "Lớp học"}
                         </Text>
                     </View>
                     <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
@@ -212,7 +213,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             Lớp học:
                         </Text>
                         <Text style={{ ...styles.classValue, width: "58%", textAlign: "left" }}>
-                            TTD2
+                            {classDetail?.classCode ? classDetail?.classCode : "A000"}
                         </Text>
                     </View>
                     <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
@@ -220,7 +221,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             Ngày khai giảng:
                         </Text>
                         <Text style={{ ...styles.classValue, width: "58%", textAlign: "left" }}>
-                            05/01/2024
+                            {classDetail?.startDate ? formatDate(classDetail?.startDate) : "Chưa xác định"}
                         </Text>
                     </View>
                     <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
@@ -233,8 +234,8 @@ export default function ClassDetailScreen({ route, navigation }) {
                         <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                             Hình Thức:
                         </Text>
-                        <Text style={{ ...styles.classValue, width: "58%", textAlign: "left" }}>
-                            Offline
+                        <Text style={{ ...styles.classValue, width: "58%", textAlign: "left", textTransform: "capitalize" }}>
+                            {classDetail?.method}
                         </Text>
                     </View>
                     <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
@@ -242,7 +243,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             Giáo viên:
                         </Text>
                         <Text style={{ ...styles.classValue, width: "58%", textAlign: "left" }}>
-                            Thủy Tiên
+                            {classDetail?.lecture?.fullName}
                         </Text>
                     </View>
                     <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
@@ -250,7 +251,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             Trạng thái:
                         </Text>
                         <Text style={{ ...styles.classValue, width: "58%", textAlign: "left" }}>
-                            Đang học
+                            {getStatus(classDetail?.status)}
                         </Text>
                     </View>
 
@@ -297,7 +298,7 @@ export default function ClassDetailScreen({ route, navigation }) {
 
                 <View style={styles.program}>
                     {
-                        programEducation?.map((item, index) => {
+                        programEducation?.topics?.map((item, index) => {
                             return (
                                 <View
                                     style={{
@@ -308,14 +309,19 @@ export default function ClassDetailScreen({ route, navigation }) {
                                 >
                                     <TouchableOpacity
                                         style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
-                                    onPress={() => {
-                                        const updatedProgramEducation = [...programEducation];
-                                        updatedProgramEducation[index].expand = !updatedProgramEducation[index].expand;
-                                        setProgramEducation(updatedProgramEducation);
-                                    }}
+                                        onPress={() => {
+                                            setProgramEducation(prevProgramEducation => {
+                                                const updatedTopics = [...prevProgramEducation.topics];
+                                                // const defaultExpantStatus = updatedTopics[index].expand === undefined ? false
+                                                //     :
+                                                //     !updatedTopics[index].expand
+                                                updatedTopics[index] = { ...updatedTopics[index], expand: !updatedTopics[index].expand };
+                                                return { ...prevProgramEducation, topics: updatedTopics };
+                                            });
+                                        }}
                                     >
                                         <Text style={styles.mainText}>
-                                            <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.name}</Text>
+                                            <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}</Text>
                                             {/* {formatDate()} */}
                                             {"(05/01/2024)"}
                                         </Text>
@@ -327,13 +333,18 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         }
                                     </TouchableOpacity>
                                     {
-                                        item.expand &&
-                                        item.list.map((element, key) => {
-                                            count += 1
-                                            return (
-                                                <Text style={styles.childText} key={key}>{count}. {element.name}</Text>
-                                            )
-                                        })
+                                        item.expand === true &&
+                                        (
+                                            !item.sessions[0] ?
+                                                <Text style={styles.childText}>Không có chủ đề</Text>
+                                                :
+                                                item.sessions.map((element, key) => {
+                                                    count += 1
+                                                    return (
+                                                        <Text style={styles.childText} key={key}>{count}. {element.content}</Text>
+                                                    )
+                                                })
+                                        )
                                     }
                                 </View>
                             )

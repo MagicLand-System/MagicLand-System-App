@@ -133,3 +133,10 @@ export const shortedTime = (inputTime) => {
     var timeComponents = inputTime.split(":");
     return timeComponents[0] + ":" + timeComponents[1];
 }
+
+export const checkCurrentDate = (dateString) => {
+    const givenDate = new Date(dateString);
+    const currentDate = new Date();
+
+    return givenDate.toDateString() === currentDate.toDateString();
+}

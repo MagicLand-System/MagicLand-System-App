@@ -11,6 +11,7 @@ export const getAllAttendanceClass = async () => {
 };
 
 export const getAttendanceList = async (classId) => {
+    
     try {
         const response = await api.get(`/api/v1/lectures/student/attendance?classId=${classId}`);
         return response;
