@@ -61,7 +61,7 @@ export default function AttendanceScreen({ route, navigation }) {
     }
 
     const handleCompleteAttend = async () => {
-        const response = await takeAttendance(classDetail?.classId, studentTmpList, slot)
+        const response = await takeAttendance(classDetail?.classId, studentTmpList, String(slot).replace(/\s/g, ''))
         if (response?.status === 200) {
             setStudentList(JSON.parse(JSON.stringify(studentTmpList)))
             setEdittingMode(false)
