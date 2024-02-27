@@ -169,21 +169,21 @@ const progressData = [
 
 export default function ClassDetailScreen({ route, navigation }) {
     let classDetail = route?.params?.classDetail
-    const [programEducation, setProgramEducation] = useState(programEducationDefault)
+    const [programEducation, setProgramEducation] = useState([])
     const [currentPage, setCurrentPage] = useState(0);
     let count = 0
 
-    useEffect(() => {
-        classDetail = route?.params?.classDetail
-        loadSyllabusData()
-    }, [route?.params?.classDetail])
+    // useEffect(() => {
+    //     classDetail = route?.params?.classDetail
+    //     loadSyllabusData()
+    // }, [route?.params?.classDetail])
 
     const loadSyllabusData = async () => {
         const response = await getSyllabus(classDetail?.courseId)
         if (response.status === 200) {
             setProgramEducation(response?.data)
         } else {
-            console.log("getSyllabus fail : ", response.response);
+            console.log("getSyllabus fail : ", response.response?.data);
         }
     }
 
@@ -298,7 +298,7 @@ export default function ClassDetailScreen({ route, navigation }) {
 
                 <View style={styles.program}>
                     {
-                        programEducation?.topics?.map((item, index) => {
+                        programEducation?.syllabusInformations?.sessions?.map((item, index) => {
                             return (
                                 <View
                                     style={{
@@ -335,10 +335,10 @@ export default function ClassDetailScreen({ route, navigation }) {
                                     {
                                         item.expand === true &&
                                         (
-                                            !item.sessions[0] ?
+                                            !item.contents[0] ?
                                                 <Text style={styles.childText}>Không có chủ đề</Text>
                                                 :
-                                                item.sessions.map((element, key) => {
+                                                item.contents.map((element, key) => {
                                                     count += 1
                                                     return (
                                                         <Text style={styles.childText} key={key}>{count}. {element.content}</Text>
