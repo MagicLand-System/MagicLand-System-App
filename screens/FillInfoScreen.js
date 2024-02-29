@@ -169,7 +169,7 @@ export default function FillInfoScreen() {
             </View>
             <View style={styles.input}>
               <Text style={styles.inputTitle}> <Text style={{ color: 'red' }}>* </Text>Địa chỉ</Text>
-              <GooglePlacesAutocomplete
+              {/* <GooglePlacesAutocomplete
                 styles={{
                   textInput: styles.textInput,
                   poweredContainer: {height: 0},
@@ -185,6 +185,13 @@ export default function FillInfoScreen() {
                   components: 'country:vn',
                 }}
                 onFail={error => console.log(error)}
+              /> */}
+              <TextInput
+                placeholder="Địa chỉ"
+                name='Địa chỉ'
+                value={address}
+                onChangeText={setAddress}
+                styles={styles.textInput}
               />
               <View style={{ height: 25, width: '75%', justifyContent: 'center' }}>
                 {addressError &&

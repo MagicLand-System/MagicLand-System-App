@@ -9,6 +9,7 @@ import CircularProgressBar from '../../components/CircularProgressBar';
 import { formatDate } from '../../util/util';
 import { getSyllabus } from '../../api/course';
 import { getStatus } from '../../constants/class';
+import { getQuizByClassid } from '../../api/quiz';
 
 // import ThuyTienAvt from "../assets/images/ThuyTienAvt.png"
 // import ProcessBar from '../components/ProcessBar';
@@ -169,13 +170,15 @@ const progressData = [
 
 export default function ClassDetailScreen({ route, navigation }) {
     let classDetail = route?.params?.classDetail
-    const [programEducation, setProgramEducation] = useState(programEducationDefault)
+    const [programEducation, setProgramEducation] = useState([])
+    const [quizList, setQuizList] = useState([])
     const [currentPage, setCurrentPage] = useState(0);
     let count = 0
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
         loadSyllabusData()
+        loadQuizData()
     }, [route?.params?.classDetail])
 
     const loadSyllabusData = async () => {
@@ -183,7 +186,16 @@ export default function ClassDetailScreen({ route, navigation }) {
         if (response.status === 200) {
             setProgramEducation(response?.data)
         } else {
-            console.log("getSyllabus fail : ", response.response);
+            console.log("getSyllabus fail : ", response.response?.data);
+        }
+    }
+
+    const loadQuizData = async () => {
+        const response = await getQuizByClassid(classDetail?.classId)
+        if (response.status === 200) {
+            setQuizList(response?.data)
+        } else {
+            console.log("getSyllabus fail : ", response.response?.data);
         }
     }
 
@@ -191,6 +203,12 @@ export default function ClassDetailScreen({ route, navigation }) {
         const page = Math.round(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
         setCurrentPage(page);
     };
+
+    const navigateDoHomework = (homework) => {
+        if (homework?.quizType === "multiple-choice") {
+            navigation.push("MutilpleChoiceScreen", { homework: homework, title: homework?.quizName })
+        }
+    }
 
     return (
         <>
@@ -298,7 +316,7 @@ export default function ClassDetailScreen({ route, navigation }) {
 
                 <View style={styles.program}>
                     {
-                        programEducation?.topics?.map((item, index) => {
+                        programEducation?.syllabusInformations?.sessions?.map((item, index) => {
                             return (
                                 <View
                                     style={{
@@ -311,12 +329,12 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
                                         onPress={() => {
                                             setProgramEducation(prevProgramEducation => {
-                                                const updatedTopics = [...prevProgramEducation.topics];
-                                                // const defaultExpantStatus = updatedTopics[index].expand === undefined ? false
-                                                //     :
-                                                //     !updatedTopics[index].expand
+                                                const updatedTopics = [...prevProgramEducation.syllabusInformations?.sessions];
                                                 updatedTopics[index] = { ...updatedTopics[index], expand: !updatedTopics[index].expand };
-                                                return { ...prevProgramEducation, topics: updatedTopics };
+                                                return {
+                                                    ...prevProgramEducation,
+                                                    syllabusInformations: { ...prevProgramEducation.syllabusInformations, sessions: updatedTopics }
+                                                };
                                             });
                                         }}
                                     >
@@ -333,14 +351,15 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         }
                                     </TouchableOpacity>
                                     {
-                                        item.expand === true &&
                                         (
-                                            !item.sessions[0] ?
+                                            !item.contents[0] ?
+                                                item.expand === true &&
                                                 <Text style={styles.childText}>Không có chủ đề</Text>
                                                 :
-                                                item.sessions.map((element, key) => {
+                                                item.contents.map((element, key) => {
                                                     count += 1
                                                     return (
+                                                        item.expand === true &&
                                                         <Text style={styles.childText} key={key}>{count}. {element.content}</Text>
                                                     )
                                                 })
@@ -372,7 +391,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                         </View>
                     </View>
                     {
-                        scoreDetailDefault.map((item, key) => (
+                        quizList.map((item, key) => (
                             <View style={{ ...styles.flexColumn, width: "100%", paddingHorizontal: 20 }} key={key}>
                                 <View style={{ ...styles.flexColumn, width: "70%", paddingVertical: 20, borderRightWidth: 1 }}>
                                     <View style={styles.tabletIcon}>
@@ -387,9 +406,11 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         }
                                     </View>
                                     {/* <Icon name={"checkbox-marked-circle"} color={"#4582E6"} size={15} /> */}
-                                    <Text style={styles.boldText}>
-                                        {item.name}
-                                    </Text>
+                                    <TouchableOpacity onPress={() => navigateDoHomework(item)}>
+                                        <Text style={styles.boldText}>
+                                            {item.quizName} ( {item.quizType} )
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                                 <View style={styles.scoreValue}>
                                     {
