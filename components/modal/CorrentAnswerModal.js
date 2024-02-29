@@ -5,7 +5,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-export default function CorrentAnswerModal({ visible }) {
+export default function CorrentAnswerModal({ visible, score }) {
 
     return (
         <Modal
@@ -19,7 +19,7 @@ export default function CorrentAnswerModal({ visible }) {
                 <View style={styles.modalHeader}>
                     <Text style={styles.modalHeaderText}>Giỏi quá!!!</Text>
                 </View>
-                <Text style={{ ...styles.modalHeaderText, color: "#3AAC45", margin: 10 }}>Chúc mừng bé được cộng 1 điểm.</Text>
+                <Text style={{ ...styles.modalHeaderText, color: "#3AAC45", margin: 10 }}>Chúc mừng bé được cộng {score} điểm.</Text>
                 <Text style={{ ...styles.modalHeaderText, color: "#3AAC45", margin: 10 }}>Tiếp tục nào!!!</Text>
 
 

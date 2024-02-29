@@ -9,6 +9,7 @@ import CircularProgressBar from '../../components/CircularProgressBar';
 import { formatDate } from '../../util/util';
 import { getSyllabus } from '../../api/course';
 import { getStatus } from '../../constants/class';
+import { getQuizByClassid } from '../../api/quiz';
 
 // import ThuyTienAvt from "../assets/images/ThuyTienAvt.png"
 // import ProcessBar from '../components/ProcessBar';
@@ -170,12 +171,14 @@ const progressData = [
 export default function ClassDetailScreen({ route, navigation }) {
     let classDetail = route?.params?.classDetail
     const [programEducation, setProgramEducation] = useState([])
+    const [quizList, setQuizList] = useState([])
     const [currentPage, setCurrentPage] = useState(0);
     let count = 0
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
         loadSyllabusData()
+        loadQuizData()
     }, [route?.params?.classDetail])
 
     const loadSyllabusData = async () => {
@@ -187,11 +190,26 @@ export default function ClassDetailScreen({ route, navigation }) {
         }
     }
 
+    const loadQuizData = async () => {
+        const response = await getQuizByClassid(classDetail?.classId)
+        if (response.status === 200) {
+            setQuizList(response?.data)
+        } else {
+            console.log("getSyllabus fail : ", response.response?.data);
+        }
+    }
+
     const handleScroll = (event) => {
         const page = Math.round(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
         setCurrentPage(page);
     };
-    // console.log(programEducation);
+
+    const navigateDoHomework = (homework) => {
+        if (homework?.quizType === "multiple-choice") {
+            navigation.push("MutilpleChoiceScreen", { homework: homework, title: homework?.quizName })
+        }
+    }
+
     return (
         <>
             <Header navigation={navigation} goback={navigation.pop} title={"Thông Tin Chi Tiết Của Lớp Học"} />
@@ -373,7 +391,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                         </View>
                     </View>
                     {
-                        scoreDetailDefault.map((item, key) => (
+                        quizList.map((item, key) => (
                             <View style={{ ...styles.flexColumn, width: "100%", paddingHorizontal: 20 }} key={key}>
                                 <View style={{ ...styles.flexColumn, width: "70%", paddingVertical: 20, borderRightWidth: 1 }}>
                                     <View style={styles.tabletIcon}>
@@ -388,9 +406,11 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         }
                                     </View>
                                     {/* <Icon name={"checkbox-marked-circle"} color={"#4582E6"} size={15} /> */}
-                                    <Text style={styles.boldText}>
-                                        {item.name}
-                                    </Text>
+                                    <TouchableOpacity onPress={() => navigateDoHomework(item)}>
+                                        <Text style={styles.boldText}>
+                                            {item.quizName} ( {item.quizType} )
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                                 <View style={styles.scoreValue}>
                                     {
