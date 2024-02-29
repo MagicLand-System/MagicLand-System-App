@@ -173,10 +173,10 @@ export default function ClassDetailScreen({ route, navigation }) {
     const [currentPage, setCurrentPage] = useState(0);
     let count = 0
 
-    // useEffect(() => {
-    //     classDetail = route?.params?.classDetail
-    //     loadSyllabusData()
-    // }, [route?.params?.classDetail])
+    useEffect(() => {
+        classDetail = route?.params?.classDetail
+        loadSyllabusData()
+    }, [route?.params?.classDetail])
 
     const loadSyllabusData = async () => {
         const response = await getSyllabus(classDetail?.courseId)
@@ -191,7 +191,7 @@ export default function ClassDetailScreen({ route, navigation }) {
         const page = Math.round(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
         setCurrentPage(page);
     };
-
+    // console.log(programEducation);
     return (
         <>
             <Header navigation={navigation} goback={navigation.pop} title={"Thông Tin Chi Tiết Của Lớp Học"} />
@@ -311,12 +311,12 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
                                         onPress={() => {
                                             setProgramEducation(prevProgramEducation => {
-                                                const updatedTopics = [...prevProgramEducation.topics];
-                                                // const defaultExpantStatus = updatedTopics[index].expand === undefined ? false
-                                                //     :
-                                                //     !updatedTopics[index].expand
+                                                const updatedTopics = [...prevProgramEducation.syllabusInformations?.sessions];
                                                 updatedTopics[index] = { ...updatedTopics[index], expand: !updatedTopics[index].expand };
-                                                return { ...prevProgramEducation, topics: updatedTopics };
+                                                return {
+                                                    ...prevProgramEducation,
+                                                    syllabusInformations: { ...prevProgramEducation.syllabusInformations, sessions: updatedTopics }
+                                                };
                                             });
                                         }}
                                     >
@@ -333,14 +333,15 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         }
                                     </TouchableOpacity>
                                     {
-                                        item.expand === true &&
                                         (
                                             !item.contents[0] ?
+                                                item.expand === true &&
                                                 <Text style={styles.childText}>Không có chủ đề</Text>
                                                 :
                                                 item.contents.map((element, key) => {
                                                     count += 1
                                                     return (
+                                                        item.expand === true &&
                                                         <Text style={styles.childText} key={key}>{count}. {element.content}</Text>
                                                     )
                                                 })

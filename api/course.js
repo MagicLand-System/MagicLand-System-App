@@ -41,8 +41,9 @@ export const getCourseCategories = async () => {
 };
 
 export const getSyllabus = async (CouseId) => {
+    // console.log(CouseId);
     try {
-        const response = await api.get(`/api/v1/Syllabus/getByCourse?CouseId=${CouseId}`);
+        const response = await api.get(`/api/v1/Syllabus/getByCourse?courseId=${CouseId}`);
         return response;
     } catch (error) {
         console.log("getSyllabus in api/course.js error : ", error);
