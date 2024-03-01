@@ -49,7 +49,10 @@ export default function ClassOptionScreen({ route, navigation }) {
         {
             title: "Điểm danh",
             icon: <Icon name={"book"} color={"#4582E6"} size={25} />,
-            onClick: () => navigation.push("AttendanceScreen", { classDetail: classDetail, date: date, slot: slot })
+            onClick: () => {
+                navigation.push("AttendanceScreen", { classDetail: classDetail, date: date, slot: slot })
+                // console.log(date);
+            }
         },
         {
             title: "Chấm điểm bài tập",

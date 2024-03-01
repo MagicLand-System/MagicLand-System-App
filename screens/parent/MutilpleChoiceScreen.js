@@ -54,10 +54,10 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
             setModalVisible({ ...modalVisible, correct: false, incorrect: false, chooseValue: "" });
         }, 2000);
     }
-    
+
     return (
         <>
-            <Header navigation={navigation} goback={navigation.pop} title={"Chủ đề 3 - Bài 10 + 11"} />
+            <Header navigation={navigation} goback={navigation.pop} title={route?.params?.title} />
             {
                 loading ?
                     <SpinnerLoading />
@@ -68,7 +68,6 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
                         source={background1}
                     >
                         <View>
-                            {/* <Text style={styles.questionMark}>{homeworkData.homeworkList[homeworkListIndex].mark} Điểm</Text> */}
                             <Text style={styles.questionMark}>{totalMark} Điểm</Text>
                             <Text style={styles.correctAnswer}>{homeworkData[homeworkListIndex].questionDescription}</Text>
                             {
@@ -128,13 +127,15 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#F5F5F5',
+        flex: 1
     },
     questionMark: {
         width: WIDTH,
         padding: 20,
         textAlign: "right",
         fontWeight: "600",
-        color: "#DF8A3C"
+        color: "#DF8A3C",
+        // color: "white"
     },
     correctAnswer: {
         width: WIDTH,
