@@ -9,7 +9,7 @@ import CourseCard from '../../../components/CourseCard';
 import FilterCustomModal from '../../../components/modal/FilterCustomModal';
 import InputRange from '../../../components/InputRange';
 import StarChoose from '../../../components/StarChoose';
-import { getAllCourse } from '../../../api/course';
+import { getAllCourse, getValidCourse } from '../../../api/course';
 import SpinnerLoading from '../../../components/SpinnerLoading';
 import { userSelector, courseSelector } from '../../../store/selector';
 import { useSelector } from 'react-redux';
@@ -89,7 +89,7 @@ export default function CourseScreen({ navigation }) {
 
     const loadAllCourseData = async () => {
         setDataLoading(true)
-        const response = await getAllCourse()
+        const response = await getValidCourse()
         if (response?.status === 200) {
             setCourseList(response?.data)
             const { minPrice, maxPrice } = getMinMaxPrice(response?.data);

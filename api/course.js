@@ -10,6 +10,16 @@ export const getAllCourse = async () => {
     }
 };
 
+export const getValidCourse = async () => {
+    try {
+        const response = await api.get("/api/v1/courses/validRegister");
+        return response;
+    } catch (error) {
+        console.log("getValidCourse in api/course.js error : ", error);
+        return error;
+    }
+};
+
 export const getCourseByCourseId = async () => {
     try {
         const response = await api.get(`/api/v1/${courseID}`);
