@@ -50,10 +50,16 @@ export const getCourseCategories = async () => {
     }
 };
 
-export const getSyllabus = async (CouseId) => {
-    // console.log(CouseId);
+export const getSyllabus = async (CouseId, classId) => {
+    let path = `courseId=${CouseId}`
+
+    if (classId) {
+        path = `courseId=${CouseId}&classId=${classId}`
+    }
+
     try {
-        const response = await api.get(`/api/v1/Syllabus/getByCourse?courseId=${CouseId}`);
+        const response = await api.get(`/api/v1/Syllabus/getByCourse?${path}`);
+        console.log(path);
         return response;
     } catch (error) {
         console.log("getSyllabus in api/course.js error : ", error);

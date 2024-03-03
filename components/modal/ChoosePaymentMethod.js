@@ -12,7 +12,7 @@ import { useFocusEffect } from '@react-navigation/native';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-export default function ChoosePaymentMethod({ visible, paymentMethodList, setPaymentMethodList, onCancle, navigation }) {
+export default function ChoosePaymentMethod({ visible, paymentMethodList, setPaymentMethodList, onCancle, navigation, price }) {
 
     const [dropdownButton, setDropdownButton] = useState(Array(paymentMethodList.length).fill(false));
     const [wallet, setWallet] = useState({})
@@ -32,15 +32,33 @@ export default function ChoosePaymentMethod({ visible, paymentMethodList, setPay
         if (response?.status === 200) {
             setWallet(response?.data)
         }
+        checkWallet()
+    }
+
+    const checkWallet = () => {
+        if (wallet?.balance < price) {
+            setDropdownButton((prevStudentList) => {
+                return prevStudentList.map((item, currentIndex) => (
+                    item = currentIndex === 0 ? true : false
+                ));
+            });
+        }
     }
 
     const handleChoosePaymentMethod = (id, index) => {
         setPaymentMethodList((prevStudentList) => {
             const index = prevStudentList.findIndex(obj => obj.id === id);
-            return prevStudentList.map((item, i) => ({
-                ...item,
-                check: i === index ? true : false,
-            }));
+            if (index === 0 && wallet?.balance < price) {
+                return prevStudentList.map((item, i) => ({
+                    ...item,
+                }));
+            } else {
+                return prevStudentList.map((item, i) => ({
+                    ...item,
+                    check: i === index ? true : false,
+                }));
+            }
+
         });
         setDropdownButton((prevStudentList) => {
             return prevStudentList.map((item, currentIndex) => (

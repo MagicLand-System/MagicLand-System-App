@@ -28,6 +28,7 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
     const loadQuizData = async () => {
         setLoading(true)
         const response = await getQuizById(quizData?.examId)
+        console.log(quizData?.examId);
         if (response.status === 200) {
             setHomeworkData(response?.data)
             setLoading(false)

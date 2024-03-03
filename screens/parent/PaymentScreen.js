@@ -97,7 +97,12 @@ export default function PaymentScreen({ route, navigation }) {
     }
 
     const handlePayment = () => {
-        setModalVisible({ ...modalVisible, otp: true })
+        const hasCheckedItem = paymentMethodList.some(item => item.check === true);
+        if (hasCheckedItem) {
+            setModalVisible({ ...modalVisible, otp: true });
+        } else {
+            showToast("Thông báo", `Hãy chọn phương thức thanh toán trước`, "warning");
+        }
     }
 
     const handleSubmitOtp = async (otp) => {
@@ -309,6 +314,7 @@ export default function PaymentScreen({ route, navigation }) {
                 setPaymentMethodList={setPaymentMethodList}
                 navigation={navigation}
                 onCancle={handleClosePaymentModal}
+                price={classDetail[0]?.coursePrice}
             />
         </>
     )

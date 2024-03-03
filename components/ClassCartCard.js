@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import React from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { formatDate, formatPrice } from '../util/util';
+import { formatDate, formatPrice, getVnDay, shortedTime } from '../util/util';
 import defaultImage from "../assets/classCard/classicMath.png"
 import { courseSelector } from '../store/selector';
 import { useSelector } from 'react-redux';
@@ -16,7 +16,7 @@ const colorList = [
     "#DE9E71"
 ]
 
-export default function ClassCartCard({ cardDetail, check, index, onClick, background }) {
+export default function ClassCartCard({ cardDetail, check, index, onClick, background, priceHidden, timeType }) {
 
     const course = useSelector(courseSelector)
 
@@ -88,7 +88,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                 </View>
                 <View style={styles.cardDetail}>
                     <View style={{ ...styles.flexColumnBetween, marginTop: 5, paddingRight: 10 }}>
-                        <Text style={{...styles.cardName, maxWidth: "70%"}} numberOfLines={1}>{
+                        <Text style={{ ...styles.cardName, maxWidth: "70%" }} numberOfLines={1}>{
                             cardDetail?.name ?
                                 cardDetail?.name
                                 :
@@ -96,16 +96,24 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                                     cardDetail?.className
                                     :
                                     "Lớp học"}</Text>
-                        <Text style={{ ...styles.cardName, color: "#241468", fontSize : 11 }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
+                        {
+                            !priceHidden &&
+                            <Text style={{ ...styles.cardName, color: "#241468", fontSize: 11 }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
+                        }
                     </View>
                     <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>
                     <View style={styles.flexColumn}>
                         <Icon name={"calendar-check"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.startDate ? cardDetail?.startDate : cardDetail?.Time)}</Text>
+                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.startDate ? cardDetail?.startDate : cardDetail?.date)}</Text>
                     </View>
                     <View style={{ ...styles.flexColumn, marginVertical: 5 }}>
                         <Icon name={"clock-time-three-outline"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{getSchedule(cardDetail)}</Text>
+                        {
+                            timeType === "onDate" ?
+                                <Text style={styles.cardDetailText}>{getVnDay(cardDetail?.dayOfWeeks ? cardDetail?.dayOfWeeks : "Monday")} ( {shortedTime(cardDetail?.slot ? cardDetail?.slot?.startTime : cardDetail?.startTime)} - {shortedTime(cardDetail?.slot ? cardDetail?.slot?.endTime : cardDetail?.endTime)} )</Text>
+                                :
+                                <Text style={styles.cardDetailText}>{getSchedule(cardDetail)}</Text>
+                        }
                     </View>
                     <View style={styles.flexColumn}>
                         <Icon name={"map-marker-radius"} color={"#241468"} size={18} />

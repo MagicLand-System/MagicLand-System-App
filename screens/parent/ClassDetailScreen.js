@@ -182,7 +182,7 @@ export default function ClassDetailScreen({ route, navigation }) {
     }, [route?.params?.classDetail])
 
     const loadSyllabusData = async () => {
-        const response = await getSyllabus(classDetail?.courseId)
+        const response = await getSyllabus(classDetail?.courseId, classDetail?.classId)
         if (response.status === 200) {
             setProgramEducation(response?.data)
         } else {
@@ -340,8 +340,9 @@ export default function ClassDetailScreen({ route, navigation }) {
                                     >
                                         <Text style={styles.mainText}>
                                             <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}</Text>
-                                            {/* {formatDate()} */}
-                                            {"(05/01/2024)"}
+                                            {formatDate(item?.date)}
+                                            {/* {"(05/01/2024)"} */}
+                                            {/* {console.log(item)} */}
                                         </Text>
                                         {
                                             !item.expand ?
