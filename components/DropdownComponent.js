@@ -11,15 +11,6 @@ const DropdownComponent = ({ dropdownStyle, studentList, rightIcon, onChoose, pl
         return (
             <View style={styles.item}>
                 <Text style={styles.textItem}>{dropdownItem(item)}</Text>
-                {/* <Text style={styles.textItem}>{item.fullName}</Text> */}
-                {/* {item.value === value && (
-            <AntDesign
-              style={styles.icon}
-              color="black"
-              name="Safety"
-              size={20}
-            />
-          )} */}
             </View>
         );
     };
@@ -50,7 +41,7 @@ const DropdownComponent = ({ dropdownStyle, studentList, rightIcon, onChoose, pl
             // )}
             renderRightIcon={rightIcon}
             renderItem={renderItem}
-            disable={disable ? disable : false}
+            disable={disable}
         />
     );
 };

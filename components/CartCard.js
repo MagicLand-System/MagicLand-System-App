@@ -16,36 +16,12 @@ const colorList = [
     "#DE9E71"
 ]
 
-export default function ClassCartCard({ cardDetail, check, index, onClick, background, priceHidden, timeType }) {
+export default function CartCard({ cardDetail, type, check, index, onClick, background, priceHidden }) {
 
     const course = useSelector(courseSelector)
 
-    const getCourseType = (courseName) => {
-        const courseFound = course.find(course => course?.name?.toUpperCase() === courseName?.toUpperCase());
-        return courseFound ? courseFound?.vietName : "Khoá học";
-    }
-
-    const getSchedule = (item) => {
-        if (item?.schedules) {
-            switch (item?.schedules[0]?.dayOfWeeks) {
-                case "Monday":
-                    return "Thứ 2 - 4 - 6 (7h30 - 9h)"
-                case "Tuesday":
-                    return "Thứ 3 - 5 - 7 (7h30 - 9h)"
-                case "Saturday":
-                    return "Thứ 7 - Cn (7h30 - 9h)"
-
-                default:
-                    return "Thứ 2 - 4 - 6 (7h30 - 9h)"
-            }
-        } else {
-            return "Thứ 2 - 4 - 6 (7h30 - 9h)"
-        }
-
-    }
-
     return (
-        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail?.classId) }}>
+        <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail?.cartItemId) }}>
             <View
                 style={{
                     ...styles.card,
@@ -78,12 +54,12 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
 
                 <View style={styles.cardImage}>
                     <Image
-                        source={defaultImage}
+                        source={{uri : cardDetail?.image}}
                         resizeMode="cover"
                         style={styles.cardImageValue}
                     />
                     <View style={styles.classType}>
-                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{cardDetail?.classSubject ? cardDetail?.classSubject : "Khoá Học"}</Text>
+                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{cardDetail?.subject ? cardDetail?.subject : "Khoá Học"}</Text>
                     </View>
                 </View>
                 <View style={styles.cardDetail}>
@@ -98,27 +74,31 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                                     "Lớp học"}</Text>
                         {
                             !priceHidden &&
-                            <Text style={{ ...styles.cardName, color: "#241468", fontSize: 11 }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
+                            <Text style={{ ...styles.cardName, color: "#241468", fontSize: 11 }}>{cardDetail?.price ? formatPrice(cardDetail?.price) : formatPrice(0)}đ</Text>
                         }
                     </View>
-                    <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>
+                    <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Mã Số: {cardDetail?.code} {type === "CLASS" && <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>- {cardDetail?.schedules[0]?.method}</Text>}</Text>
                     <View style={styles.flexColumn}>
                         <Icon name={"calendar-check"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.startDate ? cardDetail?.startDate : cardDetail?.date)}</Text>
+                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.schedules[0]?.schedule ? cardDetail?.schedules[0]?.openingDay : cardDetail?.date)}</Text>
                     </View>
                     <View style={{ ...styles.flexColumn, marginVertical: 5 }}>
-                        <Icon name={"clock-time-three-outline"} color={"#241468"} size={18} />
+
                         {
-                            timeType === "onDate" ?
-                                <Text style={styles.cardDetailText}>{getVnDay(cardDetail?.dayOfWeeks ? cardDetail?.dayOfWeeks : "Monday")} ( {shortedTime(cardDetail?.slot ? cardDetail?.slot?.startTime : cardDetail?.startTime)} - {shortedTime(cardDetail?.slot ? cardDetail?.slot?.endTime : cardDetail?.endTime)} )</Text>
-                                :
-                                <Text style={styles.cardDetailText}>{getSchedule(cardDetail)}</Text>
+                            type === "CLASS" &&
+                            <>
+                                <Icon name={"clock-time-three-outline"} color={"#241468"} size={18} />
+                                <Text style={styles.cardDetailText}>{cardDetail?.schedules[0]?.schedule} ( {cardDetail?.schedules[0]?.slot} )</Text>
+                            </>
                         }
                     </View>
-                    <View style={styles.flexColumn}>
-                        <Icon name={"map-marker-radius"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{cardDetail?.address}</Text>
-                    </View>
+                    {
+                        type === "CLASS" &&
+                        <View style={styles.flexColumn}>
+                            <Icon name={"map-marker-radius"} color={"#241468"} size={18} />
+                            <Text style={styles.cardDetailText}>{cardDetail?.address}</Text>
+                        </View>
+                    }
                 </View>
             </View>
         </TouchableOpacity>

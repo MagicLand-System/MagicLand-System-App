@@ -12,6 +12,7 @@ import ClassCard from '../../components/ClassCard';
 import SpinnerLoading from "../../components/SpinnerLoading"
 import FilterCustomModal from '../../components/modal/FilterCustomModal';
 import ClassCartCard from '../../components/ClassCartCard';
+import CartCard from '../../components/CartCard';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -109,7 +110,7 @@ export default function CartScreen({ navigation }) {
         const response = await getCartOfParent()
         if (response?.status === 200) {
             // console.log(response?.data.cartItems);
-            setClassCardDetail(response?.data?.cartItems)
+            setClassCardDetail(response?.data?.items)
         }
         setDataLoading(false)
     }
@@ -124,26 +125,26 @@ export default function CartScreen({ navigation }) {
     }
 
     const hanldeRegis = () => {
-        const choosesListCount = classCardDetail?.filter(item => item.class.choose)
-        if (choosesListCount.length !== 0) {
+        const choosesListCount = classCardDetail?.filter(item => item.choose)
+        if (choosesListCount?.length !== 0) {
             setBottomModalVisible({ total: true, confirm: true })
         }
     }
 
     const hanldeClearChoosed = () => {
         const updateList = [...classCardDetail]
-        updateList.forEach(item => item.class.choose = false)
+        updateList.forEach(item => item.choose = false)
         setClassCardDetail(updateList)
     }
 
     const handleRemoveCart = async () => {
         setDataLoading(true)
-        const choosedList = classCardDetail?.filter(item => item.class.choose)
+        const choosedList = classCardDetail?.filter(item => item.choose)
         const response = await removeClassInCart(choosedList.map((item) => (item.itemId)))
         if (response.status === 200) {
             await loadClassData()
         } else {
-            console.log(response.response.data);
+            console.log(response?.response?.data);
         }
         setDataLoading(false)
     }
@@ -154,14 +155,14 @@ export default function CartScreen({ navigation }) {
     }
 
     const handleSubmit = () => {
-        const courseList = classCardDetail?.filter(item => item.class.choose)
+        const courseList = classCardDetail?.filter(item => item?.choose)
         navigation.push("RegisterClassScreen", { courseList: courseList })
         // hanldeChangeStatus()
     }
 
     const getCountChoosed = () => {
-        const choosesListCount = classCardDetail?.filter(item => item.class.choose)
-        return choosesListCount.length
+        const choosesListCount = classCardDetail?.filter(item => item?.choose)
+        return choosesListCount?.length
     }
 
     const selectCourse = (id) => {
@@ -169,9 +170,9 @@ export default function CartScreen({ navigation }) {
             const index = getIndexById(classCardDetail, id);
             if (index !== -1) {
                 const updateArray = [...classCardDetail];
-                const classItem = updateArray[index].class;
+                const classItem = updateArray[index];
 
-                const defaultStatus = classItem && classItem.choose ? classItem.choose : false;
+                const defaultStatus = classItem && classItem?.choose ? classItem?.choose : false;
 
                 if (classItem) {
                     classItem.choose = !defaultStatus;
@@ -183,7 +184,7 @@ export default function CartScreen({ navigation }) {
     };
 
     const getIndexById = (array, id) => {
-        return array.findIndex(item => item.class && item.class.classId === id);
+        return array.findIndex(item => item && item.cartItemId === id);
     };
 
     const hanldeSubmit = () => {
@@ -354,7 +355,7 @@ export default function CartScreen({ navigation }) {
 
     return (
         <>
-            <FavoriteHeader navigation={navigation} title={`Khóa Học Bạn Quan Tâm (${classCardDetail.length})`} type={bottomModalVisible.total} setType={hanldeChangeStatus} />
+            <FavoriteHeader navigation={navigation} title={`Khóa Học Bạn Quan Tâm (${classCardDetail?.length})`} type={bottomModalVisible.total} setType={hanldeChangeStatus} />
             <TouchableOpacity
                 onPress={() => setFilterVisible(true)}
                 style={{ ...styles.filterButton, bottom: bottomModalVisible.total ? bottomModalVisible.confirm ? 195 : 135 : 80 }}
@@ -368,7 +369,7 @@ export default function CartScreen({ navigation }) {
                     <ScrollView showsVerticalScrollIndicator={false} style={{ ...styles.container }}>
                         <View style={{ marginBottom: 15 }} />
                         {filferClassList(classCardDetail)?.map((item, index) => {
-                            return <ClassCartCard cardDetail={item.class} check={bottomModalVisible.total} index={index} onClick={selectCourse} key={index} />
+                            return <CartCard cardDetail={item} type={item?.itemType} check={bottomModalVisible.total} index={index} onClick={selectCourse} key={index} />
                         })}
                         <View style={{ height: bottomModalVisible.total ? bottomModalVisible.confirm ? 195 : 135 : 30 }} />
                     </ScrollView>

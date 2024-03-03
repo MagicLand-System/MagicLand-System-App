@@ -2,7 +2,7 @@ import api from './api'
 
 export const getCartOfParent = async () => {
     try {
-        const response = await api.get("/api/v1/cart/view");
+        const response = await api.get("api/v1/cart/items/all");
         return response;
     } catch (error) {
         console.log("getCartOfParent in api/cart.js error : ", error);
@@ -31,7 +31,7 @@ export const removeClassInCart = async (itemIdList) => {
     itemIdList?.forEach(element => {
         path += "itemIdList=" + element + "&"
     });
-    console.log(itemIdList);
+
     try {
         const response = await api.delete(`/api/v1/cart/item/delete?` + path);
         return response;
@@ -40,3 +40,13 @@ export const removeClassInCart = async (itemIdList) => {
         return error;
     }
 };
+
+export const addCourseToCart = async (courseId) => {
+    try {
+        const response = await api.post(`/api/v1/cart/favorite/add?courseId=` + courseId);
+        return response;
+    } catch (error) {
+        console.log("addCourseToCart in api/cart.js error : ", error);
+        return error;
+    }
+}

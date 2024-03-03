@@ -104,13 +104,13 @@ export default function MultiplePaymentScreen({ route, navigation }) {
 
         try {
             await Promise.all(courseList?.map(async (classItem) => {
-                const response = await registerClass([classItem.class?.student.id], classItem.class.classId);
+                const response = await registerClass([classItem?.student?.id], classItem?.classId ? classItem?.classId?.classId : classItem?.itemId);
                 if (response?.status === 200) {
-                    showToast("Thành công", `Đã đăng ký ${classItem.class?.student?.fullName} vào lớp ${classItem?.class?.name}`, "success");
+                    showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
                     setModalVisible({ ...modalVisible, otp: false, notifi: true });
                 } else {
                     showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
-                    console.log(response.response.data);
+                    // console.log(response.response.data);
                 }
             }));
         } catch (error) {
@@ -162,7 +162,7 @@ export default function MultiplePaymentScreen({ route, navigation }) {
     const totalPrice = () => {
         let total = 0
         courseList.forEach(element => {
-            total += element?.class.coursePrice
+            total += element?.price
         });
         return total ? total : 0
     }
@@ -185,6 +185,16 @@ export default function MultiplePaymentScreen({ route, navigation }) {
 
     const paymentMethod = () => {
         return paymentMethodList.find(item => item.check)
+    }
+
+    const findClassDetail = (array, classId) => {
+        const index = array.findIndex(obj => obj?.classId === classId?.classId);
+        console.logclassId
+        if (index !== -1) {
+            return array[index].schedule + "  (" + array[index].slot + ")"
+        } else {
+            return ""
+        }
     }
 
     return (
@@ -211,9 +221,13 @@ export default function MultiplePaymentScreen({ route, navigation }) {
                     {
                         courseList.map((item, index) => (
                             <View style={{ ...styles.flexColumnBetween }} key={index}>
-                                {/* {console.log(item?.date)} */}
-                                <Text style={{ ...styles.boldText, marginTop: 5 }}>{item?.class.name}</Text>
-                                <Text style={{ ...styles.boldText, marginTop: 5 }}>{item?.class?.date?.name}</Text>
+                                <Text style={{ ...styles.boldText, marginTop: 5 }}>{item?.name}</Text>
+                                {
+                                    item?.itemType === "CLASS" ?
+                                        <Text style={{ ...styles.boldText, marginTop: 5 }}>{item?.schedules[0]?.schedule + "  (" + item?.schedules[0]?.slot})</Text>
+                                        :
+                                        <Text style={{ ...styles.boldText, marginTop: 5 }}>{findClassDetail(item?.schedules, item?.classId)}</Text>
+                                }
                             </View>
                         ))
                     }
