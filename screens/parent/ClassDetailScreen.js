@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Header from '../../components/header/Header';
 import NotificationModal from '../../components/modal/NotificationModal';
 import CircularProgressBar from '../../components/CircularProgressBar';
+import CourseCard from '../../components/CourseCard';
 
 import { formatDate } from '../../util/util';
 import { getSyllabus } from '../../api/course';
@@ -17,150 +18,178 @@ import { getQuizByClassid } from '../../api/quiz';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const programEducationDefault = [
-    {
-        name: "Giới thiệu khái quát Toán Tư Duy.",
-        expand: false,
-        list: [
-            {
-                name: "Giới thiệu khóa học"
-            },
-            {
-                name: "Làm quen với Toán Tư Duy"
-            },
-            {
-                name: "Những con số xếp hàng"
-            },
-        ]
-    },
-    {
-        name: "Rèn kỹ năng so sánh, thống kê, cân thăng bằng. ",
-        expand: false,
-        list: [
-            {
-                name: "Cân thăng bằng"
-            },
-            {
-                name: "Làm quen với cái cân"
-            },
-            {
-                name: "Bé tập thống kê"
-            },
-            {
-                name: "Các số xếp hàng"
-            },
-            {
-                name: "Trò chơi đếm cách"
-            },
-            {
-                name: "Kiểm tra 1"
-            },
-        ]
-    },
-    {
-        name: "Làm quen các số từ 0 đến 10, tập đếm đến 20, ... ",
-        expand: false,
-        list: [
-            {
-                name: "Số nào ở đâu?"
-            },
-            {
-                name: "Que tính kì diệu"
-            },
-            {
-                name: "Cộng thêm với 10"
-            },
-            {
-                name: "Cộng trừ đến 20"
-            },
-            {
-                name: "Trong “3” có “1” và “2”"
-            },
-            {
-                name: "Làm thế nào để tính nhanh"
-            },
-            {
-                name: "Sudoku"
-            },
-            {
-                name: "Bài kiểm tra 2"
-            },
-        ]
-    },
-    {
-        name: "Sáng tạo với hình học, xếp vòng.",
-        expand: false,
-        list: [
-            {
-                name: "Khối trụ"
-            },
-            {
-                name: "khối cầu"
-            },
-            {
-                name: "Khối lập phương"
-            },
-            {
-                name: "Thử tài đoán vật"
-            },
-            {
-                name: "Tập làm kiến trúc sư"
-            },
-        ]
-    },
-    {
-        name: "Các bài toán vận dụng thực tiễn.",
-        expand: false,
-        list: [
-            {
-                name: "Câu đố hoa quả"
-            },
-            {
-                name: "Chiếc hộp có chứa được quả không?"
-            },
-            {
-                name: "Bảy ngày trong tuần"
-            },
-            {
-                name: "Mười hai tháng trong năm"
-            },
-            {
-                name: "Bông hoa đồng hồ"
-            },
-            {
-                name: "Bài đánh giá năng lực"
-            },
-        ]
-    },
-]
-
-const scoreDetailDefault = [
-    {
-        name: "Quiz 1",
-        mark: 8,
-        total: 10,
-    },
-    {
-        name: "Quiz 2",
-        mark: 10,
-        total: 10,
-    },
-    {
-        name: "Thực hành 1",
-        mark: 4,
-        total: 10,
-    },
-    {
-        name: "Thực hành 2",
-        mark: undefined,
-        total: 10,
-    },
-    {
-        name: "Bài đánh giá năng lực",
-        mark: undefined,
-        total: 10,
-    },
-]
+const courseData = {
+    "openingSchedules": [
+        {
+            "classId": "df31d5f6-63f2-4d7d-8141-114ad6dc4ec8",
+            "schedule": "3-5-7",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-22T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "c8e69b6b-bdb6-4343-8173-1beeb9cd0c41",
+            "schedule": "3-5-7",
+            "slot": "12:00 AM - 14:00 PM",
+            "openingDay": "2024-03-24T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "1ee3c1a3-0b76-4e22-825b-23ede1d891c0",
+            "schedule": "3-5-7",
+            "slot": "12:00 AM - 14:00 PM",
+            "openingDay": "2024-03-15T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "acd3b8b8-c20b-4870-b77e-2a30a71c09fa",
+            "schedule": "4-6-Sunday",
+            "slot": "12:00 AM - 14:00 PM",
+            "openingDay": "2024-03-25T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "26db0478-e6bf-46f8-86a5-43ac38031259",
+            "schedule": "3-5-7",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-26T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "b653930e-ab4f-4eab-bd74-48e31f6ee6ef",
+            "schedule": "3-5-7",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-24T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "7c46ab75-cd35-4aa5-bc46-4d7e8c8062e9",
+            "schedule": "3-5-7",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-24T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "f7acbe6c-fa86-4710-9fce-6d26b692e1df",
+            "schedule": "3-5-7",
+            "slot": "12:00 AM - 14:00 PM",
+            "openingDay": "2024-03-26T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "14ca7599-abd1-46d9-a903-711cf86f89f4",
+            "schedule": "4-6-Sunday",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-25T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "cd1829a1-0150-43e5-82f1-885d2f839aef",
+            "schedule": "3-5-7",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-26T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "78ebe4df-b213-4e10-9fb9-a340374f1212",
+            "schedule": "2-3-4-5-6-7-Sunday",
+            "slot": "12:00 AM - 14:00 PM",
+            "openingDay": "2024-02-01T00:00:00",
+            "method": "OFFLINE"
+        },
+        {
+            "classId": "ea9c3d70-7f25-4485-9704-a6b38e076743",
+            "schedule": "3-5-7",
+            "slot": "12:00 AM - 14:00 PM",
+            "openingDay": "2024-03-22T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "4af76424-9485-42bf-ab57-ae9cf7a44feb",
+            "schedule": "4-6-Sunday",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-25T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "bdfa8fb8-0f13-40ee-93c3-b7b46d79d336",
+            "schedule": "2-3-4-5-6-7-Sunday",
+            "slot": "14:15 PM - 16:15 PM",
+            "openingDay": "2024-02-12T00:00:00",
+            "method": "OFFLINE"
+        },
+        {
+            "classId": "19bd506a-fd2e-4d59-bae6-bc8cbfe038db",
+            "schedule": "4-6-Sunday",
+            "slot": "12:00 AM - 14:00 PM",
+            "openingDay": "2024-03-25T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "099b02e8-ef68-402d-94b8-cd93ac096dfb",
+            "schedule": "4-6-Sunday",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-25T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "114e0d61-29e5-40f5-ad2d-de21f33bf985",
+            "schedule": "3-5-7",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-22T00:00:00",
+            "method": "offline"
+        },
+        {
+            "classId": "3e6bb081-d063-4604-946c-f35913557122",
+            "schedule": "4-6-Sunday",
+            "slot": "7:00 AM - 9:00 AM",
+            "openingDay": "2024-03-25T00:00:00",
+            "method": "offline"
+        }
+    ],
+    "relatedCourses": [],
+    "numberClassOnGoing": 0,
+    "updateDate": "2024-02-16T00:00:00",
+    "courseId": "871606a7-baa0-4c79-b685-1443502d02b3",
+    "isInCart": false,
+    "cartItemId": null,
+    "image": "https://i0.wp.com/apeejay.news/wp-content/uploads/2022/12/schoolgirl-pointing-up-blackboard.jpg",
+    "price": 300000,
+    "mainDescription": "Khóa học \"Vẽ thế giới quanh em\" không chỉ là hành trình nghệ thuật, mà là một cuộc phiêu lưu sáng tạo dành cho các tâm hồn trẻ thơ. Tại đây, chúng tôi kết hợp nghệ thuật và giáo dục để mang lại cho trẻ không chỉ kỹ năng vẽ tuyệt vời mà còn sự hiểu biết sâu rộng về thế giới.",
+    "subDescriptionTitle": [
+        {
+            "title": "Hãy Cùng Nhau Khám Phá Thế Giới",
+            "contents": [
+                {
+                    "content": "Kỳ Thú Hành Trình Văn Hóa",
+                    "description": "Bé sẽ đi du lịch qua những góc kỳ thú của thế giới thông qua bức tranh của mình. Khám phá văn hóa, kiến trúc và đặc điểm độc đáo của mỗi quốc gia qua ngôn ngữ hình vẽ."
+                },
+                {
+                    "content": "Kỹ Năng Tư Duy và Giao Tiếp",
+                    "description": "Vẽ không chỉ là về nét bút và màu sắc, mà còn là về cách diễn đạt ý tưởng. Khóa học giúp trẻ phát triển kỹ năng tư duy và giao tiếp thông qua ngôn ngữ nghệ thuật của bé."
+                },
+                {
+                    "content": "Sáng Tạo Trong Môi Trường Vui Nhộn",
+                    "description": "Với không khí học vui nhộn và năng động, trẻ không chỉ học về nghệ thuật mà còn trải nghiệm sự vui nhộn và niềm hứng thú trong quá trình sáng tạo."
+                },
+                {
+                    "content": "Bí Mật Của Nghệ Thuật Sáng Tạo",
+                    "description": "Học cách tạo ra những tác phẩm nghệ thuật sáng tạo và độc đáo của riêng bạn. Chia sẻ bí mật của sự sáng tạo và tìm ra nguồn cảm hứng không ngừng từ thế giới xung quanh."
+                }
+            ]
+        }
+    ],
+    "courseDetail": {
+        "courseName": "Vẽ Thế Giới Quanh Em",
+        "minAgeStudent": "4",
+        "maxAgeStudent": "10",
+        "subject": "Hội Họa",
+        "method": "offline / OFFLINE",
+        "numberOfSession": 20,
+        "addedDate": null,
+        "coursePrerequisites": []
+    }
+}
 
 const progressData = [
     { label: "Tiến độ học tập", value: 85, inActiveStrokeColor: "#7388A95A", activeStrokeColor: "#5BBF4A" },
@@ -341,10 +370,8 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         }}
                                     >
                                         <Text style={styles.mainText}>
-                                            <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}</Text>
-                                            {formatDate(item?.date)}
-                                            {/* {"(05/01/2024)"} */}
-                                            {/* {console.log(item)} */}
+                                            <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}  </Text>
+                                            ({formatDate(item?.date)})
                                         </Text>
                                         {
                                             !item.expand ?
@@ -427,6 +454,16 @@ export default function ClassDetailScreen({ route, navigation }) {
                         ))
                     }
                 </View>
+
+                <View style={styles.titleView}>
+                    <Text style={styles.title}>Các khoá học liên quan:</Text>
+                </View>
+                {/* courseData */}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.courseList}>
+                    <CourseCard cardDetail={courseData} onClick={() => console.log("click")} navigation={navigation} />
+                    <CourseCard cardDetail={courseData} onClick={() => console.log("click")} navigation={navigation} />
+                    <CourseCard cardDetail={courseData} onClick={() => console.log("click")} navigation={navigation} />
+                </ScrollView>
 
                 {/* <View style={styles.titleView}>
                     <Text style={styles.title}>Yêu cầu:</Text>
@@ -587,6 +624,9 @@ const styles = StyleSheet.create({
         width: "32%",
         alignItems: "center",
         justifyContent: "center"
+    },
+    courseList: {
+        marginVertical: 10
     },
 
     teacherInfor: {

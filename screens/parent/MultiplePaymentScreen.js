@@ -268,7 +268,7 @@ export default function MultiplePaymentScreen({ route, navigation }) {
                         <Text style={styles.detailViewTitle}>Học Phí:</Text>
                         <Text style={styles.boldText}>{formatPrice(totalPrice())}đ</Text>
                     </View>
-                    <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, height: 45, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }} onPress={handleChooseVourcherModal}>
+                    {/* <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, height: 45, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }} onPress={handleChooseVourcherModal}>
                         <Text style={{ ...styles.detailViewTitle, color: "#3AAC45" }}>Vourcher Giảm Giá</Text>
                         {
                             vourcherValue() ?
@@ -280,7 +280,7 @@ export default function MultiplePaymentScreen({ route, navigation }) {
                                 <Icon name={"chevron-right"} color={"#3AAC45"} size={28} />
                         }
 
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                         <Text style={styles.detailViewTitle}>Tổng tiền:</Text>
                         <Text style={{ ...styles.boldText }}>{formatPrice(totalPayment())}đ</Text>

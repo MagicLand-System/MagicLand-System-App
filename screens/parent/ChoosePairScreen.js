@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Header from '../../components/header/Header'
 import CorrentAnswerModal from '../../components/modal/CorrentAnswerModal';
 import IncorrentAnswerModal from '../../components/modal/IncorrentAnswerModal';
@@ -65,8 +66,9 @@ export default function ChoosePairScreen({ route, navigation }) {
             if (index1 !== -1 && index2 !== -1) {
                 homeworkData[homeworkListIndex].anwserFlashCarsInfor[index1].choosed = true
                 homeworkData[homeworkListIndex].anwserFlashCarsInfor[index2].choosed = true
+                setTotalMark(totalMark + homeworkData[homeworkListIndex].anwserFlashCarsInfor[index2].score + homeworkData[homeworkListIndex].anwserFlashCarsInfor[index1].score)
             }
-            
+
             if (checkCompletePhase()) {
                 if (homeworkData[homeworkListIndex + 1]) {
                     setHomeworkListIndex(homeworkListIndex + 1)
@@ -77,7 +79,7 @@ export default function ChoosePairScreen({ route, navigation }) {
                 }
             }
         } else {
-            console.log("wrong");
+            setWrongAmount(wrongAmount - 1)
         }
         setChoosedCardIdList([])
     }
@@ -85,6 +87,22 @@ export default function ChoosePairScreen({ route, navigation }) {
     const checkCompletePhase = () => {
         return homeworkData[homeworkListIndex].anwserFlashCarsInfor.every(card => card.choosed === true);
     }
+
+    const getHeartLeft = (amount) => {
+        const hearts = [];
+        for (let i = 0; i < 3; i++) {
+            hearts.push((i + 1) <= amount ?
+                <View style={{ marginRight: 10 }}>
+                    <Icon key={i} name={"cards-heart"} color={"red"} size={28} />
+                </View>
+                :
+                <View style={{ marginRight: 10 }}>
+                    <Icon key={i} name={"heart-outline"} color={"black"} size={28} />
+                </View>
+            );
+        }
+        return hearts.reverse();
+    };
 
     return (
         <>
@@ -98,7 +116,10 @@ export default function ChoosePairScreen({ route, navigation }) {
                         style={styles.container}
                         source={background1}
                     >
-                        <Text style={styles.questionMark}>{totalMark} Điểm</Text>
+                        <View style={{ ...styles.flexColumnAround, marginHorizontal: WIDTH * 0.22, width: WIDTH * 0.7 }}>
+                            {getHeartLeft(wrongAmount)}
+                            <Text style={styles.questionMark}>{totalMark} Điểm</Text>
+                        </View>
                         <Text style={styles.correctAnswer}>{homeworkData[homeworkListIndex].questionDescription}</Text>
                         <View style={styles.cardList}>
                             {
@@ -142,11 +163,15 @@ const styles = StyleSheet.create({
         // color: "white"
     },
     correctAnswer: {
-        width: WIDTH,
+        width: WIDTH * 0.9,
         fontSize: 25,
         fontWeight: "600",
         padding: 20,
-        textAlign: "center"
+        textAlign: "center",
+        backgroundColor: "white",
+        marginHorizontal: WIDTH * 0.05,
+        borderWidth: 1,
+        borderRadius: 15
     },
     cardList: {
         flexDirection: "row",
@@ -159,15 +184,17 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: "white",
         width: WIDTH * 0.3,
-        height: HEIGHT * 0.185,
+        height: HEIGHT * 0.16,
         borderWidth: 1,
         marginBottom: 10,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        borderRadius: 15,
+        overflow: "hidden"
     },
     cardImage: {
         width: WIDTH * 0.295,
-        height: HEIGHT * 0.18,
+        height: HEIGHT * 0.155,
         borderWidth: 1,
         overflow: "hidden"
     },

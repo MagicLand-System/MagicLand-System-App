@@ -140,7 +140,7 @@ export default function CartScreen({ navigation }) {
     const handleRemoveCart = async () => {
         setDataLoading(true)
         const choosedList = classCardDetail?.filter(item => item.choose)
-        const response = await removeClassInCart(choosedList.map((item) => (item.itemId)))
+        const response = await removeClassInCart(choosedList.map((item) => (item?.cartItemId)))
         if (response.status === 200) {
             await loadClassData()
         } else {
