@@ -29,19 +29,28 @@ export default function AttendanceScreen({ route, navigation }) {
     const loadStudentData = async () => {
         const response = await getAttendanceList(classDetail.classId)
         if (response?.status === 200) {
-            if (!checkCurrentDate(date)) {
-                const data = response?.data?.map((item) => {
-                    return {
-                        ...item,
-                        isPresent: false
-                    }
-                })
-                setStudentList(data)
-                setStudentTmpList(data)
-            } else {
-                setStudentList(response?.data)
-                setStudentTmpList(response?.data)
-            }
+            const data = response?.data?.map((item) => {
+                return {
+                    ...item,
+                    isPresent: item?.isPresent ? item?.isPresent : false
+                }
+            })
+            setStudentList(data)
+            setStudentTmpList(data)
+
+            // if (!checkCurrentDate(date)) {
+            //     const data = response?.data?.map((item) => {
+            //         return {
+            //             ...item,
+            //             isPresent: false
+            //         }
+            //     })
+            //     setStudentList(data)
+            //     setStudentTmpList(data)
+            // } else {
+            //     setStudentList(response?.data)
+            //     setStudentTmpList(response?.data)
+            // }
         }
     }
 

@@ -53,8 +53,7 @@ export default function HomeScreen({ navigation }) {
   }
 
   const hanldeViewWorkSchedule = (item) => {
-    console.log(item);
-    // navigation.push("ClassOptionScreen", { classId: item?.classId, date: new Date(), slot: item?.slotOrder })
+    navigation.push("ClassOptionScreen", { classId: item?.classId, date: new Date(), slot: item?.slotOrder })
   }
 
   return (
