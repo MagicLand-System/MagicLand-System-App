@@ -187,8 +187,8 @@ export default function CourseDetailScreen({ route, navigation }) {
                 console.log(item.classId);
                 const response = await modifyCart([], item.classId)
                 if (response?.status === 200) {
-                    showToast("Thành công", `Đã thêm ${item?.name} vào danh sách quan tâm`, "success");
-                    console.log(`Đã thêm ${item?.name} vào giỏ hàng`);
+                    showToast("Thành công", `Đã thêm ${item?.courseName} - ${item?.classCode} vào danh sách quan tâm`, "success");
+                    console.log(item);
                 } else {
                     showToast("Thất bại", `Thêm ${item?.name} vào danh sách quan tâm thất bại`, "error");
                     console.log(response.response.data);

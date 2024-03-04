@@ -10,23 +10,24 @@ import { addCourseToCart, removeClassInCart } from '../api/cart';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-export default function CourseCard({ cardDetail, onClick, choose }) {
+export default function CourseCard({ cardDetail, onClick, choose, reloadData }) {
 
-    const [favorite, setFavorite] = useState(cardDetail?.isInCart)
+    const [favorite, setFavorite] = useState(cardDetail?.cartItemId)
     const course = useSelector(courseSelector)
 
     const handleStarClick = async () => {
-        if (favorite) {
-            const response = await removeClassInCart([cardDetail?.courseId])
+        if (cardDetail?.cartItemId) {
+            const response = await removeClassInCart([cardDetail?.cartItemId])
             if (response?.status === 200) {
-                setFavorite(!favorite)
+                reloadData()
             } else {
                 console.log(response?.response?.data);
             }
         } else {
             const response = await addCourseToCart(cardDetail?.courseId)
             if (response?.status === 200) {
-                setFavorite(!favorite)
+                // setFavorite(!favorite)
+                reloadData()
             } else {
                 console.log(response?.response?.data);
             }
@@ -42,7 +43,7 @@ export default function CourseCard({ cardDetail, onClick, choose }) {
         <View style={styles.container}>
             <TouchableOpacity style={styles.cardFavorite} onPress={handleStarClick}>
                 {
-                    favorite ?
+                    cardDetail?.cartItemId ?
                         <Icon name={"star"} color={"#FFC90C"} size={28} />
                         :
                         <Icon name={"star"} color={"white"} size={28} />

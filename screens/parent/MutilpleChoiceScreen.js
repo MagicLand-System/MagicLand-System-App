@@ -139,11 +139,15 @@ const styles = StyleSheet.create({
         // color: "white"
     },
     correctAnswer: {
-        width: WIDTH,
+        width: WIDTH * 0.9,
         fontSize: 25,
         fontWeight: "600",
         padding: 20,
-        textAlign: "center"
+        textAlign: "center",
+        backgroundColor: "white",
+        marginHorizontal: WIDTH * 0.05,
+        borderWidth: 1,
+        borderRadius: 15
     },
     answerButton: {
         padding: 20,

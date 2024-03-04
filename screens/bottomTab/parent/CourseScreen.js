@@ -18,12 +18,7 @@ import { constants } from '../../../constants/constants';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
-
-
-const priceDefault = {
-    min: 0,
-    max: 2000
-}
+console.log("asdas");
 
 export default function CourseScreen({ navigation }) {
 
@@ -307,7 +302,7 @@ export default function CourseScreen({ navigation }) {
                             :
                             hanldeFilter(courseList).map((item, index) => {
                                 return (
-                                    <CourseCard cardDetail={item} onClick={hanldeCoursePress} navigation={navigation} key={index} />
+                                    <CourseCard cardDetail={item} onClick={hanldeCoursePress} navigation={navigation} reloadData={loadAllCourseData} key={index} />
                                 )
                             })
                     }
