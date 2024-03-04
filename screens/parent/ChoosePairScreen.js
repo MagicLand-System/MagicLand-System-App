@@ -19,12 +19,21 @@ export default function ChoosePairScreen({ route, navigation }) {
     const [totalMark, setTotalMark] = useState(0)
     const [homeworkData, setHomeworkData] = useState([])
     const [homeworkListIndex, setHomeworkListIndex] = useState(0)
+    const [wrongAmount, setWrongAmount] = useState(3)
+    const [choosedCardIdList, setChoosedCardIdList] = useState([])
     const [loading, setLoading] = useState(true)
     const [modalVisible, setModalVisible] = useState({ correct: false, incorrect: false, chooseValue: "", score: 0, complete: false })
 
     useEffect(() => {
         loadQuizData()
     }, [route?.params?.homework])
+
+    useEffect(() => {
+        if (choosedCardIdList?.length === 2) {
+            checkMatch()
+        }
+    }, [choosedCardIdList])
+
 
     const loadQuizData = async () => {
         setLoading(true)
@@ -36,6 +45,45 @@ export default function ChoosePairScreen({ route, navigation }) {
         } else {
             console.log("getQuiz fail : ", response.response?.data);
         }
+    }
+
+    const handleChooseCard = (card) => {
+        setChoosedCardIdList((prevChoosedCardIdList) => {
+            const index = prevChoosedCardIdList.indexOf(card?.cardId);
+            if (index !== -1) {
+                return prevChoosedCardIdList.filter((card) => card?.cardId !== card?.cardId);
+            } else {
+                return [...prevChoosedCardIdList, card];
+            }
+        });
+    };
+
+    const checkMatch = () => {
+        if (choosedCardIdList[0]?.numberCoupleIdentify === choosedCardIdList[1]?.numberCoupleIdentify) {
+            const index1 = homeworkData[homeworkListIndex].anwserFlashCarsInfor?.findIndex(obj => obj?.cardId === choosedCardIdList[0]?.cardId);
+            const index2 = homeworkData[homeworkListIndex].anwserFlashCarsInfor?.findIndex(obj => obj?.cardId === choosedCardIdList[1]?.cardId);
+            if (index1 !== -1 && index2 !== -1) {
+                homeworkData[homeworkListIndex].anwserFlashCarsInfor[index1].choosed = true
+                homeworkData[homeworkListIndex].anwserFlashCarsInfor[index2].choosed = true
+            }
+            
+            if (checkCompletePhase()) {
+                if (homeworkData[homeworkListIndex + 1]) {
+                    setHomeworkListIndex(homeworkListIndex + 1)
+                } else {
+                    console.log(homeworkData[homeworkListIndex + 1]);
+                    console.log(homeworkListIndex);
+                    console.log("complete quiz");
+                }
+            }
+        } else {
+            console.log("wrong");
+        }
+        setChoosedCardIdList([])
+    }
+
+    const checkCompletePhase = () => {
+        return homeworkData[homeworkListIndex].anwserFlashCarsInfor.every(card => card.choosed === true);
     }
 
     return (
@@ -56,24 +104,18 @@ export default function ChoosePairScreen({ route, navigation }) {
                             {
                                 homeworkData[homeworkListIndex].anwserFlashCarsInfor?.map((item, index) => {
                                     return (
-                                        <React.Fragment key={index}>
-                                            <TouchableOpacity style={styles.card} >
-                                                {
-                                                    checkIsLink(item?.firstCardInfor) ?
-                                                        <Image style={styles.cardImage} source={{ uri: item?.firstCardInfor }} resizeMode="cover" />
-                                                        :
-                                                        <Text>{item?.firstCardInfor}</Text>
-                                                }
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={styles.card}>
-                                                {
-                                                    checkIsLink(item?.secondCardInfor) ?
-                                                        <Image style={styles.cardImage} source={{ uri: item?.secondCardInfor }} resizeMode="cover" />
-                                                        :
-                                                        <Text>{item?.secondCardInfor}</Text>
-                                                }
-                                            </TouchableOpacity>
-                                        </React.Fragment>
+                                        <TouchableOpacity
+                                            style={[styles.card, choosedCardIdList.includes(item) && styles.choosedCard, item?.choosed && styles.correctedCard]}
+                                            onPress={() => handleChooseCard(item)}
+                                            key={index}
+                                        >
+                                            {
+                                                checkIsLink(item?.cardImage) ?
+                                                    <Image style={styles.cardImage} source={{ uri: item?.cardImage }} resizeMode="cover" />
+                                                    :
+                                                    <Text>{item?.cardDescription}</Text>
+                                            }
+                                        </TouchableOpacity>
                                     )
                                 })
                             }
@@ -128,6 +170,13 @@ const styles = StyleSheet.create({
         height: HEIGHT * 0.18,
         borderWidth: 1,
         overflow: "hidden"
+    },
+    choosedCard: {
+        borderWidth: 2,
+        borderColor: "blue"
+    },
+    correctedCard: {
+        opacity: 0
     },
 
     flexColumnAround: {

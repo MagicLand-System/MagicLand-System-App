@@ -62,7 +62,7 @@ export default function ScheduleList({ cardList, onClick }) {
                                 }
                             </View>
                             <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
-                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{getSchedule(item?.schedules[0].dayOfWeeks)}</Text>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{getSchedule(item?.schedules[0]?.dayOfWeeks)}</Text>
                             </View>
                             <View style={{ ...styles.startDateColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
                                 <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{formatDate(item?.startDate)}</Text>

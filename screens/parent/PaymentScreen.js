@@ -78,6 +78,7 @@ export default function PaymentScreen({ route, navigation }) {
     const [vourcherList, setVourcherList] = useState(vourcherListDefault)
     const [paymentMethodList, setPaymentMethodList] = useState(paymentTypeDefault)
     const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false, paymentMethod: false })
+    const [loading, setLoading] = useState({ confirmRegis: false })
     const showToast = CustomToast();
 
     useEffect(() => {
@@ -106,17 +107,21 @@ export default function PaymentScreen({ route, navigation }) {
     }
 
     const handleSubmitOtp = async (otp) => {
-        classDetail?.map(async (classItem) => {
-            console.log(studentList.map(item => item.id), classItem.classId);
-            const response = await registerClass(studentList.map(item => item.id), classItem.classId)
-            if (response?.status === 200) {
-                // showToast("Thành công", `Đã đăng ký ${studentList.map(item => item.fullName)} vào lớp ${classItem.name}`, "success");
-                setModalVisible({ ...modalVisible, otp: false, notifi: true })
-            } else {
-                showToast("Thất bại", `${response.response.data.Error}`, "error");
-                // console.log(response.response.data);
-            }
-        })
+        setLoading({ ...loading, confirmRegis: true })
+        try {
+            await Promise.all(classDetail?.map(async (classItem) => {
+                const response = await registerClass(studentList.map(item => item.id), classItem.classId)
+                if (response?.status === 200) {
+                    setModalVisible({ ...modalVisible, otp: false, notifi: true });
+                } else {
+                    showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+                }
+            }));
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading({ ...loading, confirmRegis: false })
+        }
     }
 
     const handleChooseVourcherModal = () => {
@@ -265,7 +270,7 @@ export default function PaymentScreen({ route, navigation }) {
                         <Text style={styles.detailViewTitle}>Học Phí:</Text>
                         <Text style={styles.boldText}>{formatPrice(classDetail[0]?.coursePrice)}đ</Text>
                     </View>
-                    <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, height: 45, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }} onPress={handleChooseVourcherModal}>
+                    {/* <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, height: 45, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }} onPress={handleChooseVourcherModal}>
                         <Text style={{ ...styles.detailViewTitle, color: "#3AAC45" }}>Vourcher Giảm Giá</Text>
                         {
                             vourcherValue() ?
@@ -277,7 +282,7 @@ export default function PaymentScreen({ route, navigation }) {
                                 <Icon name={"chevron-right"} color={"#3AAC45"} size={28} />
                         }
 
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                         <Text style={styles.detailViewTitle}>Tổng tiền:</Text>
                         <Text style={{ ...styles.boldText }}>{formatPrice(totalPayment())}đ</Text>
@@ -303,6 +308,7 @@ export default function PaymentScreen({ route, navigation }) {
                 phone={"12345689"}
                 onCancle={hanldeCloseOtpModal}
                 onSubmit={handleSubmitOtp}
+                loading={loading?.confirmRegis}
             />
             <PaymentSuccessModal
                 visible={modalVisible.notifi}

@@ -48,3 +48,18 @@ export const registerClass = async (studentsIdList, classId) => {
     }
 };
 
+export const checkStudentCanRegis = async (classId, studentIdList) => {
+
+    let path = ""
+    studentIdList?.forEach(element => {
+        path += "studentIdList=" + element + "&"
+    });
+
+    try {
+        const response = await api.get(`/api/v1/classes/students/checking?classId=${classId}&${path}`);
+        return response;
+    } catch (error) {
+        console.log("checkStudentCanRegis in api/class.js error : ", error);
+        return error;
+    }
+};

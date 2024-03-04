@@ -12,6 +12,8 @@ import { useSelector } from 'react-redux';
 import { userSelector } from '../../store/selector';
 import { getStudents } from '../../api/student';
 import { useFocusEffect } from '@react-navigation/native';
+import { checkStudentCanRegis } from '../../api/class';
+import CustomToast from "../../components/CustomToast";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -22,6 +24,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
     const [classList, setClassList] = useState(route?.params?.classList)
     const [classChoosed, setClassChoosed] = useState(classList?.filter(obj => obj.choose === true))
     const [modalVisible, setModalVisible] = useState({ classChoose: false })
+    const showToast = CustomToast();
     const user = useSelector(userSelector);
 
     useFocusEffect(
@@ -55,14 +58,21 @@ export default function ClassRegisterScreen({ route, navigation }) {
         navigation.push("AddStudent")
     }
 
-    const selectStudent = (id) => {
-        setStudentList((prevStudentList) => {
-            const index = prevStudentList.findIndex(obj => obj.id === id);
-            return prevStudentList.map((item, i) => ({
-                ...item,
-                check: i === index ? !item.check : item.check,
-            }));
-        });
+    const selectStudent = async (id) => {
+        const index = studentList.findIndex(obj => obj.id === id);
+        if ((index !== -1) && (!studentList[index]?.check)) {
+            const response = await checkStudentCanRegis(classList[0]?.classId, [id])
+            if (response?.status === 200) {
+                setStudentList((prevStudentList) => {
+                    return prevStudentList.map((item, i) => ({
+                        ...item,
+                        check: i === index ? !item.check : item.check,
+                    }));
+                });
+            } else {
+                showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+            }
+        }
     };
 
     const onCancleClassChoose = () => {

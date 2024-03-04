@@ -150,5 +150,5 @@ export const getVnDay = (day) => {
 }
 
 export const checkIsLink = (string) => {
-    return string.startsWith("http");
+    return string?.startsWith("http");
 }
