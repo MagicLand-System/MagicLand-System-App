@@ -20,9 +20,9 @@ export const getQuizByClassid = async (id) => {
     }
 };
 
-export const getQuizById = async (id) => {
+export const getQuizById = async (id , examPart) => {
     try {
-        const response = await api.get(`/api/v1/exam/quiz?id=${id}`);
+        const response = await api.get(`/api/v1/exam/quiz?id=${id}&examPart=${examPart}`);
         return response;
     } catch (error) {
         console.log("getQuizById in api/quiz.js error : " + error + ", data : " + error?.response?.data);

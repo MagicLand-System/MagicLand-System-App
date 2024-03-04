@@ -148,3 +148,7 @@ export const getVnDay = (day) => {
     const lowerCaseDay = day.toLowerCase();
     return dayContrants[lowerCaseDay] ? dayContrants[lowerCaseDay].vn : "";
 }
+
+export const checkIsLink = (string) => {
+    return string.startsWith("http");
+}

@@ -143,8 +143,6 @@ export default function ClassRegisterScreen({ route, navigation }) {
                     <Text style={styles.title}>Thông Tin Khóa Học:</Text>
                 </View>
                 <View style={{ ...styles.studentDetail, marginTop: 20 }}>
-
-                    <Text style={styles.boldText}>Thông tin khóa học:</Text>
                     {
                         classChoosed.map((item, index) => {
                             // borderTopWidth:  1 : 0,
@@ -152,7 +150,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
                                 <View style={[index !== 0 ? styles.classDetail : ""]} key={index}>
                                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                         <Text style={styles.detailViewTitle}>Tên Khóa Học:</Text>
-                                        <Text style={styles.boldText}>{item?.name} </Text>
+                                        <Text style={styles.boldText}>{item?.className} </Text>
                                     </View>
                                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                         <Text style={styles.detailViewTitle}>Số Lượng Đăng Ký:</Text>
@@ -268,7 +266,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     detailViewTitle: {
-        color: "#C4C4C4",
+        color: "#5A5A5A",
         fontSize: 15,
         fontWeight: "600"
     },

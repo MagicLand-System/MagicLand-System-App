@@ -28,7 +28,7 @@ import MultiplePaymentScreen from '../screens/parent/MultiplePaymentScreen';
 import ClassStudyDetailScreen from '../screens/parent/ClassStudyDetailScreen';
 import ClassContentScreen from '../screens/parent/ClassContentScreen';
 import MutilpleChoiceScreen from '../screens/parent/MutilpleChoiceScreen';
-
+import ChoosePairScreen from '../screens/parent/ChoosePairScreen';
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
 import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
@@ -109,6 +109,8 @@ const BottomTabNavigator = () => {
             <Tab.Screen name="ClassStudyDetailScreen" component={ClassStudyDetailScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="ClassContentScreen" component={ClassContentScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="ChoosePairScreen" component={ChoosePairScreen} options={{ tabBarButton: () => null }} />
+
             <Tab.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="ClassOptionScreen" component={ClassOptionScreen} options={{ tabBarButton: () => null }} />
         </Tab.Navigator>

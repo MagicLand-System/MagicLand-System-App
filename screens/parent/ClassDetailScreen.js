@@ -207,13 +207,15 @@ export default function ClassDetailScreen({ route, navigation }) {
     const navigateDoHomework = (homework) => {
         if (homework?.quizType === "multiple-choice") {
             navigation.push("MutilpleChoiceScreen", { homework: homework, title: homework?.quizName })
+        } else if (homework?.quizType === "flashcard") {
+            navigation.push("ChoosePairScreen", { homework: homework, title: homework?.quizName })
         }
     }
 
     return (
         <>
             <Header navigation={navigation} goback={navigation.pop} title={"Thông Tin Chi Tiết Của Lớp Học"} />
-            <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+            <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false} style={styles.container}>
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Khóa học:</Text>
                 </View>
@@ -314,7 +316,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                     <Text style={styles.title}>Chương trình giảng dạy:</Text>
                 </View>
 
-                <View style={styles.program}>
+                <ScrollView nestedScrollEnabled={true} style={styles.program}>
                     {
                         programEducation?.syllabusInformations?.sessions?.map((item, index) => {
                             return (
@@ -370,7 +372,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             )
                         })
                     }
-                </View>
+                </ScrollView>
 
                 {/* markScoreDetail */}
 
@@ -533,13 +535,14 @@ const styles = StyleSheet.create({
     },
     program: {
         width: WIDTH * 0.9,
+        maxHeight: HEIGHT * 0.4,
         borderWidth: 1,
         borderRadius: 10,
         marginHorizontal: WIDTH * 0.05,
         overflow: "hidden"
     },
     processScrollView: {
-        flexDirection: "row"
+        flexDirection: "row",
     },
     paginationContainer: {
         flexDirection: "row",

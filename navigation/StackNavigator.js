@@ -43,6 +43,7 @@ import AccountSettingScreen from '../screens/parent/AccountSettingScreen';
 import StudentListScreen from '../screens/parent/StudentListScreen';
 import StudentDetailScreen from '../screens/parent/StudentDetailScreen';
 import EditStudentScreen from '../screens/parent/EditStudentScreen';
+import ChoosePairScreen from '../screens/parent/ChoosePairScreen';
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
 import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
@@ -120,6 +121,7 @@ const StackNavigator = () => {
                     <Stack.Screen name="StudentListScreen" component={StudentListScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="StudentDetailScreen" component={StudentDetailScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="EditStudentScreen" component={EditStudentScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ChoosePairScreen" component={ChoosePairScreen} options={{ headerShown: false }} />
                 </>
             ) : user?.role.name === 'LECTURER' ? (
                 <>
