@@ -29,8 +29,7 @@ export default function AttendanceScreen({ route, navigation }) {
     const loadStudentData = async () => {
         const response = await getAttendanceList(classDetail.classId)
         if (response?.status === 200) {
-
-            if (checkCurrentDate(date)) {
+            if (!checkCurrentDate(date)) {
                 const data = response?.data?.map((item) => {
                     return {
                         ...item,
@@ -87,6 +86,14 @@ export default function AttendanceScreen({ route, navigation }) {
         return attendList
     }
 
+    const filterByStudentName = (studentList, search) => {
+        if (search === "") {
+            return studentList
+        } else {
+            return studentList.filter(student => student.studentName.toLowerCase().includes(search.toLowerCase()));
+        }
+    }
+
     return (
         <>
             <Header navigation={navigation} title={"Lớp " + classDetail?.classCode + " - Điểm danh"} goback={navigation.pop} />
@@ -109,14 +116,14 @@ export default function AttendanceScreen({ route, navigation }) {
                                 <Text style={styles.columnNote}>Ghi chú</Text>
                             </View>
                             {
-                                (edittingMode ? studentTmpList : studentList).map((item, index) => {
+                                filterByStudentName((edittingMode ? studentTmpList : studentList), searchValue).map((item, index) => {
                                     return (
                                         <TouchableOpacity
                                             onPress={() => handleCheckAttend(item.studentId)}
                                             style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#707070" }}
                                             key={index}>
                                             <View style={styles.columnNumber}>
-                                                <Text style={{ ...styles.boldText, marginHorizontal: 10, marginRight: 2 }}>{index + 1}</Text>
+                                                <Text style={{ ...styles.boldText, marginHorizontal: 5, marginRight: 2 }}>{index + 1}</Text>
                                                 <Icon name={"account-circle"} color={"#908484"} size={WIDTH * 0.13} />
                                             </View>
                                             <Text style={styles.columnName}>{item?.studentName}</Text>
@@ -157,15 +164,14 @@ export default function AttendanceScreen({ route, navigation }) {
                         </TouchableOpacity>
                     </View>
                 }
-                {
-                    (!edittingMode && studentList[0] && checkCurrentDate(date)) &&
-                    <TouchableOpacity style={{ ...styles.editButton, bottom: edittingMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing}>
-                        <Icon name={"edit"} color={"white"} size={28} />
-                    </TouchableOpacity>
-                }
-                <View style={{ height: 40 }} />
+                <View style={{ height: 20 }} />
             </ScrollView>
-
+            {
+                (!edittingMode && studentList[0] && checkCurrentDate(date)) &&
+                <TouchableOpacity style={{ ...styles.editButton, bottom: edittingMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing}>
+                    <Icon name={"edit"} color={"white"} size={28} />
+                </TouchableOpacity>
+            }
         </>
     )
 }
@@ -199,7 +205,7 @@ const styles = StyleSheet.create({
     columnNumber: {
         flexDirection: "row",
         width: "25%",
-        paddingLeft: 20,
+        paddingLeft: 10,
         alignItems: "center",
     },
     columnName: {

@@ -13,31 +13,11 @@ import { useFocusEffect } from '@react-navigation/native';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const dateDefault = [
-    {
-        id: 0,
-        name: "Thứ 2 - 4 - 6 (7h30 - 9h)",
-    },
-    {
-        id: 1,
-        name: "Thứ 3 - 5 - 7 (7h30 - 9h)",
-    },
-    {
-        id: 2,
-        name: "Thứ 7 - Cn (7h30 - 9h)",
-    },
-]
-
 export default function RegisterClassScreen({ route, navigation }) {
 
     const [studentList, setStudentList] = useState([])
     const [courseList, setCourseList] = useState(route?.params?.courseList)
     const [visible, setVisible] = useState({ submit: true })
-    const user = useSelector(userSelector);
-
-    useEffect(() => {
-        loadSchedule()
-    }, [route?.params?.courseList])
 
     useFocusEffect(
         React.useCallback(() => {
@@ -45,50 +25,46 @@ export default function RegisterClassScreen({ route, navigation }) {
         }, [])
     );
 
-    const loadSchedule = async () => {
-        courseList.map(item => {
-            checkExistedSchedule(item) &&
-                setSchedule(item)
-        })
-    }
-
     const loadStudentData = async () => {
         const studentList = await getStudents()
         setStudentList(studentList?.filter(item => item?.isActive))
     }
 
     const handleNavigate = () => {
-        // console.log(courseList[1].class);
         if (totalComplete() === courseList.length) {
             navigation.push("MultiplePaymentScreen", { courseList: courseList })
         }
     }
 
     const handleChooseStudent = (item, student) => {
-        const index = courseList.findIndex(obj => obj?.class?.classId === item?.classId);
+        const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
         const updateArray = [...courseList]
-        updateArray[index].class.student = student;
+        updateArray[index].student = student;
         setCourseList(updateArray)
     }
 
-    const handleChooseDate = (item, date) => {
-        const index = courseList.findIndex(obj => obj.class.classId === item.classId);
+    const handleChooseClass = (item, classId) => {
+        const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
         const updateArray = [...courseList]
-        updateArray[index].class.date = date;
+        updateArray[index].classId = classId;
         setCourseList(updateArray)
     }
 
     const totalPrice = () => {
         let total = 0
         courseList.forEach(element => {
-            total += element.class.coursePrice
+            total += element?.price
         });
         return total
     }
 
     const checkAllFeild = (item) => {
-        if (item?.student && item?.date) {
-            return true
+        if (item?.student) {
+            if (item?.itemType === "COURSE") {
+                return item?.classId ? true : false
+            } else {
+                return true
+            }
         }
         return false
     }
@@ -96,9 +72,16 @@ export default function RegisterClassScreen({ route, navigation }) {
     const checkAnyComplete = () => {
         let flag = false
         courseList.forEach(item => {
-            if (item?.student && item?.date) {
-                flag = true
+            if (item?.student) {
+                if (item?.itemType === "COURSE") {
+                    flag = item?.classId ? true : false
+                } else {
+                    flag = true
+                }
             }
+            // if (item?.student && item?.date) {
+            //     flag = true
+            // }
         });
 
         return flag
@@ -107,46 +90,24 @@ export default function RegisterClassScreen({ route, navigation }) {
     const totalComplete = () => {
         let amount = 0
         courseList.forEach(item => {
-            if (item?.class?.student && item?.class?.date) {
-                amount += 1
+            if (item?.student) {
+                if (item?.itemType === "COURSE") {
+                    flag = item?.classId && (amount += 1)
+                } else {
+                    amount += 1
+                }
             }
         });
 
         return amount
     }
 
-    const checkExistedSchedule = (item) => {
-        const index = courseList.findIndex(obj => obj.class.id === item?.class.id);
-        return courseList[index]?.class?.schedules[0] ?
-            true
-            :
-            false
-    }
-
-    const setSchedule = (item) => {
-        const index = courseList.findIndex(obj => obj.class.classId === item?.class.classId);
-        switch (courseList[index]?.class?.schedules[0].dayOfWeeks) {
-            case "Monday":
-                handleChooseDate(item?.class, dateDefault[0])
-                break;
-            case "Tuesday":
-                handleChooseDate(item?.class, dateDefault[1])
-                break;
-            case "Wednesday":
-                handleChooseDate(item?.class, dateDefault[0])
-                break; 
-            case "Thursday":
-                handleChooseDate(item?.class, dateDefault[1])
-                break;
-            case "Friday":
-                handleChooseDate(item?.class, dateDefault[0])
-                break;
-            case "Saturday":
-                handleChooseDate(item?.class, dateDefault[2])
-                break;
-
-            default:
-                break;
+    const findClassDetail = (array, classId) => {
+        const index = array.findIndex(obj => obj?.classId === classId.classId);
+        if (index !== -1) {
+            return array[classId._index].schedule + array[index].slot
+        } else {
+            return ""
         }
     }
 
@@ -180,17 +141,17 @@ export default function RegisterClassScreen({ route, navigation }) {
                         </View>
                     </View>
                     {
-                        courseList?.filter(item => item.class.choose === true)?.map((item, index) => {
+                        courseList?.filter(item => item?.choose === true)?.map((item, index) => {
                             return (
                                 <View style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#F9ACC0" }} key={index}>
                                     {
-                                        checkAllFeild(item.class) &&
+                                        checkAllFeild(item) &&
                                         <View style={styles.completeCheck}>
                                             <Icon name={"check"} color={"white"} size={22} />
                                         </View>
                                     }
                                     <View style={[styles.courseName, styles.tabRightBorder]}>
-                                        <Text style={{ ...styles.tableText, color: "#3AA6B9", fontWeight: "600" }} numberOfLines={1}>{item?.class.name}</Text>
+                                        <Text style={{ ...styles.tableText, color: "#3AA6B9", fontWeight: "600" }} numberOfLines={1}>{item?.name}</Text>
                                     </View>
                                     <View style={[styles.studentInfor, styles.tabRightBorder]}>
                                         {
@@ -201,15 +162,15 @@ export default function RegisterClassScreen({ route, navigation }) {
                                                 valueField={"id"}
                                                 dropdownItem={(item) => item.fullName}
                                                 rightIcon={() => (
-                                                    !item.class.student &&
+                                                    !item.student &&
                                                     <View style={{ backgroundColor: "rgba(126, 134, 158, 0.25)", borderRadius: 50 }}>
                                                         <Icon name={"plus"} color={"#241468"} size={22} />
                                                     </View>
                                                 )}
-                                                onChoose={(student) => handleChooseStudent(item.class, student)}
+                                                onChoose={(student) => handleChooseStudent(item, student)}
                                                 placeHolder={
-                                                    item?.class?.student ?
-                                                        item?.class?.student?.fullName
+                                                    item?.student ?
+                                                        item?.student?.fullName
                                                         :
                                                         "Thêm thông tin cháu"
                                                 }
@@ -219,33 +180,31 @@ export default function RegisterClassScreen({ route, navigation }) {
                                     <View style={[styles.calendar, styles.tabRightBorder]}>
                                         <DropdownComponent
                                             dropdownStyle={styles.dropdownStyle}
-                                            studentList={dateDefault}
-                                            labelField={"name"}
-                                            valueField={"id"}
-                                            dropdownItem={(item) => item.name}
+                                            studentList={item?.schedules}
+                                            labelField={"schedule"}
+                                            valueField={"classId"}
+                                            dropdownItem={(item) => item.schedule + " " + item.slot}
                                             rightIcon={() => (
-                                                !item?.class.date &&
+                                                item?.itemType === "COURSE" &&
                                                 <View >
                                                     <Icon name={"chevron-down"} color={"#241468"} size={12} />
                                                 </View>
                                             )}
-                                            onChoose={(date) => handleChooseDate(item?.class, date)}
+                                            onChoose={(classId) => handleChooseClass(item, classId)}
                                             placeHolder={
-                                                checkExistedSchedule(item) ?
-                                                    item?.class?.date?.name
+                                                item?.itemType === "CLASS" ?
+                                                    <Text>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
                                                     :
-                                                    item?.class?.date ?
-                                                        item?.class?.date?.name
+                                                    item?.classId ?
+                                                        <Text>{findClassDetail(item?.schedules, item?.classId)}</Text>
                                                         :
                                                         <Text numberOfLines={1}>Chọn lớp</Text>
                                             }
-                                            disable={!checkExistedSchedule(item)}
+                                            disable={item?.itemType === "CLASS"}
                                         />
-                                        {/* {console.log(item?.class.date)} */}
-                                        {/* <Text style={[styles.tableText]} >Lịch học</Text> */}
                                     </View>
                                     <View style={[styles.classPrice]}>
-                                        <Text style={[styles.tableText]}>{formatPrice(item?.class?.coursePrice ? item?.class?.coursePrice : 0)}đ</Text>
+                                        <Text style={[styles.tableText]}>{formatPrice(item?.price ? item?.price : 0)}đ</Text>
                                     </View>
                                 </View>
                             )

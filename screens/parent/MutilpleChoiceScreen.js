@@ -27,7 +27,8 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
 
     const loadQuizData = async () => {
         setLoading(true)
-        const response = await getQuizById(quizData?.examId)
+        const response = await getQuizById(quizData?.examId, quizData?.examPart)
+        console.log(quizData?.examId);
         if (response.status === 200) {
             setHomeworkData(response?.data)
             setLoading(false)
@@ -65,7 +66,7 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
                     <ImageBackground
                         showsVerticalScrollIndicator={false}
                         style={styles.container}
-                        source={background1}
+                        source={background2}
                     >
                         <View>
                             <Text style={styles.questionMark}>{totalMark} Điểm</Text>
@@ -146,7 +147,8 @@ const styles = StyleSheet.create({
     },
     answerButton: {
         padding: 20,
-        borderWidth: 1
+        borderWidth: 1,
+        marginHorizontal: 5
     },
     questionImage: {
         width: WIDTH * 0.7,

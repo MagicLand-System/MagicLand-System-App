@@ -201,7 +201,7 @@ export default function WorkScheduleScreen({ navigation }) {
             calendarType === "day" &&
             getCurrentDate({ dateString: dateSelected }).map((item, index) => {
               return (
-                <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
+                <ClassCartCard cardDetail={item} check={false} index={index} priceHidden={true} timeType={"onDate"} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
               )
             })
           }

@@ -85,7 +85,7 @@ export default function CourseScreen({ navigation }) {
             x: WIDTH * carouselIndex,
             animated: true,
         });
-    }, [filterValue]);
+    }, [carouselIndex]);
 
     const loadAllCourseData = async () => {
         setDataLoading(true)
@@ -281,7 +281,7 @@ export default function CourseScreen({ navigation }) {
                         })
                     }
                 </ScrollView>
-                <View style={styles.filterOption}>
+                {/* <View style={styles.filterOption}>
                     <TouchableOpacity style={[styles.filterOptionView, styles.newOption]}>
                         <Text style={styles.filterOptionText} numberOfLines={1}>Mới nhất</Text>
                     </TouchableOpacity>
@@ -294,11 +294,11 @@ export default function CourseScreen({ navigation }) {
                     <TouchableOpacity style={[styles.filterOptionView, styles.priceOption]}>
                         <Text style={styles.filterOptionText} numberOfLines={1}>Giá</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 <View
                     style={{
                         ...styles.courseListScroll,
-                        marginBottom: !dataLoading ? 100 : "35%"
+                        marginBottom: !dataLoading ? 100 : "45%"
                     }}
                 >
                     {

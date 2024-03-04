@@ -5,17 +5,32 @@ import { courseSelector } from '../store/selector';
 import { useSelector } from 'react-redux';
 
 import { formatPrice } from '../util/util';
+import { addCourseToCart, removeClassInCart } from '../api/cart';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function CourseCard({ cardDetail, onClick, choose }) {
 
-    const [favorite, setFavorite] = useState(cardDetail.favorite)
+    const [favorite, setFavorite] = useState(cardDetail?.isInCart)
     const course = useSelector(courseSelector)
 
-    const handleStarClick = () => {
-        setFavorite(!favorite)
+    const handleStarClick = async () => {
+        if (favorite) {
+            const response = await removeClassInCart([cardDetail?.courseId])
+            if (response?.status === 200) {
+                setFavorite(!favorite)
+            } else {
+                console.log(response?.response?.data);
+            }
+        } else {
+            const response = await addCourseToCart(cardDetail?.courseId)
+            if (response?.status === 200) {
+                setFavorite(!favorite)
+            } else {
+                console.log(response?.response?.data);
+            }
+        }
     }
 
     const getCourseType = (courseName) => {

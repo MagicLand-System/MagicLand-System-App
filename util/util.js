@@ -1,3 +1,5 @@
+import { dayContrants } from "../constants/day";
+
 export function truncateString(str, maxLength) {
     if (str?.length <= maxLength) {
         return str;
@@ -129,7 +131,8 @@ export const mutilplePop = (navigate, time) => {
     }
 }
 
-export const shortedTime = (inputTime) => {
+export const shortedTime = (time) => {
+    const inputTime = time ? time : "00:00:00"
     var timeComponents = inputTime.split(":");
     return timeComponents[0] + ":" + timeComponents[1];
 }
@@ -139,4 +142,13 @@ export const checkCurrentDate = (dateString) => {
     const currentDate = new Date();
 
     return givenDate.toDateString() === currentDate.toDateString();
+}
+
+export const getVnDay = (day) => {
+    const lowerCaseDay = day.toLowerCase();
+    return dayContrants[lowerCaseDay] ? dayContrants[lowerCaseDay].vn : "";
+}
+
+export const checkIsLink = (string) => {
+    return string?.startsWith("http");
 }

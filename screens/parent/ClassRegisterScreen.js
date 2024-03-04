@@ -12,6 +12,8 @@ import { useSelector } from 'react-redux';
 import { userSelector } from '../../store/selector';
 import { getStudents } from '../../api/student';
 import { useFocusEffect } from '@react-navigation/native';
+import { checkStudentCanRegis } from '../../api/class';
+import CustomToast from "../../components/CustomToast";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -22,6 +24,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
     const [classList, setClassList] = useState(route?.params?.classList)
     const [classChoosed, setClassChoosed] = useState(classList?.filter(obj => obj.choose === true))
     const [modalVisible, setModalVisible] = useState({ classChoose: false })
+    const showToast = CustomToast();
     const user = useSelector(userSelector);
 
     useFocusEffect(
@@ -55,14 +58,21 @@ export default function ClassRegisterScreen({ route, navigation }) {
         navigation.push("AddStudent")
     }
 
-    const selectStudent = (id) => {
-        setStudentList((prevStudentList) => {
-            const index = prevStudentList.findIndex(obj => obj.id === id);
-            return prevStudentList.map((item, i) => ({
-                ...item,
-                check: i === index ? !item.check : item.check,
-            }));
-        });
+    const selectStudent = async (id) => {
+        const index = studentList.findIndex(obj => obj.id === id);
+        if ((index !== -1) && (!studentList[index]?.check)) {
+            const response = await checkStudentCanRegis(classList[0]?.classId, [id])
+            if (response?.status === 200) {
+                setStudentList((prevStudentList) => {
+                    return prevStudentList.map((item, i) => ({
+                        ...item,
+                        check: i === index ? !item.check : item.check,
+                    }));
+                });
+            } else {
+                showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+            }
+        }
     };
 
     const onCancleClassChoose = () => {
@@ -143,8 +153,6 @@ export default function ClassRegisterScreen({ route, navigation }) {
                     <Text style={styles.title}>Thông Tin Khóa Học:</Text>
                 </View>
                 <View style={{ ...styles.studentDetail, marginTop: 20 }}>
-
-                    <Text style={styles.boldText}>Thông tin khóa học:</Text>
                     {
                         classChoosed.map((item, index) => {
                             // borderTopWidth:  1 : 0,
@@ -152,7 +160,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
                                 <View style={[index !== 0 ? styles.classDetail : ""]} key={index}>
                                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                         <Text style={styles.detailViewTitle}>Tên Khóa Học:</Text>
-                                        <Text style={styles.boldText}>{item?.name} </Text>
+                                        <Text style={styles.boldText}>{item?.className} </Text>
                                     </View>
                                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                         <Text style={styles.detailViewTitle}>Số Lượng Đăng Ký:</Text>
@@ -268,7 +276,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     detailViewTitle: {
-        color: "#C4C4C4",
+        color: "#5A5A5A",
         fontSize: 15,
         fontWeight: "600"
     },

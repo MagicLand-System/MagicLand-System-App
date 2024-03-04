@@ -14,10 +14,10 @@ export default function NofiticationCard({ notificationDetail, onClick }) {
                 <Text style={{ opacity: 0.6 }}>{notificationDetail?.time}</Text>
             </View>
             <View style={styles.flexColumnBetween}>
-                <View style={{ width: WIDTH * 0.02 }}>
+                <View style={{ width: WIDTH * 0.04, justifyContent: "center", alignItems: "center" }}>
                     <Icon name={"circle"} color={"#000000"} size={10} />
                 </View>
-                <Text style={{ width: WIDTH * 0.82 }}>
+                <Text style={{ width: WIDTH * 0.8 }}>
                     {notificationDetail?.message}
                 </Text>
             </View>
