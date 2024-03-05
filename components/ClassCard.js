@@ -73,7 +73,7 @@ export default function ClassCard({ cardDetail, check, index, onClick, backgroun
                     </>
                 }
                 <View style={styles.flexColumnBetween}>
-                    <Text style={styles.cardName}>{cardDetail.name ? cardDetail.name : "Toán cấp 1"}</Text>
+                    <Text style={styles.cardName}>{cardDetail.className ? cardDetail.className : "Toán cấp 1"}</Text>
 
                 </View>
 
@@ -91,7 +91,7 @@ export default function ClassCard({ cardDetail, check, index, onClick, backgroun
                     </View>
                     <View style={{ ...styles.flexColumn, width: "35%" }}>
                         <Icon name={"notebook-multiple"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{cardDetail?.schedules ? cardDetail?.schedules?.length : 0} buổi</Text>
+                        <Text style={styles.cardDetailText}>Khai giảng ngày: {cardDetail?.startDate ? formatDate(cardDetail?.startDate) : 0}</Text>
                     </View>
                 </View>
 
@@ -110,8 +110,7 @@ export default function ClassCard({ cardDetail, check, index, onClick, backgroun
                     <View style={{ ...styles.flexColumn, width: "50%", marginRight: "5%" }}>
                         <Icon name={"calendar-check"} color={"#241468"} size={18} />
                         <View>
-                            <Text style={styles.cardDetailText}>Khai giảng ngày: {cardDetail?.startDate ? formatDate(cardDetail?.startDate) : 0}</Text>
-                            <Text style={styles.cardDetailText}>Lịch học: 3 - 5 - 7 (17:00 - 18:30)</Text>
+                            <Text style={styles.cardDetailText}>Lịch học: {cardDetail?.schedules?.schedule} ({cardDetail?.schedules?.slot})</Text>
                         </View>
                     </View>
                     <View style={{ ...styles.flexColumn, width: "35%" }}>

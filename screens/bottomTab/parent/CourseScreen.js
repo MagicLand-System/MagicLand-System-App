@@ -64,7 +64,6 @@ export default function CourseScreen({ navigation }) {
     }
 
     useEffect(() => {
-        loadAllCourseData()
         loadFilterData()
     }, [])
 
@@ -81,6 +80,12 @@ export default function CourseScreen({ navigation }) {
             animated: true,
         });
     }, [carouselIndex]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            loadAllCourseData()
+        }, [])
+    );
 
     const loadAllCourseData = async () => {
         setDataLoading(true)

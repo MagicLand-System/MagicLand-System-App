@@ -218,7 +218,7 @@ export default function PaymentScreen({ route, navigation }) {
                                     <Text style={styles.detailViewTitle}>Khóa Học:</Text>
                                     <Text style={styles.boldText}>
                                         {
-                                            classDetail.map(item => (item.name))
+                                            classDetail.map(item => (item.courseName))
                                         }
                                     </Text>
                                 </View>

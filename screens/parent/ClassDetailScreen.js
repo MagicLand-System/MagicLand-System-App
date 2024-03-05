@@ -254,7 +254,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                             Khóa học:
                         </Text>
                         <Text style={{ ...styles.classValue, width: "58%", textAlign: "left" }}>
-                            {classDetail?.name ? classDetail?.name : "Lớp học"}
+                            {classDetail?.courseName ? classDetail?.courseName : "Lớp học"}
                         </Text>
                     </View>
                     <View style={{ ...styles.flexColumnBetween, marginBottom: 5 }}>
