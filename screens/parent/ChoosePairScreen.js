@@ -6,6 +6,7 @@ import CorrentAnswerModal from '../../components/modal/CorrentAnswerModal';
 import IncorrentAnswerModal from '../../components/modal/IncorrentAnswerModal';
 import { getQuizById } from '../../api/quiz';
 import SpinnerLoading from "../../components/SpinnerLoading"
+import CustomToast from "../../components/CustomToast";
 
 import background1 from "../../assets/quiz/quizBackground1.jpg"
 import background2 from "../../assets/quiz/quizBackground2.jpg"
@@ -24,6 +25,7 @@ export default function ChoosePairScreen({ route, navigation }) {
     const [choosedCardIdList, setChoosedCardIdList] = useState([])
     const [loading, setLoading] = useState(true)
     const [modalVisible, setModalVisible] = useState({ correct: false, incorrect: false, chooseValue: "", score: 0, complete: false })
+    const showToast = CustomToast();
 
     useEffect(() => {
         loadQuizData()
@@ -49,14 +51,18 @@ export default function ChoosePairScreen({ route, navigation }) {
     }
 
     const handleChooseCard = (card) => {
-        setChoosedCardIdList((prevChoosedCardIdList) => {
-            const index = prevChoosedCardIdList.indexOf(card?.cardId);
-            if (index !== -1) {
-                return prevChoosedCardIdList.filter((card) => card?.cardId !== card?.cardId);
-            } else {
-                return [...prevChoosedCardIdList, card];
-            }
-        });
+        if (wrongAmount === 0) {
+            showToast("Thông báo", `Bạn đã hết lượt làm bài`, "warning");
+        } else {
+            setChoosedCardIdList((prevChoosedCardIdList) => {
+                const index = prevChoosedCardIdList.indexOf(card?.cardId);
+                if (index !== -1) {
+                    return prevChoosedCardIdList.filter((card) => card?.cardId !== card?.cardId);
+                } else {
+                    return [...prevChoosedCardIdList, card];
+                }
+            });
+        }
     };
 
     const checkMatch = () => {
@@ -127,7 +133,8 @@ export default function ChoosePairScreen({ route, navigation }) {
                                     return (
                                         <TouchableOpacity
                                             style={[styles.card, choosedCardIdList.includes(item) && styles.choosedCard, item?.choosed && styles.correctedCard]}
-                                            onPress={() => handleChooseCard(item)}
+                                            onPress={() => { !item?.choosed && handleChooseCard(item) }}
+                                            activeOpacity={item?.choosed ? 0 : 0.5}
                                             key={index}
                                         >
                                             {
@@ -183,8 +190,8 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: "white",
-        width: WIDTH * 0.3,
-        height: HEIGHT * 0.16,
+        width: WIDTH * 0.28,
+        height: HEIGHT * 0.14,
         borderWidth: 1,
         marginBottom: 10,
         alignItems: "center",
@@ -193,8 +200,8 @@ const styles = StyleSheet.create({
         overflow: "hidden"
     },
     cardImage: {
-        width: WIDTH * 0.295,
-        height: HEIGHT * 0.155,
+        width: WIDTH * 0.275,
+        height: HEIGHT * 0.135,
         borderWidth: 1,
         overflow: "hidden"
     },
