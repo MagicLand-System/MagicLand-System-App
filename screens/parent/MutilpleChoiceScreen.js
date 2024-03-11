@@ -84,7 +84,7 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
                                     />
                                 </View>
                             }
-                            <View style={styles.flexColumnCenter}>
+                            <View style={{...styles.flexColumnCenter, marginTop: 10}}>
                                 {
                                     homeworkData[homeworkListIndex].answersMutipleChoicesInfor?.map((item, index) => {
                                         return (

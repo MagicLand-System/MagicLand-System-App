@@ -18,13 +18,6 @@ const colorList = [
 
 export default function ClassCartCard({ cardDetail, check, index, onClick, background, priceHidden, timeType }) {
 
-    const course = useSelector(courseSelector)
-
-    const getCourseType = (courseName) => {
-        const courseFound = course.find(course => course?.name?.toUpperCase() === courseName?.toUpperCase());
-        return courseFound ? courseFound?.vietName : "Khoá học";
-    }
-
     const getSchedule = (item) => {
         if (item?.schedules) {
             switch (item?.schedules[0]?.dayOfWeeks) {

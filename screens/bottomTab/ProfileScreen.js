@@ -66,7 +66,7 @@ export default function ProfileScreen({ navigation }) {
     {
       name: "Đăng xuất",
       icon: <Icon name={"logout"} color={"black"} size={30} />,
-      role: ["PARENT", "LECTURER"],
+      role: ["PARENT", "LECTURER", "STUDENT"],
       onClick: handleLogout,
     },
   ]
@@ -81,7 +81,7 @@ export default function ProfileScreen({ navigation }) {
               <View style={{ ...styles.flexColumnBetween, marginBottom: 10 }}>
                 <Text style={styles.userName}>
                   {
-                    user.role.name === "LECTURER" ?
+                    user?.role?.name?.name === "LECTURER" ?
                       "GV: "
                       :
                       "PH: "
@@ -98,7 +98,7 @@ export default function ProfileScreen({ navigation }) {
           {
             optionList.map((item, index) => {
               return (
-                (item.role.includes(user.role.name)) &&
+                (item.role.includes(user?.role?.name)) &&
                 < TouchableOpacity
                   style={{ ...styles.flexColumnBetween, paddingVertical: 10, borderBottomWidth: 1, borderColor: "#D9D9D9" }}
                   onPress={item.onClick}

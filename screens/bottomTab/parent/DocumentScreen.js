@@ -7,7 +7,7 @@ import ClassCard from '../../../components/ClassCard';
 import { getClassesByStudentId, getStudents, getschedule } from '../../../api/student';
 import ClassCartCard from '../../../components/ClassCartCard';
 import { useFocusEffect } from '@react-navigation/native';
-import { userSelector } from '../../../store/selector';
+import { studentSelector, userSelector } from '../../../store/selector';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SpinnerLoading from '../../../components/SpinnerLoading';
@@ -426,29 +426,17 @@ const classListData = [
 
 export default function DocumentScreen({ navigation }) {
 
-  const [studentList, setStudentList] = useState([])
+  const student = useSelector(studentSelector)
+  const [studentList, setStudentList] = useState(student)
   const [classList, setClassList] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingClassList, setLoadingClassList] = useState(true)
   const [type, setType] = useState("PROGRESSING")
   const [animation] = useState(new Animated.Value(0));
-  const user = useSelector(userSelector);
 
   useEffect(() => {
     loadStudentData()
-  }, [user])
-
-  useFocusEffect(
-    React.useCallback(() => {
-      loadStudentData()
-    }, [])
-  );
-
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     loadStudentData()
-  //   }, [])
-  // );
+  }, [student])
 
   useEffect(() => {
     switch (type) {
@@ -484,25 +472,18 @@ export default function DocumentScreen({ navigation }) {
     transform: [{ translateX: interpolatedValue }],
   };
 
-  // const getAccesstoken = async () => {
-  //   const accessToken = await AsyncStorage.getItem("accessToken");
-  //   console.log(accessToken); 
-  // }
-  // getAccesstoken()
-
   const loadStudentData = async () => {
     setLoading(true);
-    const studentList = (await getStudents()).map((item, i) => ({ ...item, check: i === 0 ? true : false }));
+    const studentListTmp = studentList.map((item, i) => ({ ...item, check: i === 0 ? true : false }));
 
-    if (studentList.length !== 0) {
-      const scheduleData = await loadClassData(studentList[0].id);
+    if (studentListTmp?.length !== 0) {
+      const scheduleData = await loadClassData(studentListTmp[0].id);
       setClassList(scheduleData);
     }
 
-    setStudentList(studentList?.filter(item => item?.isActive)?.reverse());
+    setStudentList(studentListTmp?.filter(item => item?.isActive));
     setLoading(false);
   };
-  // console.log(studentList[studentList.length - 1].check);
 
   const loadClassData = async (id) => {
     setLoadingClassList(true)
@@ -588,7 +569,7 @@ export default function DocumentScreen({ navigation }) {
       </View>
       <ScrollView showsHorizontalScrollIndicator={false} horizontal style={styles.studentList}>
         {
-          !loading &&
+          // !loading &&
           studentList?.map((item, index) => {
             return (
               <StudentView student={item} index={index} key={index} onClick={selectStudent} />

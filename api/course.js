@@ -59,7 +59,6 @@ export const getSyllabus = async (CouseId, classId) => {
 
     try {
         const response = await api.get(`/api/v1/Syllabus/getByCourse?${path}`);
-        console.log(path);
         return response;
     } catch (error) {
         console.log("getSyllabus in api/course.js error : ", error);

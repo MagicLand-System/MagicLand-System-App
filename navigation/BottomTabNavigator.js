@@ -33,6 +33,9 @@ import ChoosePairScreen from '../screens/parent/ChoosePairScreen';
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
 import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
 
+import StudentHomeScreen from '../screens/bottomTab/student/StudentHomeScreen';
+import StudentScoreScreen from '../screens/bottomTab/student/StudentScoreScreen';
+
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { constants } from '../constants/constants';
 
@@ -55,7 +58,15 @@ const BottomTabNavigator = () => {
         >
             <Tab.Screen
                 name="Home"
-                component={user?.role.name === 'LECTURER' ? HomeScreen : CourseScreen}
+                component={
+                    user?.role?.name === 'LECTURER' ?
+                        HomeScreen
+                        :
+                        user?.role?.name === 'PARENT' ?
+                            CourseScreen
+                            :
+                            StudentHomeScreen
+                }
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return <Icon name={"home-minus"} color={focused ? activeColor : inactiveColor} size={28} />
@@ -63,7 +74,7 @@ const BottomTabNavigator = () => {
                     tabBarLabel: 'Trang Chủ',
                 }} />
             {
-                user?.role.name !== 'LECTURER' &&
+                user?.role?.name === 'PARENT' &&
                 <Tab.Screen name="Document" component={DocumentScreen} options={{
                     tabBarIcon: ({ focused }) => {
                         return <Icon name={"school"} color={focused ? activeColor : inactiveColor} size={28} />
@@ -72,7 +83,7 @@ const BottomTabNavigator = () => {
                 }} />
             }
             {
-                user?.role.name !== 'LECTURER' &&
+                user?.role?.name === 'PARENT' &&
                 <Tab.Screen name="Scan" component={ScanScreen} options={{
                     tabBarIcon: ({ focused }) => {
                         let icon = focused == true ? require('./../assets/images/scan_active_icon.png') : require('./../assets/images/scan_icon.png');
@@ -81,19 +92,28 @@ const BottomTabNavigator = () => {
                     tabBarLabel: 'Quét QR',
                 }} />
             }
-            <Tab.Screen name="Schedule" component={user?.role.name === 'LECTURER' ? WorkScheduleScreen : ScheduleScreen} options={{
-                tabBarIcon: ({ focused }) => {
-                    return <Icon name={"calendar-month"} color={focused ? activeColor : inactiveColor} size={28} />
-                },
-                tabBarLabel: user?.role.name === 'LECTURER' ? 'Lịch Làm Việc' : 'Lịch học',
-            }} />
+            <Tab.Screen name="Schedule"
+                component={
+                    user?.role?.name === 'LECTURER' ?
+                        WorkScheduleScreen
+                        :
+                        user?.role?.name === 'PARENT' ?
+                            ScheduleScreen
+                            :
+                            StudentScoreScreen
+                }
+                options={{
+                    tabBarIcon: ({ focused }) => {
+                        return <Icon name={"calendar-month"} color={focused ? activeColor : inactiveColor} size={28} />
+                    },
+                    tabBarLabel: user?.role?.name === 'LECTURER' ? 'Lịch Làm Việc' : 'Lịch học',
+                }} />
             <Tab.Screen name="Profile" component={ProfileScreen} options={{
                 tabBarIcon: ({ focused }) => {
                     return <Icon name={"account"} color={focused ? activeColor : inactiveColor} size={28} />
                 },
                 tabBarLabel: 'Tài Khoản',
             }} />
-            {/* <Tab.Screen name="CourseScreen" component={CourseScreen} options={{ tabBarButton: () => null }} /> */}
             <Tab.Screen name="CourseDetailScreen" component={CourseDetailScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="ClassScreen" component={ClassScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="ClassDetailScreen" component={ClassDetailScreen} options={{ tabBarButton: () => null }} />
