@@ -9,145 +9,30 @@ import { formatDate } from '../../util/util';
 // import ThuyTienAvt from "../assets/images/ThuyTienAvt.png"
 import ProcessBar from '../../components/ProcessBar';
 import CircularProgressBar from '../../components/CircularProgressBar';
+import { getSyllabus } from '../../api/course';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const programEducationDefault = [
-    {
-        name: "Giới thiệu khái quát Toán Tư Duy.",
-        expand: false,
-        complete: true,
-        date: "2023-12-31T00:00:00",
-        list: [
-            {
-                name: "Giới thiệu khóa học"
-            },
-            {
-                name: "Làm quen với Toán Tư Duy"
-            },
-            {
-                name: "Những con số xếp hàng"
-            },
-        ]
-    },
-    {
-        name: "Rèn kỹ năng so sánh, thống kê, cân thăng bằng. ",
-        expand: false,
-        complete: true,
-        date: "2024-01-09T00:00:00",
-        list: [
-            {
-                name: "Cân thăng bằng"
-            },
-            {
-                name: "Làm quen với cái cân"
-            },
-            {
-                name: "Bé tập thống kê"
-            },
-            {
-                name: "Các số xếp hàng"
-            },
-            {
-                name: "Trò chơi đếm cách"
-            },
-            {
-                name: "Kiểm tra 1"
-            },
-        ]
-    },
-    {
-        name: "Làm quen các số từ 0 đến 10, tập đếm đến 20, ... ",
-        expand: false,
-        complete: false,
-        date: "2024-01-10T00:00:00",
-        list: [
-            {
-                name: "Số nào ở đâu?"
-            },
-            {
-                name: "Que tính kì diệu"
-            },
-            {
-                name: "Cộng thêm với 10"
-            },
-            {
-                name: "Cộng trừ đến 20"
-            },
-            {
-                name: "Trong “3” có “1” và “2”"
-            },
-            {
-                name: "Làm thế nào để tính nhanh"
-            },
-            {
-                name: "Sudoku"
-            },
-            {
-                name: "Bài kiểm tra 2"
-            },
-        ]
-    },
-    {
-        name: "Sáng tạo với hình học, xếp vòng.",
-        expand: false,
-        complete: false,
-        date: "2024-01-11T00:00:00",
-        list: [
-            {
-                name: "Khối trụ"
-            },
-            {
-                name: "khối cầu"
-            },
-            {
-                name: "Khối lập phương"
-            },
-            {
-                name: "Thử tài đoán vật"
-            },
-            {
-                name: "Tập làm kiến trúc sư"
-            },
-        ]
-    },
-    {
-        name: "Các bài toán vận dụng thực tiễn.",
-        expand: false,
-        complete: false,
-        date: "2024-01-11T00:00:00",
-        list: [
-            {
-                name: "Câu đố hoa quả"
-            },
-            {
-                name: "Chiếc hộp có chứa được quả không?"
-            },
-            {
-                name: "Bảy ngày trong tuần"
-            },
-            {
-                name: "Mười hai tháng trong năm"
-            },
-            {
-                name: "Bông hoa đồng hồ"
-            },
-            {
-                name: "Bài đánh giá năng lực"
-            },
-        ]
-    },
-]
-
 export default function ClassStudyDetailScreen({ route, navigation }) {
+
     let classDetail = route?.params?.classDetail
-    const [programEducation, setProgramEducation] = useState(programEducationDefault)
+    const [programEducation, setProgramEducation] = useState([])
     let count = 0
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
+        loadSyllabusData()
     }, [route?.params?.classDetail])
+
+    const loadSyllabusData = async () => {
+        const response = await getSyllabus(classDetail?.courseId, classDetail?.classId)
+        if (response?.status === 200) {
+            setProgramEducation(response?.data)
+        } else {
+            console.log("getSyllabus fail : ", response.response?.data);
+        }
+    }
 
     const handleViewDetail = () => {
         navigation.push("ClassContentScreen", { classDetail: classDetail })
@@ -172,7 +57,8 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                             Ngày học:
                         </Text>
                         <Text style={styles.classValue}>
-                            Thứ 5 , 02/12/2023
+                            {formatDate(classDetail?.date)}
+                            {/* Thứ 5 , 02/12/2023 */}
                         </Text>
                     </View>
                     <View style={styles.flexColumnBetween}>
@@ -180,7 +66,7 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                             Thời gian:
                         </Text>
                         <Text style={styles.classValue}>
-                            17h30 - 19h
+                            {classDetail?.startTime} - {classDetail?.endTime}
                         </Text>
                     </View>
                     <View style={styles.flexColumnBetween}>
@@ -188,7 +74,13 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                             Hình Thức:
                         </Text>
                         <Text style={styles.classValue}>
-                            Offline
+                            {classDetail?.method}
+                            {
+                                String(classDetail?.method)?.toLocaleLowerCase() === "online" &&
+                                <TouchableOpacity style={{ transform: [{ translateY: 2.5 }] }}>
+                                    <Text style={{...styles.classValue, color: "#000"}}> {" meet > "}</Text>
+                                </TouchableOpacity>
+                            }
                         </Text>
                     </View>
                     <View style={styles.flexColumnBetween}>
@@ -196,7 +88,7 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                             Phòng học:
                         </Text>
                         <Text style={styles.classValue}>
-                            P001
+                            {classDetail?.roomName}
                         </Text>
                     </View>
                     <View style={styles.flexColumnBetween}>
@@ -204,7 +96,7 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                             Tình trạng:
                         </Text>
                         <Text style={styles.classValue}>
-                            Đã điểm danh
+                            {classDetail?.attendanceStatus}
                         </Text>
                     </View>
 
@@ -249,73 +141,102 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                     <Text style={styles.title}>Nội dung buổi học:</Text>
                 </View>
 
-                <ScrollView style={styles.program}>
+                <ScrollView nestedScrollEnabled={true} style={styles.program}>
                     {
-                        programEducation?.map((item, index) => {
+                        programEducation?.syllabusInformations?.topics?.map((item, index) => {
                             return (
                                 <View
                                     style={{
                                         ...styles.mainTab,
-                                        // borderBottomWidth: item.expand ? 1 : 0,
-                                        backgroundColor: index % 2 === 1 ?
-                                            item.complete ?
-                                                "#8EE69F"
-                                                :
-                                                "#C2D9FF"
-                                            :
-                                            "white",
+                                        backgroundColor: index % 2 === 1 ? "#C2D9FF" : "white"
                                     }}
                                     key={index}
                                 >
                                     <TouchableOpacity
-                                        style={{
-                                            ...styles.flexColumnBetween,
-                                            // alignItems: "baseline",
-                                            paddingVertical: 8,
-                                            paddingRight: 10,
-                                            borderRadius: 10,
-                                            // borderWidth: 1,
-                                        }}
+                                        style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
                                         onPress={() => {
-                                            const updatedProgramEducation = [...programEducation];
-                                            updatedProgramEducation[index].expand = !updatedProgramEducation[index].expand;
-                                            setProgramEducation(updatedProgramEducation);
+                                            setProgramEducation(prevProgramEducation => {
+                                                const updatedTopics = [...prevProgramEducation.syllabusInformations?.topics];
+                                                updatedTopics[index] = { ...updatedTopics[index], expand: !updatedTopics[index].expand };
+                                                return {
+                                                    ...prevProgramEducation,
+                                                    syllabusInformations: { ...prevProgramEducation.syllabusInformations, topics: updatedTopics }
+                                                };
+                                            });
                                         }}
                                     >
-                                        <Text style={styles.mainText} numberOfLines={1}>{"Buổi " + (index + 1) + " - " + formatDate(item.date)}</Text>
+                                        <Text style={styles.mainText}>
+                                            <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}  </Text>
+
+                                        </Text>
+
                                         {
-                                            item.complete ?
-                                                <Icon name={"check-circle"} color={"#2C8535"} size={25} />
+                                            !item.expand ?
+                                                <Icon name={"plus"} color={"#241468"} size={25} />
                                                 :
-                                                !item.expand ?
-                                                    <Icon name={"plus"} color={"#241468"} size={25} />
-                                                    :
-                                                    <Icon name={"minus"} color={"#241468"} size={25} />
+                                                <Icon name={"minus"} color={"#241468"} size={25} />
                                         }
                                     </TouchableOpacity>
-
                                     {
-                                        item.expand &&
-                                        <>
-                                            <View style={{ ...styles.flexColumn, paddingVertical: 8 }} >
-                                                <Text
-                                                    style={styles.mainText}
-                                                    numberOfLines={1}
-                                                >
-                                                    {"Chủ đề " + (index + 1) + " - " + item.name}
-                                                </Text>
-                                            </View>
-                                            {
-                                                item.list.map((element, key) => {
-                                                    count += 1
+                                        (
+                                            !item.sessions[0] ?
+                                                item.expand === true &&
+                                                <Text style={styles.childText}>Không có buổi học</Text>
+                                                :
+                                                item.sessions.map((element, key) => {
                                                     return (
-                                                        <Text style={styles.childText} key={key}>{count}. {element.name}</Text>
+                                                        <>
+                                                            {
+                                                                item.expand === true &&
+                                                                <Text style={styles.childText} key={key}>Buổi {element?.orderSession} ({formatDate(element?.date)})</Text>
+                                                            }
+                                                            {
+                                                                (
+                                                                    !element.contents[0] ?
+                                                                        item.expand === true &&
+                                                                        <Text style={styles.childText}>Không có chủ đề</Text>
+                                                                        :
+                                                                        element?.contents?.map((content, key) => {
+                                                                            count += 1
+                                                                            return (
+                                                                                <>
+                                                                                    {
+                                                                                        item.expand === true &&
+                                                                                        <Text style={{ ...styles.childText, marginLeft: 7 }} key={key}>{count}. {content.content}</Text>
+                                                                                    }
+                                                                                    {
+                                                                                        item.expand === true &&
+                                                                                        content?.details?.map((detail, index) => {
+                                                                                            return (
+                                                                                                <Text style={{ ...styles.childText, marginLeft: 15 }} key={index}>{count}.{index + 1} {detail}</Text>
+                                                                                            )
+                                                                                        })
+                                                                                    }
+                                                                                </>
+                                                                            )
+                                                                        })
+                                                                )
+                                                            }
+                                                        </>
                                                     )
                                                 })
-                                            }
-                                        </>
-
+                                        )
                                     }
+                                    {/* {
+                                        (
+                                            !item.contents[0] ?
+                                                item.expand === true &&
+                                                <Text style={styles.childText}>Không có chủ đề</Text>
+                                                :
+                                                item.contents.map((element, key) => {
+                                                    count += 1
+                                                    return (
+                                                        item.expand === true &&
+                                                        <Text style={styles.childText} key={key}>{count}. {element.content}</Text>
+                                                    )
+                                                })
+                                        )
+                                    } */}
                                 </View>
                             )
                         })
@@ -382,7 +303,8 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(69, 130, 230, 0.28)"
     },
     classValue: {
-        color: "#888888"
+        color: "#888888",
+        textTransform: "capitalize",
     },
     programcontent: {
         position: 'relative',
@@ -401,17 +323,39 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginVertical: 20,
     },
+
     program: {
         width: WIDTH * 0.9,
-        // maxHeight: HEIGHT * 0.4,
-        // paddingBottom: 20,
+        maxHeight: HEIGHT * 0.4,
         borderWidth: 1,
         borderRadius: 10,
         marginHorizontal: WIDTH * 0.05,
-        marginBottom: 50,
-        overflow: "hidden",
-        backgroundColor: "white"
+        overflow: "hidden"
     },
+    processScrollView: {
+        flexDirection: "row",
+    },
+    courseList: {
+        marginVertical: 10
+    },
+    scoreTable: {
+        width: WIDTH * 0.9,
+        borderWidth: 1,
+        borderRadius: 10,
+        marginHorizontal: WIDTH * 0.05,
+        marginBottom: 20
+    },
+    tabletIcon: {
+        width: WIDTH * 0.1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    scoreValue: {
+        width: "32%",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+
     mainTab: {
         // paddingVertical: 10,
         borderRadius: 10,

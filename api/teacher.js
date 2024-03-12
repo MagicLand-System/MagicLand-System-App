@@ -11,12 +11,32 @@ export const getAllAttendanceClass = async () => {
 };
 
 export const getAttendanceList = async (classId) => {
-    
+
     try {
         const response = await api.get(`/api/v1/lectures/student/attendance?classId=${classId}`);
         return response;
     } catch (error) {
         console.log("getAttendanceList in api/teacher.js error : ", error);
+        return error;
+    }
+};
+
+export const getEvaluatesList = async (classId, noSession) => {
+    try {
+        const response = await api.get(`/api/v1/lectures/students/get/evaluates?classId=${classId}&noSession=${noSession}`);
+        return response;
+    } catch (error) {
+        console.log("getEvaluatesList in api/teacher.js error : ", error);
+        return error;
+    }
+};
+
+export const takeEvaluates = async (data, noSession) => {
+    try {
+        const response = await api.put(`/api/v1/lectures/students/evaluate?noSession=${noSession}`, data);
+        return response;
+    } catch (error) {
+        console.log("takseEvaluates in api/teacher.js error : ", error);
         return error;
     }
 };

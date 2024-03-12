@@ -106,13 +106,12 @@ export default function PaymentScreen({ route, navigation }) {
 
     const handlePayment = async () => {
         const hasCheckedItem = paymentMethodList.some(item => item.check === true);
-        const recaptchaVerifier = new auth.re
+        // const recaptchaVerifier = new auth.re
         if (hasCheckedItem) {
-            const phoneProvider = new PhoneAuthProvider(auth);
-            const verificationId = await phoneProvider.verifyPhoneNumber(
-                user?.phone
-            );
-            console.log(verificationId);
+            // const phoneProvider = new PhoneAuthProvider(auth);
+            // const verificationId = await phoneProvider.verifyPhoneNumber(
+            //     user?.phone
+            // );
             setVerificationId(verificationId)
             setModalVisible({ ...modalVisible, otp: true });
         } else {
@@ -123,19 +122,23 @@ export default function PaymentScreen({ route, navigation }) {
     const handleSubmitOtp = async () => {
         setLoading({ ...loading, confirmRegis: true })
         try {
+            let response
             await Promise.all(classDetail?.map(async (classItem) => {
-                const response = await registerClass(studentList.map(item => item.id), classItem.classId)
+                response = await registerClass(studentList.map(item => item.id), classItem.classId)
                 if (response?.status === 200) {
                     setModalVisible({ ...modalVisible, otp: false, notifi: false });
-                    handleCloseNotifiModal()
+                    // handleCloseNotifiModal()
+
                 } else {
                     showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
                 }
             }));
+            navigation.push("TransactionDetailScreen", { classDetail: classDetail, total: totalPayment(), transactionData: response?.data })
         } catch (error) {
             console.error(error);
         } finally {
             setLoading({ ...loading, confirmRegis: false })
+
         }
     }
 
@@ -153,7 +156,7 @@ export default function PaymentScreen({ route, navigation }) {
 
     const handleCloseNotifiModal = () => {
         // setModalVisible({ ...modalVisible, notifi: false })
-        navigation.push("TransactionDetailScreen", { total: totalPayment() })
+
     }
 
     const handleChooseVourcher = (index) => {
@@ -171,13 +174,14 @@ export default function PaymentScreen({ route, navigation }) {
 
     const verifyOtp = async (otp) => {
         try {
-            setErrorMessage('')
-            setLoading(true)
-            const credential = PhoneAuthProvider.credential(verificationId, otp);
-            await signInWithCredential(auth, credential)
-                .then((userCredential) => {
-                    handleSubmitOtp()
-                })
+            // setErrorMessage('')
+            // setLoading(true)
+            // const credential = PhoneAuthProvider.credential(verificationId, otp);
+            // await signInWithCredential(auth, credential)
+            //     .then((userCredential) => {
+            //         handleSubmitOtp()
+            //     })
+            handleSubmitOtp()
         } catch (error) {
             showToast("Thông báo", `Xác thực OTP không thành công`, "warning");
             setLoading(false)

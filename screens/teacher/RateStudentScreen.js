@@ -1,83 +1,41 @@
 import { View, Text, Image, StyleSheet, Dimensions, TextInput, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import Header from '../../../components/header/Header';
+import React, { useEffect, useState } from 'react'
+import Header from '../../components/header/Header';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { getAttendanceList, getEvaluatesList, takeEvaluates } from '../../api/teacher';
+import { checkCurrentDate } from '../../util/util';
 
-import unhappyIcon from "../../../assets/rateIcon/unhapppyIcon.png"
-import happyIcon from "../../../assets/rateIcon/happyIcon.png"
-import ContentedIcon from "../../../assets/rateIcon/ContentedIcon.png"
+// import unhappyIcon from "../../../assets/rateIcon/unhapppyIcon.png"
+// import happyIcon from "../../../assets/rateIcon/happyIcon.png"
+// import ContentedIcon from "../../../assets/rateIcon/ContentedIcon.png"
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const studentListDefault = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    note: "Học Bù",
-    rate: "bad"
-  },
-  {
-    id: 2,
-    name: "Nguyễn Văn B",
-    rate: "neutral"
-  },
-  {
-    id: 3,
-    name: "Nguyễn Văn A",
-    rate: "happy"
-  },
-  {
-    id: 4,
-    name: "Nguyễn Văn C",
-    note: "Học Bù",
-    rate: "happy"
-  },
-  {
-    id: 5,
-    name: "Nguyễn Văn B",
-    rate: "happy"
-  },
-  {
-    id: 6,
-    name: "Nguyễn Văn D",
-    rate: "happy"
-  },
-  {
-    id: 7,
-    name: "Nguyễn Văn A",
-    note: "Học Bù",
-    rate: "happy"
-  },
-  {
-    id: 8,
-    name: "Nguyễn Văn D",
-    rate: "happy"
-  },
-  {
-    id: 9,
-    name: "Nguyễn Văn E",
-    rate: "happy"
-  },
-  {
-    id: 10,
-    name: "Nguyễn Văn F",
-    note: "Dự thính",
-    rate: "happy"
-  },
-  {
-    id: 11,
-    name: "Nguyễn Văn A",
-    rate: "happy"
-  },
-]
-
-export default function AttendanceScreen({ route, navigation }) {
+export default function RateStudentScreen({ route, navigation }) {
   const classDetail = route.params.classDetail
-  const [studentList, setStudentList] = useState(JSON.parse(JSON.stringify(studentListDefault)))
-  const [studentTmpList, setStudentTmpList] = useState(JSON.parse(JSON.stringify(studentListDefault)))
+  const noSession = route.params.noSession
+  const date = route.params.date
+  const [studentList, setStudentList] = useState([])
+  const [studentTmpList, setStudentTmpList] = useState([])
   const [searchValue, setSearchValue] = useState("")
   const [editMode, setEditMode] = useState(false)
+
+  useEffect(() => {
+    loadStudentData()
+  }, [route.params.classDetail])
+
+  const loadStudentData = async () => {
+    const response = await getEvaluatesList(classDetail.classId, noSession);
+    if (response?.status === 200) {
+      let data = response?.data;
+      data[0].evaludateInfors = data[0].evaludateInfors.map(info => {
+        return { ...info, level: info?.level === 0 ? 2 : info?.level };
+      });
+      setStudentList(data);
+      setStudentTmpList(data);
+    }
+  }
 
   const handleClearAttend = () => {
     const updateArray = [...studentList]
@@ -92,16 +50,25 @@ export default function AttendanceScreen({ route, navigation }) {
 
   const changeRate = (id, rate) => {
     if (editMode) {
-      const index = studentTmpList.findIndex(obj => obj.id === id);
+      const index = studentTmpList[0]?.evaludateInfors?.findIndex(obj => obj.studentId === id);
       const updateArray = JSON.parse(JSON.stringify(studentTmpList))
-      updateArray[index].rate = rate;
+      updateArray[0].evaludateInfors[index].level = rate;
       setStudentTmpList(updateArray)
     }
   }
 
-  const handleCompleteEditing = () => {
-    setStudentList(JSON.parse(JSON.stringify(studentTmpList)))
-    setEditMode(false)
+  const handleCompleteEditing = async () => {
+    const data = {
+      classId: classDetail.classId,
+      studeEvaluateRequests: studentTmpList[0].evaludateInfors
+    }
+    const response = await takeEvaluates(data, noSession)
+    if (response?.status === 200) {
+      setStudentList(JSON.parse(JSON.stringify(studentTmpList)))
+      setEditMode(false)
+    } else {
+      console.log("complete takeEvaluates");
+    }
   }
 
   const handleClearEditing = () => {
@@ -112,6 +79,14 @@ export default function AttendanceScreen({ route, navigation }) {
   const handleSetEditing = () => {
     setStudentTmpList(JSON.parse(JSON.stringify(studentList)))
     setEditMode(true)
+  }
+
+  const filterByStudentName = (studentList, search) => {
+    if (search === "") {
+      return studentList[0]?.evaludateInfors
+    } else {
+      return studentList[0]?.evaludateInfors?.filter(student => student.studentName.toLowerCase().includes(search.toLowerCase()));
+    }
   }
 
   return (
@@ -133,7 +108,7 @@ export default function AttendanceScreen({ route, navigation }) {
             <Text style={styles.columnNote}>Ghi chú</Text>
           </View>
           {
-            (editMode ? studentTmpList : studentList).map((item, index) => {
+            filterByStudentName((editMode ? studentTmpList : studentList), searchValue)?.map((item, index) => {
               return (
                 <TouchableOpacity
                   // onPress={() => handleCheckAttend(item.id)}
@@ -143,27 +118,27 @@ export default function AttendanceScreen({ route, navigation }) {
                     <Text style={{ ...styles.boldText, marginHorizontal: 10, marginRight: 2 }}>{index + 1}</Text>
                     <Icon name={"account-circle"} color={"#908484"} size={WIDTH * 0.13} />
                   </View>
-                  <Text style={styles.columnName}>{item?.name}</Text>
+                  <Text style={styles.columnName}>{item?.studentName}</Text>
                   <View style={styles.columnStatus}>
-                    <TouchableOpacity onPress={() => changeRate(item.id, "bad")} style={{ marginRight: 10 }}>
+                    <TouchableOpacity onPress={() => changeRate(item.studentId, 1)} style={{ marginRight: 10 }}>
                       {
-                        item.rate === "bad" ?
+                        item.level === 1 ?
                           <Icon name={"emoticon-sad-outline"} color={"#F86565"} size={25} />
                           :
                           <Icon name={"emoticon-sad-outline"} color={"#B6C8E2"} size={25} />
                       }
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => changeRate(item.id, "neutral")} style={{ marginRight: 10 }}>
+                    <TouchableOpacity onPress={() => changeRate(item.studentId, 2)} style={{ marginRight: 10 }}>
                       {
-                        item.rate === "neutral" ?
+                        item.level === 2 ?
                           <Icon name={"emoticon-neutral-outline"} color={"#7B61FF"} size={25} />
                           :
                           <Icon name={"emoticon-neutral-outline"} color={"#B6C8E2"} size={25} />
                       }
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => changeRate(item.id, "happy")}>
+                    <TouchableOpacity onPress={() => changeRate(item.studentId, 3)}>
                       {
-                        item.rate === "happy" ?
+                        item.level === 3 ?
                           <Icon name={"emoticon-happy-outline"} color={"#229A89"} size={25} />
                           :
                           <Icon name={"emoticon-happy-outline"} color={"#B6C8E2"} size={25} />
@@ -187,15 +162,14 @@ export default function AttendanceScreen({ route, navigation }) {
             </TouchableOpacity>
           </View>
         }
-        {
-          !editMode &&
-          <TouchableOpacity style={{ ...styles.editButton, bottom: editMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing}>
-            <Icon name={"lead-pencil"} color={"white"} size={28} />
-          </TouchableOpacity>
-        }
         <View style={{ height: 40 }} />
       </ScrollView>
-
+      {
+        (!editMode && studentList[0] && checkCurrentDate(date)) &&
+        <TouchableOpacity style={{ ...styles.editButton, bottom: editMode ? HEIGHT * 0.15 : HEIGHT * 0.05 }} onPress={handleSetEditing}>
+          <Icon name={"circle-edit-outline"} color={"white"} size={28} />
+        </TouchableOpacity>
+      }
     </>
   )
 }
@@ -203,6 +177,7 @@ export default function AttendanceScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
+    height: HEIGHT,
     flex: 1,
     backgroundColor: 'white',
   },
@@ -296,6 +271,5 @@ const styles = StyleSheet.create({
     width: "85%",
     paddingLeft: 10,
     marginVertical: 15,
-    color: "#B8B8D2"
   }
 })

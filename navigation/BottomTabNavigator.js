@@ -11,7 +11,7 @@ import ScheduleScreen from '../screens/bottomTab/parent/ScheduleScreen';
 import CourseScreen from '../screens/bottomTab/parent/CourseScreen';
 import HomeScreen from '../screens/bottomTab/teacher/HomeScreen';
 import WorkScheduleScreen from '../screens/bottomTab/teacher/WorkScheduleScreen';
-import RateStudentScreen from '../screens/bottomTab/teacher/RateStudentScreen';
+import RateStudentScreen from '../screens/teacher/RateStudentScreen';
 
 import CourseDetailScreen from '../screens/parent/CourseDetailScreen';
 import ClassScreen from '../screens/parent/ClassScreen';

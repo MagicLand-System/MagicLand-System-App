@@ -13,6 +13,7 @@ export default function ClassOptionScreen({ route, navigation }) {
     const classId = route.params.classId
     const date = route.params.date
     const slot = route.params.slot
+    const noSession = route.params.noSession
     const [classDetail, setClassDetail] = useState()
     const [loading, setLoading] = useState(true)
 
@@ -57,7 +58,10 @@ export default function ClassOptionScreen({ route, navigation }) {
         {
             title: "Chấm điểm bài tập",
             icon: <Icon name={"book"} color={"#4582E6"} size={25} />,
-            onClick: () => navigation.push("RateStudentScreen", { classDetail: classDetail, date: date })
+            onClick: () => {
+                navigation.push("RateStudentScreen", { classDetail: classDetail, date: date })
+                // console.log(date);
+            }
         },
     ]
 
@@ -81,7 +85,11 @@ export default function ClassOptionScreen({ route, navigation }) {
                             <Text style={styles.title}>Đánh giá tổng quan: </Text>
                         </View>
                         <Text style={{ opacity: 0.6, marginLeft: WIDTH * 0.04 }}>Đánh giá sau khi các bé hoàn thành khóa học</Text>
-                        <ClassOption title={"Đánh giá"} icon={<Icon name={"book"} color={"#4582E6"} size={25} />} onClick={() => navigation.push("RateStudentScreen", { classDetail: classDetail })} />
+                        <ClassOption
+                            title={"Đánh giá"}
+                            icon={<Icon name={"book"} color={"#4582E6"} size={25} />}
+                            onClick={() => navigation.push("RateStudentScreen", { classDetail: classDetail, date: date, noSession: noSession })}
+                        />
 
                     </ScrollView>
             }
