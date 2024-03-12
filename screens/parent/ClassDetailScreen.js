@@ -7,7 +7,7 @@ import NotificationModal from '../../components/modal/NotificationModal';
 import CircularProgressBar from '../../components/CircularProgressBar';
 import CourseCard from '../../components/CourseCard';
 
-import { formatDate } from '../../util/util';
+import { formatDate, shortedTime } from '../../util/util';
 import { getSyllabus } from '../../api/course';
 import { getStatus } from '../../constants/class';
 import { getQuizByClassid } from '../../api/quiz';
@@ -347,7 +347,7 @@ export default function ClassDetailScreen({ route, navigation }) {
 
                 <ScrollView nestedScrollEnabled={true} style={styles.program}>
                     {
-                        programEducation?.syllabusInformations?.sessions?.map((item, index) => {
+                        programEducation?.syllabusInformations?.topics?.map((item, index) => {
                             return (
                                 <View
                                     style={{
@@ -360,19 +360,20 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
                                         onPress={() => {
                                             setProgramEducation(prevProgramEducation => {
-                                                const updatedTopics = [...prevProgramEducation.syllabusInformations?.sessions];
+                                                const updatedTopics = [...prevProgramEducation.syllabusInformations?.topics];
                                                 updatedTopics[index] = { ...updatedTopics[index], expand: !updatedTopics[index].expand };
                                                 return {
                                                     ...prevProgramEducation,
-                                                    syllabusInformations: { ...prevProgramEducation.syllabusInformations, sessions: updatedTopics }
+                                                    syllabusInformations: { ...prevProgramEducation.syllabusInformations, topics: updatedTopics }
                                                 };
                                             });
                                         }}
                                     >
                                         <Text style={styles.mainText}>
                                             <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}  </Text>
-                                            ({formatDate(item?.date)})
+
                                         </Text>
+
                                         {
                                             !item.expand ?
                                                 <Icon name={"plus"} color={"#241468"} size={25} />
@@ -381,6 +382,51 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         }
                                     </TouchableOpacity>
                                     {
+                                        (
+                                            !item.sessions[0] ?
+                                                item.expand === true &&
+                                                <Text style={styles.childText}>Không có buổi học</Text>
+                                                :
+                                                item.sessions.map((element, key) => {
+                                                    return (
+                                                        <>
+                                                            {
+                                                                item.expand === true &&
+                                                                <Text style={styles.childText} key={key}>Buổi {element?.orderSession} ({formatDate(element?.date)})</Text>
+                                                            }
+                                                            {
+                                                                (
+                                                                    !element.contents[0] ?
+                                                                        item.expand === true &&
+                                                                        <Text style={styles.childText}>Không có chủ đề</Text>
+                                                                        :
+                                                                        element?.contents?.map((content, key) => {
+                                                                            count += 1
+                                                                            return (
+                                                                                <>
+                                                                                    {
+                                                                                        item.expand === true &&
+                                                                                        <Text style={{...styles.childText, marginLeft: 7}} key={key}>{count}. {content.content}</Text>
+                                                                                    }
+                                                                                    {
+                                                                                        item.expand === true &&
+                                                                                        content?.details?.map((detail, index) => {
+                                                                                            return (
+                                                                                                <Text style={{...styles.childText, marginLeft: 15}} key={index}>{count}.{index + 1} {detail}</Text>
+                                                                                            )
+                                                                                        })
+                                                                                    }
+                                                                                </>
+                                                                            )
+                                                                        })
+                                                                )
+                                                            }
+                                                        </>
+                                                    )
+                                                })
+                                        )
+                                    }
+                                    {/* {
                                         (
                                             !item.contents[0] ?
                                                 item.expand === true &&
@@ -394,7 +440,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                                                     )
                                                 })
                                         )
-                                    }
+                                    } */}
                                 </View>
                             )
                         })
@@ -438,7 +484,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                                     {/* <Icon name={"checkbox-marked-circle"} color={"#4582E6"} size={15} /> */}
                                     <TouchableOpacity onPress={() => navigateDoHomework(item)}>
                                         <Text style={styles.boldText}>
-                                            {item.quizName} ( {item.quizType} )
+                                            {item.examName} ( {item.quizType} )
                                         </Text>
                                     </TouchableOpacity>
                                 </View>

@@ -184,13 +184,12 @@ export default function CourseDetailScreen({ route, navigation }) {
         const classChoosed = classCardDetail.filter(obj => obj.choose === true);
         if (classChoosed[0]) {
             classChoosed.map(async (item) => {
-                console.log(item.classId);
                 const response = await modifyCart([], item.classId)
                 if (response?.status === 200) {
                     showToast("Thành công", `Đã thêm ${item?.courseName} - ${item?.classCode} vào danh sách quan tâm`, "success");
                     console.log(item);
                 } else {
-                    showToast("Thất bại", `Thêm ${item?.name} vào danh sách quan tâm thất bại`, "error");
+                    showToast("Thất bại", `Thêm ${item?.courseName} - ${item?.classCode} vào danh sách quan tâm thất bại`, "error");
                     console.log(response.response.data);
                 }
             })

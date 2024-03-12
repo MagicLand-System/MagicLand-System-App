@@ -167,18 +167,18 @@ export default function CourseScreen({ navigation }) {
                         homeContentDetail.courseIcon.map((item, index) => {
                             return (
                                 <TouchableOpacity
-                                    style={[styles.optionButton, item.name === filterTmpValue.type && styles.choosed]}
+                                    style={[styles.optionButton, item?.name === filterTmpValue.type && styles.choosed]}
                                     onPress={() => {
-                                        if (item.name === filterValue.type) {
+                                        if (item?.name === filterValue.type) {
                                             setFilterTmpValue({ ...filterTmpValue, type: "ALL" })
                                         } else {
-                                            setFilterTmpValue({ ...filterTmpValue, type: item.name })
+                                            setFilterTmpValue({ ...filterTmpValue, type: item?.name })
                                         }
                                     }}
                                     key={index}
                                 >
-                                    <Text style={[styles.optionText, item.name === filterTmpValue.type && styles.choosedText]}>
-                                        {item.vietName}
+                                    <Text style={[styles.optionText, item?.name === filterTmpValue.type && styles.choosedText]}>
+                                        {item?.vietName}
                                     </Text>
                                 </TouchableOpacity>
                             )
@@ -249,17 +249,17 @@ export default function CourseScreen({ navigation }) {
                     {
                         homeContentDetail.courseIcon.map((item, index) => {
                             return (
-                                item.name !== "ALL" &&
+                                item?.name !== "ALL" &&
                                 <TouchableOpacity
                                     style={styles.courseView}
                                     key={index}
                                     onPress={() => {
-                                        if (item.name === filterValue.type) {
+                                        if (item?.name === filterValue.type) {
                                             setFilterValue({ ...filterValue, type: "ALL" })
                                             setFilterTmpValue({ ...filterTmpValue, type: "ALL" })
                                         } else {
-                                            setFilterValue({ ...filterValue, type: item.name })
-                                            setFilterTmpValue({ ...filterTmpValue, type: item.name })
+                                            setFilterValue({ ...filterValue, type: item?.name })
+                                            setFilterTmpValue({ ...filterTmpValue, type: item?.name })
                                         }
                                     }}
                                     activeOpacity={0.5}
@@ -267,7 +267,7 @@ export default function CourseScreen({ navigation }) {
                                     <View
                                         style={{
                                             ...styles.courseImageView,
-                                            backgroundColor: item.name === filterValue.type ?
+                                            backgroundColor: item?.name === filterValue.type ?
                                                 "rgba(69, 130, 230, 0.7)"
                                                 :
                                                 "rgba(58, 166, 185, 0.25)"
@@ -275,7 +275,7 @@ export default function CourseScreen({ navigation }) {
                                     >
                                         <Image source={item.img} style={styles.courseImage} resizeMode="cover" />
                                     </View>
-                                    <Text style={styles.courseName}>{item.name}</Text>
+                                    <Text style={styles.courseName}>{item?.name}</Text>
                                 </TouchableOpacity>
                             )
                         })

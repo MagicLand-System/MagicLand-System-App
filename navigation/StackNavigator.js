@@ -15,7 +15,7 @@ import FillInfoScreen from '../screens/FillInfoScreen';
 import CourseScreen from '../screens/bottomTab/parent/CourseScreen';
 import HomeScreen from '../screens/bottomTab/teacher/HomeScreen';
 import WorkScheduleScreen from '../screens/bottomTab/teacher/WorkScheduleScreen';
-import RateStudentScreen from '../screens/bottomTab/teacher/RateStudentScreen';
+import RateStudentScreen from '../screens/teacher/RateStudentScreen';
 
 import AddStudentScreen from '../screens/parent/AddStudentScreen';
 import StudentMenuScreen from '../screens/parent/StudentMenuScreen';
@@ -47,6 +47,9 @@ import ChoosePairScreen from '../screens/parent/ChoosePairScreen';
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
 import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
+
+import StudentHomeScreen from '../screens/bottomTab/student/StudentHomeScreen';
+import StudentScoreScreen from '../screens/bottomTab/student/StudentScoreScreen';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
@@ -85,7 +88,7 @@ const StackNavigator = () => {
     return (
         //Screen màn hình chính
         <Stack.Navigator initialRouteName='Started'>
-            {user?.role.name === 'PARENT' ? (
+            {user?.role?.name === 'PARENT' ? (
                 <>
                     {/* Parent */}
                     <Stack.Screen
@@ -123,7 +126,7 @@ const StackNavigator = () => {
                     <Stack.Screen name="EditStudentScreen" component={EditStudentScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="ChoosePairScreen" component={ChoosePairScreen} options={{ headerShown: false }} />
                 </>
-            ) : user?.role.name === 'LECTURER' ? (
+            ) : user?.role?.name === 'LECTURER' ? (
                 <>
                     {/* Teacher */}
                     <Stack.Screen
@@ -136,7 +139,18 @@ const StackNavigator = () => {
                     <Stack.Screen name="RateStudentScreen" component={RateStudentScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="ClassOptionScreen" component={ClassOptionScreen} options={{ headerShown: false }} />
+                </>
 
+            ) : user?.role?.name === 'STUDENT' ? (
+                <>
+                    {/* Teacher */}
+                    <Stack.Screen
+                        name="Root"
+                        component={BottomTabNavigator}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name="StudentHomeScreen" component={StudentHomeScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="StudentScoreScreen" component={StudentScoreScreen} options={{ headerShown: false }} />
                 </>
 
             ) : (

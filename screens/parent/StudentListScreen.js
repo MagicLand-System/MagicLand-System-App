@@ -22,12 +22,13 @@ export default function StudentListScreen({ navigation }) {
             loadStudentData()
         }, [])
     );
-
+    
     const loadStudentData = async () => {
         setLoading(true)
         const response = await getStudents()
         if (response) {
             setStudentList(response?.filter(item => item.isActive))
+           
         } else {
             console.log("can not get student ");
         }

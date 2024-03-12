@@ -37,20 +37,6 @@ export default function AttendanceScreen({ route, navigation }) {
             })
             setStudentList(data)
             setStudentTmpList(data)
-
-            // if (!checkCurrentDate(date)) {
-            //     const data = response?.data?.map((item) => {
-            //         return {
-            //             ...item,
-            //             isPresent: false
-            //         }
-            //     })
-            //     setStudentList(data)
-            //     setStudentTmpList(data)
-            // } else {
-            //     setStudentList(response?.data)
-            //     setStudentTmpList(response?.data)
-            // }
         }
     }
 

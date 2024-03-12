@@ -15,13 +15,14 @@ import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
 import { useDispatch } from "react-redux";
 import { fetchUser } from "../store/features/authSlice";
 import LoadingModal from "../components/LoadingModal";
+import { fetchStudentList } from '../store/features/studentSlice';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function LoginScreen() {
   const recaptchaVerifier = useRef(null);
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('+84907625914_1');
   const [verificationId, setVerificationId] = useState(null);
   const [otp, setOtp] = useState('');
 
@@ -34,6 +35,7 @@ export default function LoginScreen() {
     Baloo2_700Bold,
   })
   const [isInit, setisInit] = useState(false)
+
   useEffect(() => {
     setTimeout(function () {
       setisInit(true)
@@ -66,7 +68,7 @@ export default function LoginScreen() {
 
           const data = await authUser({ phone: phoneNumber })
           const accessToken = data.accessToken;
-          await AsyncStorage.setItem('accessToken', accessToken).then(dispatch(fetchUser()))
+          await AsyncStorage.setItem('accessToken', accessToken).then(dispatch(fetchUser())).then(dispatch(fetchStudentList()))
         }
       }
     } catch (error) {

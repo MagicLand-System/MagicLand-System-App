@@ -2,6 +2,8 @@ import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, ScrollView,
 import React, { useState, useEffect, useContext } from "react";
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { auth } from "../../firebase.config"
+import { PhoneAuthProvider, signInWithCredential, } from "firebase/auth";
 
 import Header from '../../components/header/Header';
 import ChooseVourcherModal from '../../components/modal/ChooseVourcherModal';
@@ -13,6 +15,9 @@ import { formatPrice } from '../../util/util';
 import { modifyCart } from '../../api/cart';
 import ChoosePaymentMethod from '../../components/modal/ChoosePaymentMethod';
 import { registerClass } from '../../api/class';
+import { userSelector } from '../../store/selector';
+import { useSelector } from 'react-redux';
+
 
 const paymentTypeDefault = [
     {
@@ -77,9 +82,11 @@ export default function PaymentScreen({ route, navigation }) {
     const [studentList, setStudentList] = useState(route?.params?.studentList)
     const [vourcherList, setVourcherList] = useState(vourcherListDefault)
     const [paymentMethodList, setPaymentMethodList] = useState(paymentTypeDefault)
+    const [verificationId, setVerificationId] = useState(null);
     const [modalVisible, setModalVisible] = useState({ vourcher: false, otp: false, notifi: false, paymentMethod: false })
     const [loading, setLoading] = useState({ confirmRegis: false })
     const showToast = CustomToast();
+    const user = useSelector(userSelector);
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
@@ -97,30 +104,41 @@ export default function PaymentScreen({ route, navigation }) {
         setModalVisible({ ...modalVisible, otp: false })
     }
 
-    const handlePayment = () => {
+    const handlePayment = async () => {
         const hasCheckedItem = paymentMethodList.some(item => item.check === true);
+        // const recaptchaVerifier = new auth.re
         if (hasCheckedItem) {
+            // const phoneProvider = new PhoneAuthProvider(auth);
+            // const verificationId = await phoneProvider.verifyPhoneNumber(
+            //     user?.phone
+            // );
+            setVerificationId(verificationId)
             setModalVisible({ ...modalVisible, otp: true });
         } else {
             showToast("Thông báo", `Hãy chọn phương thức thanh toán trước`, "warning");
         }
     }
 
-    const handleSubmitOtp = async (otp) => {
+    const handleSubmitOtp = async () => {
         setLoading({ ...loading, confirmRegis: true })
         try {
+            let response
             await Promise.all(classDetail?.map(async (classItem) => {
-                const response = await registerClass(studentList.map(item => item.id), classItem.classId)
+                response = await registerClass(studentList.map(item => item.id), classItem.classId)
                 if (response?.status === 200) {
-                    setModalVisible({ ...modalVisible, otp: false, notifi: true });
+                    setModalVisible({ ...modalVisible, otp: false, notifi: false });
+                    // handleCloseNotifiModal()
+
                 } else {
                     showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
                 }
             }));
+            navigation.push("TransactionDetailScreen", { classDetail: classDetail, total: totalPayment(), transactionData: response?.data })
         } catch (error) {
             console.error(error);
         } finally {
             setLoading({ ...loading, confirmRegis: false })
+
         }
     }
 
@@ -137,8 +155,8 @@ export default function PaymentScreen({ route, navigation }) {
     }
 
     const handleCloseNotifiModal = () => {
-        setModalVisible({ ...modalVisible, notifi: false })
-        navigation.push("TransactionDetailScreen", { total: totalPayment() })
+        // setModalVisible({ ...modalVisible, notifi: false })
+
     }
 
     const handleChooseVourcher = (index) => {
@@ -153,6 +171,22 @@ export default function PaymentScreen({ route, navigation }) {
     const handleClosePaymentModal = () => {
         setModalVisible({ ...modalVisible, paymentMethod: false })
     }
+
+    const verifyOtp = async (otp) => {
+        try {
+            // setErrorMessage('')
+            // setLoading(true)
+            // const credential = PhoneAuthProvider.credential(verificationId, otp);
+            // await signInWithCredential(auth, credential)
+            //     .then((userCredential) => {
+            //         handleSubmitOtp()
+            //     })
+            handleSubmitOtp()
+        } catch (error) {
+            showToast("Thông báo", `Xác thực OTP không thành công`, "warning");
+            setLoading(false)
+        }
+    };
 
     const paymentMethod = () => {
         return paymentMethodList.find(item => item.check)
@@ -307,7 +341,7 @@ export default function PaymentScreen({ route, navigation }) {
                 visible={modalVisible.otp}
                 phone={"12345689"}
                 onCancle={hanldeCloseOtpModal}
-                onSubmit={handleSubmitOtp}
+                onSubmit={verifyOtp}
                 loading={loading?.confirmRegis}
             />
             <PaymentSuccessModal

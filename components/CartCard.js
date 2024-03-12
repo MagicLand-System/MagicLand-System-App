@@ -54,7 +54,7 @@ export default function CartCard({ cardDetail, type, check, index, onClick, back
 
                 <View style={styles.cardImage}>
                     <Image
-                        source={{uri : cardDetail?.image}}
+                        source={{ uri: cardDetail?.image }}
                         resizeMode="cover"
                         style={styles.cardImageValue}
                     />
@@ -77,18 +77,17 @@ export default function CartCard({ cardDetail, type, check, index, onClick, back
                             <Text style={{ ...styles.cardName, color: "#241468", fontSize: 11 }}>{cardDetail?.price ? formatPrice(cardDetail?.price) : formatPrice(0)}đ</Text>
                         }
                     </View>
-                    <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Mã Số: {cardDetail?.code} {type === "CLASS" && <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>- {cardDetail?.schedules[0]?.method}</Text>}</Text>
+                    <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Mã Số: {cardDetail?.code} {type === "CLASS" && <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>- {cardDetail?.schedules ? cardDetail?.schedules[0]?.method : ""}</Text>}</Text>
                     <View style={styles.flexColumn}>
                         <Icon name={"calendar-check"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.schedules[0]?.schedule ? cardDetail?.schedules[0]?.openingDay : cardDetail?.date)}</Text>
+                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.schedules ? cardDetail?.schedules[0]?.openingDay : cardDetail?.date)}</Text>
                     </View>
                     <View style={{ ...styles.flexColumn, marginVertical: 5 }}>
-
                         {
                             type === "CLASS" &&
                             <>
                                 <Icon name={"clock-time-three-outline"} color={"#241468"} size={18} />
-                                <Text style={styles.cardDetailText}>{cardDetail?.schedules[0]?.schedule} ( {cardDetail?.schedules[0]?.slot} )</Text>
+                                <Text style={styles.cardDetailText}>{cardDetail?.schedules ? cardDetail?.schedules[0]?.schedule : ""} ( {cardDetail?.schedules ? cardDetail?.schedules[0]?.slot : ""} )</Text>
                             </>
                         }
                     </View>

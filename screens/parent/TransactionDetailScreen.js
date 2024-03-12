@@ -17,7 +17,8 @@ export default function TransactionDetailScreen({ route, navigation }) {
 
     let total = route?.params?.total ? route?.params?.total : 0
     let lable = route?.params?.lable ? route?.params?.lable : "-"
-    let transactionDetail = route?.params?.transactionDetail
+    let transactionData = route?.params?.transactionData
+    let classDetail = route?.params?.classDetail
     let handleClose = route?.params?.handleClose ? () => navigation.pop(route?.params?.handleClose) : () => navigation.navigate("Document")
     const user = useSelector(userSelector);
 
@@ -42,19 +43,34 @@ export default function TransactionDetailScreen({ route, navigation }) {
                 </View>
                 <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
                     <Text style={{ ...styles.boldText }}>Thời Gian:</Text>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{formatTime(new Date)} - {formatDate(new Date)}</Text>
+                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{formatTime(transactionData?.date)} - {formatDate(transactionData?.date)}</Text>
                 </View>
                 <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
                     <Text style={{ ...styles.boldText }}>Hình Thức Thanh Toán:</Text>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Ví Điện Tử</Text>
+                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>
+                        {
+                            transactionData?.method === "SystemWallet" ?
+                                "Ví điện tử"
+                                :
+                                transactionData?.method
+                        }
+                    </Text>
                 </View>
                 <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
                     <Text style={{ ...styles.boldText }}>Tên Người Thanh Toán:</Text>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{user.fullName}</Text>
+                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{transactionData.payer}</Text>
+                </View>
+                <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
+                    <Text style={{ ...styles.boldText }}>Lớp học: </Text>
+                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{classDetail?.className}</Text>
+                </View>
+                <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
+                    <Text style={{ ...styles.boldText }}>Lịch học: </Text>
+                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Thứ {classDetail?.schedules?.schedule}  {classDetail?.schedules?.slot}</Text>
                 </View>
                 <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
                     <Text style={{ ...styles.boldText }}>Nội dung: </Text>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{transactionDetail?.message}</Text>
+                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{transactionData?.message}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={{ ...styles.button, backgroundColor: "#4582E6" }} onPress={handleClose}>

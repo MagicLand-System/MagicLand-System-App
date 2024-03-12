@@ -78,3 +78,23 @@ export const getClassesByStudentId = async (id) => {
     }
 };
 
+export const getCourseRegisted = async () => {
+    try {
+        const response = await api.get("/api/v1/courses/currentStudent");
+        return response;
+    } catch (error) {
+        console.log("getCourseRegisted in api/student.js error : ", error);
+        return error;
+    }
+};
+
+export const getCurrentQuiz = async (numberOfDay) => {
+    const days = numberOfDay ? numberOfDay : 3
+    try {
+        const response = await api.get(`/api/v1/exams/student/byTime?numberOfDay=${days}`);
+        return response;
+    } catch (error) {
+        console.log("getCurrentQuiz in api/student.js error : ", error);
+        return error;
+    }
+};
