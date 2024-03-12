@@ -29,7 +29,7 @@ export const modifyCart = async (studentIds, classId) => {
 export const removeClassInCart = async (itemIdList) => {
     let path = ""
     itemIdList?.forEach(element => {
-        path += "itemIdList=" + element + "&"
+        path += "cartItemIdList=" + element + "&"
     });
 
     try {

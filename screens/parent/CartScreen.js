@@ -142,8 +142,10 @@ export default function CartScreen({ navigation }) {
         setDataLoading(true)
         const choosedList = classCardDetail?.filter(item => item.choose)
         const response = await removeClassInCart(choosedList.map((item) => (item?.cartItemId)))
+        console.log(choosedList.map((item) => (item?.cartItemId)));
         if (response.status === 200) {
             await loadClassData()
+            console.log(response?.data);
         } else {
             console.log(response?.response?.data);
         }
