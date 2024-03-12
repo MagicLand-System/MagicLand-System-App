@@ -406,13 +406,13 @@ export default function ClassDetailScreen({ route, navigation }) {
                                                                                 <>
                                                                                     {
                                                                                         item.expand === true &&
-                                                                                        <Text style={{...styles.childText, marginLeft: 7}} key={key}>{count}. {content.content}</Text>
+                                                                                        <Text style={{ ...styles.childText, marginLeft: 7 }} key={key}>{count}. {content.content}</Text>
                                                                                     }
                                                                                     {
                                                                                         item.expand === true &&
                                                                                         content?.details?.map((detail, index) => {
                                                                                             return (
-                                                                                                <Text style={{...styles.childText, marginLeft: 15}} key={index}>{count}.{index + 1} {detail}</Text>
+                                                                                                <Text style={{ ...styles.childText, marginLeft: 15 }} key={index}>{count}.{index + 1} {detail}</Text>
                                                                                             )
                                                                                         })
                                                                                     }
@@ -484,7 +484,8 @@ export default function ClassDetailScreen({ route, navigation }) {
                                     {/* <Icon name={"checkbox-marked-circle"} color={"#4582E6"} size={15} /> */}
                                     <TouchableOpacity onPress={() => navigateDoHomework(item)}>
                                         <Text style={styles.boldText}>
-                                            {item.examName} ( {item.quizType} )
+                                            {item.examName}
+                                            {/* ( {item.quizType} ) */}
                                         </Text>
                                     </TouchableOpacity>
                                 </View>

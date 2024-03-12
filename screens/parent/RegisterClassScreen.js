@@ -6,29 +6,21 @@ import { formatPrice } from '../../util/util';
 import DropdownComponent from '../../components/DropdownComponent';
 import FavoriteHeader from '../../components/header/FavoriteHeader';
 import { useSelector } from 'react-redux';
-import { userSelector } from '../../store/selector';
+import { studentSelector, userSelector } from '../../store/selector';
 import { getStudents } from '../../api/student';
 import { useFocusEffect } from '@react-navigation/native';
+import ChooseStudentModal from '../../components/modal/ChooseStudentModal';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function RegisterClassScreen({ route, navigation }) {
 
-    const [studentList, setStudentList] = useState([])
+
+    const [focusCourse, setFocusCourse] = useState({})
     const [courseList, setCourseList] = useState(route?.params?.courseList)
-    const [visible, setVisible] = useState({ submit: true })
-
-    useFocusEffect(
-        React.useCallback(() => {
-            loadStudentData()
-        }, [])
-    );
-
-    const loadStudentData = async () => {
-        const studentList = await getStudents()
-        setStudentList(studentList?.filter(item => item?.isActive))
-    }
+    const [visible, setVisible] = useState({ submit: true, chooseStudent: false })
+    const student = useSelector(studentSelector)
 
     const handleNavigate = () => {
         if (totalComplete() === courseList.length) {
@@ -38,16 +30,43 @@ export default function RegisterClassScreen({ route, navigation }) {
 
     const handleChooseStudent = (item, student) => {
         const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
-        const updateArray = [...courseList]
-        updateArray[index].student = student;
-        setCourseList(updateArray)
+        const updateArray = [...courseList];
+        if (updateArray[index].student) {
+            const studentIndex = updateArray[index].student.findIndex(student => student?.student === student?.id);
+            if (studentIndex !== -1) {
+                updateArray[index].student.splice(studentIndex, 1);
+            } else {
+                updateArray[index].student.push({ student: student?.id });
+            }
+        } else {
+            updateArray[index].student = []
+            updateArray[index].student.push({ student: student?.id });
+        }
+        setCourseList(updateArray);
     }
+
+    // const handleChooseClass = (item, classId) => {
+    //     const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
+    //     const updateArray = [...courseList]
+    //     updateArray[index].classId = classId;
+    //     if (updateArray[index].student && updateArray[index].student[0]) {
+    //         updateArray[index].student = classId;
+    //     }
+    //     setCourseList(updateArray)
+    // }
 
     const handleChooseClass = (item, classId) => {
         const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
-        const updateArray = [...courseList]
+        const updateArray = [...courseList];
         updateArray[index].classId = classId;
-        setCourseList(updateArray)
+    
+        if (updateArray[index].student && updateArray[index].student.length > 0) {
+            updateArray[index].student.forEach(student => {
+                student.class = classId;
+            });
+        }
+    
+        setCourseList(updateArray);
     }
 
     const totalPrice = () => {
@@ -111,6 +130,10 @@ export default function RegisterClassScreen({ route, navigation }) {
         }
     }
 
+    const findStudentById = (id) => {
+        return student.find(item => item.id === id);
+    }
+
     return (
         <>
             <FavoriteHeader
@@ -142,72 +165,145 @@ export default function RegisterClassScreen({ route, navigation }) {
                     </View>
                     {
                         courseList?.filter(item => item?.choose === true)?.map((item, index) => {
-                            return (
-                                <View style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#F9ACC0" }} key={index}>
-                                    {
-                                        checkAllFeild(item) &&
-                                        <View style={styles.completeCheck}>
-                                            <Icon name={"check"} color={"white"} size={22} />
-                                        </View>
-                                    }
-                                    <View style={[styles.courseName, styles.tabRightBorder]}>
-                                        <Text style={{ ...styles.tableText, color: "#3AA6B9", fontWeight: "600" }} numberOfLines={1}>{item?.name}</Text>
-                                    </View>
-                                    <View style={[styles.studentInfor, styles.tabRightBorder]}>
+                            if (item?.student && item?.student[0]) {
+                                return (
+                                    item?.student?.map((element, key) => {
+                                        const studentFouned = findStudentById(element?.student)
+                                        return (
+                                            <View style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#F9ACC0" }} key={key}>
+                                                {
+                                                    checkAllFeild(item) &&
+                                                    <View style={styles.completeCheck}>
+                                                        <Icon name={"check"} color={"white"} size={22} />
+                                                    </View>
+                                                }
+                                                <View style={[styles.courseName, styles.tabRightBorder]}>
+                                                    <Text style={{ ...styles.tableText, color: "#3AA6B9", fontWeight: "600" }} numberOfLines={1}>{item?.name}</Text>
+                                                </View>
+                                                <TouchableOpacity
+                                                    style={[styles.studentInfor, styles.tabRightBorder]}
+                                                    onPress={() => {
+                                                        setVisible({ ...visible, chooseStudent: true })
+                                                        setFocusCourse(item)
+                                                    }}
+                                                >
+                                                    <Text>
+                                                        {studentFouned?.fullName}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                                <View style={[styles.calendar, styles.tabRightBorder]}>
+                                                    <DropdownComponent
+                                                        dropdownStyle={styles.dropdownStyle}
+                                                        studentList={item?.schedules}
+                                                        labelField={"schedule"}
+                                                        valueField={"classId"}
+                                                        dropdownItem={(item) => item.schedule + " " + item.slot}
+                                                        rightIcon={() => (
+                                                            item?.itemType === "COURSE" &&
+                                                            <View >
+                                                                <Icon name={"chevron-down"} color={"#241468"} size={12} />
+                                                            </View>
+                                                        )}
+                                                        onChoose={(classId) => handleChooseClass(item, classId)}
+                                                        placeHolder={
+                                                            item?.itemType === "CLASS" ?
+                                                                <Text>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
+                                                                :
+                                                                item?.classId ?
+                                                                    <Text>{findClassDetail(item?.schedules, item?.classId)}</Text>
+                                                                    :
+                                                                    <Text numberOfLines={1}>Chọn lớp</Text>
+                                                        }
+                                                        disable={item?.itemType === "CLASS"}
+                                                    />
+                                                </View>
+                                                <View style={[styles.classPrice]}>
+                                                    <Text style={[styles.tableText]}>{formatPrice(item?.price ? item?.price : 0)}đ</Text>
+                                                </View>
+                                            </View>
+                                        )
+                                    })
+                                )
+                            } else {
+                                return (
+                                    <View style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#F9ACC0" }} key={index}>
                                         {
+                                            checkAllFeild(item) &&
+                                            <View style={styles.completeCheck}>
+                                                <Icon name={"check"} color={"white"} size={22} />
+                                            </View>
+                                        }
+                                        <View style={[styles.courseName, styles.tabRightBorder]}>
+                                            <Text style={{ ...styles.tableText, color: "#3AA6B9", fontWeight: "600" }} numberOfLines={1}>{item?.name}</Text>
+                                        </View>
+                                        <TouchableOpacity
+                                            style={[styles.studentInfor, styles.tabRightBorder]}
+                                            onPress={() => {
+                                                setVisible({ ...visible, chooseStudent: true })
+                                                setFocusCourse(item)
+                                            }}
+                                        >
+                                            <Text>
+                                                Thêm Học sinh
+                                                {/* <View style={{ backgroundColor: "rgba(126, 134, 158, 0.25)", borderRadius: 50 }}> */}
+                                                <Icon name={"plus"} color={"#241468"} size={22} />
+                                                {/* </View> */}
+                                            </Text>
+                                            {/* {
+                                                    <DropdownComponent
+                                                        dropdownStyle={styles.dropdownStyle}
+                                                        studentList={studentList}
+                                                        labelField={"fullName"}
+                                                        valueField={"id"}
+                                                        dropdownItem={(item) => item.fullName}
+                                                        rightIcon={() => (
+                                                            !item.student &&
+                                                            <View style={{ backgroundColor: "rgba(126, 134, 158, 0.25)", borderRadius: 50 }}>
+                                                                <Icon name={"plus"} color={"#241468"} size={22} />
+                                                            </View>
+                                                        )}
+                                                        onChoose={(student) => handleChooseStudent(item, student)}
+                                                        placeHolder={
+                                                            item?.student ?
+                                                                item?.student?.fullName
+                                                                :
+                                                                "Thêm thông tin cháu"
+                                                        }
+                                                    />
+                                                } */}
+                                        </TouchableOpacity>
+                                        <View style={[styles.calendar, styles.tabRightBorder]}>
                                             <DropdownComponent
                                                 dropdownStyle={styles.dropdownStyle}
-                                                studentList={studentList}
-                                                labelField={"fullName"}
-                                                valueField={"id"}
-                                                dropdownItem={(item) => item.fullName}
+                                                studentList={item?.schedules}
+                                                labelField={"schedule"}
+                                                valueField={"classId"}
+                                                dropdownItem={(item) => item.schedule + " " + item.slot}
                                                 rightIcon={() => (
-                                                    !item.student &&
-                                                    <View style={{ backgroundColor: "rgba(126, 134, 158, 0.25)", borderRadius: 50 }}>
-                                                        <Icon name={"plus"} color={"#241468"} size={22} />
+                                                    item?.itemType === "COURSE" &&
+                                                    <View >
+                                                        <Icon name={"chevron-down"} color={"#241468"} size={12} />
                                                     </View>
                                                 )}
-                                                onChoose={(student) => handleChooseStudent(item, student)}
+                                                onChoose={(classId) => handleChooseClass(item, classId)}
                                                 placeHolder={
-                                                    item?.student ?
-                                                        item?.student?.fullName
+                                                    item?.itemType === "CLASS" ?
+                                                        <Text>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
                                                         :
-                                                        "Thêm thông tin cháu"
+                                                        item?.classId ?
+                                                            <Text>{findClassDetail(item?.schedules, item?.classId)}</Text>
+                                                            :
+                                                            <Text numberOfLines={1}>Chọn lớp</Text>
                                                 }
+                                                disable={item?.itemType === "CLASS"}
                                             />
-                                        }
+                                        </View>
+                                        <View style={[styles.classPrice]}>
+                                            <Text style={[styles.tableText]}>{formatPrice(item?.price ? item?.price : 0)}đ</Text>
+                                        </View>
                                     </View>
-                                    <View style={[styles.calendar, styles.tabRightBorder]}>
-                                        <DropdownComponent
-                                            dropdownStyle={styles.dropdownStyle}
-                                            studentList={item?.schedules}
-                                            labelField={"schedule"}
-                                            valueField={"classId"}
-                                            dropdownItem={(item) => item.schedule + " " + item.slot}
-                                            rightIcon={() => (
-                                                item?.itemType === "COURSE" &&
-                                                <View >
-                                                    <Icon name={"chevron-down"} color={"#241468"} size={12} />
-                                                </View>
-                                            )}
-                                            onChoose={(classId) => handleChooseClass(item, classId)}
-                                            placeHolder={
-                                                item?.itemType === "CLASS" ?
-                                                    <Text>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
-                                                    :
-                                                    item?.classId ?
-                                                        <Text>{findClassDetail(item?.schedules, item?.classId)}</Text>
-                                                        :
-                                                        <Text numberOfLines={1}>Chọn lớp</Text>
-                                            }
-                                            disable={item?.itemType === "CLASS"}
-                                        />
-                                    </View>
-                                    <View style={[styles.classPrice]}>
-                                        <Text style={[styles.tableText]}>{formatPrice(item?.price ? item?.price : 0)}đ</Text>
-                                    </View>
-                                </View>
-                            )
+                                )
+                            }
                         })
                     }
                 </View>
@@ -250,6 +346,13 @@ export default function RegisterClassScreen({ route, navigation }) {
                     </Text>
                 </TouchableOpacity> */}
             </View>
+            <ChooseStudentModal
+                focusCourse={focusCourse}
+                selectStudent={handleChooseStudent}
+                visible={visible.chooseStudent}
+                onCancle={() => { setVisible({ ...visible, chooseStudent: false }) }}
+                navigation={navigation}
+            />
         </>
     )
 }
@@ -309,7 +412,9 @@ const styles = StyleSheet.create({
         width: '28%'
     },
     studentInfor: {
-        width: '30%'
+        width: '30%',
+        alignItems: "center",
+        justifyContent: "center"
     },
     calendar: {
         width: '22%'

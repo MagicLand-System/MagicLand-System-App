@@ -104,14 +104,16 @@ export default function MultiplePaymentScreen({ route, navigation }) {
 
         try {
             await Promise.all(courseList?.map(async (classItem) => {
-                const response = await registerClass([classItem?.student?.id], classItem?.classId ? classItem?.classId?.classId : classItem?.itemId);
-                if (response?.status === 200) {
-                    showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
-                    setModalVisible({ ...modalVisible, otp: false, notifi: true });
-                } else {
-                    showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
-                    // console.log(response.response.data);
-                }
+                await classItem?.student?.map(async (student) => {
+                    const response = await registerClass([student?.student], classItem?.classId ? classItem?.classId?.classId : classItem?.itemId);
+                    if (response?.status === 200) {
+                        showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
+                        setModalVisible({ ...modalVisible, otp: false, notifi: true });
+                    } else {
+                        showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+                        // console.log(response.response.data);
+                    }
+                })
             }));
         } catch (error) {
             console.error(error);
@@ -161,8 +163,10 @@ export default function MultiplePaymentScreen({ route, navigation }) {
 
     const totalPrice = () => {
         let total = 0
-        courseList.forEach(element => {
-            total += element?.price
+        courseList.forEach(item => {
+            item?.student?.forEach(element => {
+                total += item?.price
+            })
         });
         return total ? total : 0
     }
