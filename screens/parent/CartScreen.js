@@ -98,6 +98,7 @@ export default function CartScreen({ navigation }) {
     const [dataLoading, setDataLoading] = useState(true)
     const [filterVisible, setFilterVisible] = useState(false)
     const [filterValue, setFilterValue] = useState({ ...filterDetailDefault })
+    const [filterType, setFilterType] = useState("CLASS")
     const [filterTmpValue, setFilterTmpValue] = useState(JSON.parse(JSON.stringify(filterDetailDefault)))
     const [bottomModalVisible, setBottomModalVisible] = useState({ total: false, confirm: false })
 
@@ -171,7 +172,7 @@ export default function CartScreen({ navigation }) {
             if (index !== -1) {
                 const updateArray = [...classCardDetail];
                 const classItem = updateArray[index];
-
+                
                 const defaultStatus = classItem && classItem?.choose ? classItem?.choose : false;
 
                 if (classItem) {
@@ -320,7 +321,7 @@ export default function CartScreen({ navigation }) {
 
     const filferClassList = (array) => {
         let updateArray = [...array]
-        // rate > 0 && updateArray.filter(item => item)
+        updateArray = updateArray.filter(item => item?.itemType === filterType)
         const amountLesson = filterValue.amountLesson.find(item => item.check === true)
         if (amountLesson.minValue && amountLesson.maxValue) {
             updateArray = updateArray.filter(item => item.class.schedules?.length >= amountLesson.minValue && item.class.schedules?.length <= amountLesson.maxValue)
@@ -353,6 +354,8 @@ export default function CartScreen({ navigation }) {
         return updateArray
     }
 
+
+
     return (
         <>
             <FavoriteHeader navigation={navigation} title={`Khóa Học Bạn Quan Tâm (${classCardDetail?.length})`} type={bottomModalVisible.total} setType={hanldeChangeStatus} />
@@ -362,6 +365,20 @@ export default function CartScreen({ navigation }) {
             >
                 <Icon name={"filter"} color={"white"} size={28} />
             </TouchableOpacity>
+            <View style={{ ...styles.filterType }}>
+                <TouchableOpacity style={{ ...styles.filterTypeOption, borderRightWidth: 1, borderColor: "#241468" }}
+                    onPress={() => setFilterType("CLASS")}
+                >
+                    <Text style={{ ...styles.filterTypeName, textDecorationLine: filterType === "CLASS" ? "underline" : "none" }}>
+                        Lớp Học
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ ...styles.filterTypeOption }} onPress={() => setFilterType("COURSE")}>
+                    <Text style={{ ...styles.filterTypeName, textDecorationLine: filterType === "COURSE" ? "underline" : "none" }}>
+                        Khoá Học
+                    </Text>
+                </TouchableOpacity>
+            </View>
             {
                 dataLoading ?
                     <SpinnerLoading />
@@ -453,6 +470,23 @@ const styles = StyleSheet.create({
         right: 20,
         backgroundColor: "#4980D8",
         zIndex: 999
+    },
+    filterType: {
+        flexDirection: "row",
+        width: WIDTH,
+        backgroundColor: "white",
+        borderBottomWidth: 1,
+        borderColor: "#241468"
+    },
+    filterTypeOption: {
+        width: "50%",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 15
+    },
+    filterTypeName: {
+        fontWeight: 600,
+        paddingVertical: 5
     },
     cardList: {
         flexDirection: "row",
