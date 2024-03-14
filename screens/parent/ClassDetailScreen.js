@@ -234,11 +234,11 @@ export default function ClassDetailScreen({ route, navigation }) {
     };
 
     const navigateDoHomework = (homework) => {
-        if (homework?.quizType === "multiple-choice") {
-            navigation.push("MutilpleChoiceScreen", { homework: homework, title: homework?.quizName })
-        } else if (homework?.quizType === "flashcard") {
-            navigation.push("ChoosePairScreen", { homework: homework, title: homework?.quizName })
-        }
+        // if (homework?.quizType === "multiple-choice") {
+        //     navigation.push("MutilpleChoiceScreen", { homework: homework, title: homework?.quizName })
+        // } else if (homework?.quizType === "flashcard") {
+        //     navigation.push("ChoosePairScreen", { homework: homework, title: homework?.quizName })
+        // }
     }
 
     return (

@@ -1,15 +1,17 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
-import { formatPrice } from '../../util/util';
-import DropdownComponent from '../../components/DropdownComponent';
-import FavoriteHeader from '../../components/header/FavoriteHeader';
 import { useSelector } from 'react-redux';
 import { studentSelector, userSelector } from '../../store/selector';
-import { getStudents } from '../../api/student';
-import { useFocusEffect } from '@react-navigation/native';
+
+import { formatPrice } from '../../util/util';
+import FavoriteHeader from '../../components/header/FavoriteHeader';
+
 import ChooseStudentModal from '../../components/modal/ChooseStudentModal';
+import ChooseScheduleModal from '../../components/modal/ChooseScheduleModal';
+
+import CustomToast from "../../components/CustomToast";
+import { checkStudentCanRegis } from '../../api/class';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -18,12 +20,14 @@ export default function RegisterClassScreen({ route, navigation }) {
 
 
     const [focusCourse, setFocusCourse] = useState({})
+    const [focusStudent, setFocusStudent] = useState({})
     const [courseList, setCourseList] = useState(route?.params?.courseList)
-    const [visible, setVisible] = useState({ submit: true, chooseStudent: false })
+    const [visible, setVisible] = useState({ submit: true, chooseStudent: false, chooseClass: false })
     const student = useSelector(studentSelector)
+    const showToast = CustomToast();
 
     const handleNavigate = () => {
-        if (totalComplete() === courseList.length) {
+        if (totalComplete() === getTotalClass()) {
             navigation.push("MultiplePaymentScreen", { courseList: courseList })
         }
     }
@@ -32,7 +36,7 @@ export default function RegisterClassScreen({ route, navigation }) {
         const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
         const updateArray = [...courseList];
         if (updateArray[index].student) {
-            const studentIndex = updateArray[index].student.findIndex(student => student?.student === student?.id);
+            const studentIndex = updateArray[index].student.findIndex(obj => obj?.student === student?.id);
             if (studentIndex !== -1) {
                 updateArray[index].student.splice(studentIndex, 1);
             } else {
@@ -45,44 +49,37 @@ export default function RegisterClassScreen({ route, navigation }) {
         setCourseList(updateArray);
     }
 
-    // const handleChooseClass = (item, classId) => {
-    //     const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
-    //     const updateArray = [...courseList]
-    //     updateArray[index].classId = classId;
-    //     if (updateArray[index].student && updateArray[index].student[0]) {
-    //         updateArray[index].student = classId;
-    //     }
-    //     setCourseList(updateArray)
-    // }
-
-    const handleChooseClass = (item, classId) => {
-        const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
-        const updateArray = [...courseList];
-        updateArray[index].classId = classId;
-    
-        if (updateArray[index].student && updateArray[index].student.length > 0) {
-            updateArray[index].student.forEach(student => {
-                student.class = classId;
-            });
+    const handleChooseClass = async (item) => {
+        const response = await checkStudentCanRegis(item.classId, [focusStudent?.student])
+        if (response?.status === 200) {
+            const courseindex = courseList.findIndex(obj => obj?.itemId === focusCourse?.itemId);
+            const studentIndex = courseList[courseindex].student.findIndex(obj => obj?.student === focusStudent?.student);
+            const updateArray = [...courseList];
+            updateArray[courseindex].student[studentIndex].class = item
+            setCourseList(updateArray);
+            setVisible({ ...visible, chooseClass: false })
+        } else {
+            setVisible({ ...visible, chooseClass: false })
+            showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
         }
-    
-        setCourseList(updateArray);
     }
 
     const totalPrice = () => {
         let total = 0
-        courseList.forEach(element => {
-            total += element?.price
+        courseList.forEach(item => {
+            item?.student?.forEach(element => {
+                total += item?.price
+            })
         });
-        return total
+        return total ? total : 0
     }
 
-    const checkAllFeild = (item) => {
+    const checkAllFeild = (item, studentIndex) => {
         if (item?.student) {
             if (item?.itemType === "COURSE") {
-                return item?.classId ? true : false
+                return item?.student[studentIndex]?.class ? true : false
             } else {
-                return true
+                return item?.student[0] ? true : false
             }
         }
         return false
@@ -95,12 +92,9 @@ export default function RegisterClassScreen({ route, navigation }) {
                 if (item?.itemType === "COURSE") {
                     flag = item?.classId ? true : false
                 } else {
-                    flag = true
+                    flag = item?.student[0] ? true : false
                 }
             }
-            // if (item?.student && item?.date) {
-            //     flag = true
-            // }
         });
 
         return flag
@@ -110,24 +104,22 @@ export default function RegisterClassScreen({ route, navigation }) {
         let amount = 0
         courseList.forEach(item => {
             if (item?.student) {
-                if (item?.itemType === "COURSE") {
-                    flag = item?.classId && (amount += 1)
-                } else {
-                    amount += 1
-                }
+                (amount += item?.student.length)
             }
         });
 
         return amount
     }
 
-    const findClassDetail = (array, classId) => {
-        const index = array.findIndex(obj => obj?.classId === classId.classId);
-        if (index !== -1) {
-            return array[classId._index].schedule + array[index].slot
-        } else {
-            return ""
-        }
+    const getTotalClass = () => {
+        let amount = 0
+        courseList.forEach(item => {
+            if (item?.student) {
+                amount += item?.student?.length
+            }
+        });
+
+        return amount
     }
 
     const findStudentById = (id) => {
@@ -172,7 +164,7 @@ export default function RegisterClassScreen({ route, navigation }) {
                                         return (
                                             <View style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#F9ACC0" }} key={key}>
                                                 {
-                                                    checkAllFeild(item) &&
+                                                    checkAllFeild(item, key) &&
                                                     <View style={styles.completeCheck}>
                                                         <Icon name={"check"} color={"white"} size={22} />
                                                     </View>
@@ -192,31 +184,33 @@ export default function RegisterClassScreen({ route, navigation }) {
                                                     </Text>
                                                 </TouchableOpacity>
                                                 <View style={[styles.calendar, styles.tabRightBorder]}>
-                                                    <DropdownComponent
-                                                        dropdownStyle={styles.dropdownStyle}
-                                                        studentList={item?.schedules}
-                                                        labelField={"schedule"}
-                                                        valueField={"classId"}
-                                                        dropdownItem={(item) => item.schedule + " " + item.slot}
-                                                        rightIcon={() => (
-                                                            item?.itemType === "COURSE" &&
-                                                            <View >
-                                                                <Icon name={"chevron-down"} color={"#241468"} size={12} />
-                                                            </View>
-                                                        )}
-                                                        onChoose={(classId) => handleChooseClass(item, classId)}
-                                                        placeHolder={
-                                                            item?.itemType === "CLASS" ?
-                                                                <Text>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
-                                                                :
-                                                                item?.classId ?
-                                                                    <Text>{findClassDetail(item?.schedules, item?.classId)}</Text>
+                                                    <TouchableOpacity
+                                                        onPress={() => {
+                                                            if (item?.itemType === "COURSE") {
+                                                                setVisible({ ...visible, chooseClass: true });
+                                                                setFocusCourse(item)
+                                                                setFocusStudent(element)
+                                                            } else {
+                                                                showToast("Thông báo", `Lớp học có lịch cố định`, "warning");
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Text >
+                                                            {
+                                                                item?.itemType === "CLASS" ?
+                                                                    <Text style={styles.tableText}>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
                                                                     :
-                                                                    <Text numberOfLines={1}>Chọn lớp</Text>
-                                                        }
-                                                        disable={item?.itemType === "CLASS"}
-                                                    />
+                                                                    element?.class ?
+                                                                        <Text style={styles.tableText}>
+                                                                            {element?.class?.schedule + " " + element?.class?.slot}
+                                                                        </Text>
+                                                                        :
+                                                                        <Text numberOfLines={1}>Chọn Lớp</Text>
+                                                            }
+                                                        </Text>
+                                                    </TouchableOpacity>
                                                 </View>
+
                                                 <View style={[styles.classPrice]}>
                                                     <Text style={[styles.tableText]}>{formatPrice(item?.price ? item?.price : 0)}đ</Text>
                                                 </View>
@@ -228,7 +222,7 @@ export default function RegisterClassScreen({ route, navigation }) {
                                 return (
                                     <View style={{ ...styles.tableColumn, borderBottomWidth: 1, borderColor: "#F9ACC0" }} key={index}>
                                         {
-                                            checkAllFeild(item) &&
+                                            checkAllFeild(item, -1) &&
                                             <View style={styles.completeCheck}>
                                                 <Icon name={"check"} color={"white"} size={22} />
                                             </View>
@@ -239,8 +233,8 @@ export default function RegisterClassScreen({ route, navigation }) {
                                         <TouchableOpacity
                                             style={[styles.studentInfor, styles.tabRightBorder]}
                                             onPress={() => {
-                                                setVisible({ ...visible, chooseStudent: true })
                                                 setFocusCourse(item)
+                                                setVisible({ ...visible, chooseStudent: true })
                                             }}
                                         >
                                             <Text>
@@ -249,54 +243,22 @@ export default function RegisterClassScreen({ route, navigation }) {
                                                 <Icon name={"plus"} color={"#241468"} size={22} />
                                                 {/* </View> */}
                                             </Text>
-                                            {/* {
-                                                    <DropdownComponent
-                                                        dropdownStyle={styles.dropdownStyle}
-                                                        studentList={studentList}
-                                                        labelField={"fullName"}
-                                                        valueField={"id"}
-                                                        dropdownItem={(item) => item.fullName}
-                                                        rightIcon={() => (
-                                                            !item.student &&
-                                                            <View style={{ backgroundColor: "rgba(126, 134, 158, 0.25)", borderRadius: 50 }}>
-                                                                <Icon name={"plus"} color={"#241468"} size={22} />
-                                                            </View>
-                                                        )}
-                                                        onChoose={(student) => handleChooseStudent(item, student)}
-                                                        placeHolder={
-                                                            item?.student ?
-                                                                item?.student?.fullName
-                                                                :
-                                                                "Thêm thông tin cháu"
-                                                        }
-                                                    />
-                                                } */}
                                         </TouchableOpacity>
-                                        <View style={[styles.calendar, styles.tabRightBorder]}>
-                                            <DropdownComponent
-                                                dropdownStyle={styles.dropdownStyle}
-                                                studentList={item?.schedules}
-                                                labelField={"schedule"}
-                                                valueField={"classId"}
-                                                dropdownItem={(item) => item.schedule + " " + item.slot}
-                                                rightIcon={() => (
-                                                    item?.itemType === "COURSE" &&
-                                                    <View >
-                                                        <Icon name={"chevron-down"} color={"#241468"} size={12} />
-                                                    </View>
-                                                )}
-                                                onChoose={(classId) => handleChooseClass(item, classId)}
-                                                placeHolder={
-                                                    item?.itemType === "CLASS" ?
-                                                        <Text>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
-                                                        :
-                                                        item?.classId ?
-                                                            <Text>{findClassDetail(item?.schedules, item?.classId)}</Text>
-                                                            :
-                                                            <Text numberOfLines={1}>Chọn lớp</Text>
-                                                }
-                                                disable={item?.itemType === "CLASS"}
-                                            />
+                                        <View
+                                            style={[styles.calendar, styles.tabRightBorder]}
+                                        >
+                                            {
+                                                item?.itemType === "CLASS" ?
+                                                    <Text>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
+                                                    :
+                                                    <TouchableOpacity
+                                                        onPress={() => {
+                                                            showToast("Thông báo", `Xin hay chọn học sinh trước`, "warning");
+                                                        }}
+                                                    >
+                                                        <Text>Chọn Lớp</Text>
+                                                    </TouchableOpacity>
+                                            }
                                         </View>
                                         <View style={[styles.classPrice]}>
                                             <Text style={[styles.tableText]}>{formatPrice(item?.price ? item?.price : 0)}đ</Text>
@@ -316,7 +278,7 @@ export default function RegisterClassScreen({ route, navigation }) {
                 <View style={{ ...styles.flexColumnBetween, width: "100%" }}>
                     <View style={styles.flexColumn}>
                         {
-                            totalComplete() === courseList.length ?
+                            totalComplete() === getTotalClass() ?
                                 <View style={{ backgroundColor: "white", borderRadius: 50 }}>
                                     <Icon name={"check"} color={"#241468"} size={22} />
                                 </View>
@@ -333,7 +295,7 @@ export default function RegisterClassScreen({ route, navigation }) {
                             <Text style={{ color: "white", fontWeight: "600", marginRight: 10 }}>{formatPrice(totalPrice() ? totalPrice() : 0)}đ</Text>
                         }
 
-                        <TouchableOpacity style={{ ...styles.button, backgroundColor: totalComplete() === courseList.length ? "white" : "#C4C4C4" }} onPress={handleNavigate}>
+                        <TouchableOpacity style={{ ...styles.button, backgroundColor: totalComplete() === getTotalClass() ? "white" : "#C4C4C4" }} onPress={handleNavigate}>
                             <Text style={{ color: "#241468", fontWeight: "600" }}>
                                 Đăng Ký ({totalComplete()})
                             </Text>
@@ -351,6 +313,13 @@ export default function RegisterClassScreen({ route, navigation }) {
                 selectStudent={handleChooseStudent}
                 visible={visible.chooseStudent}
                 onCancle={() => { setVisible({ ...visible, chooseStudent: false }) }}
+                navigation={navigation}
+            />
+            <ChooseScheduleModal
+                visible={visible.chooseClass}
+                classList={Array.isArray(focusCourse?.schedules) ? focusCourse?.schedules : []}
+                selectSchedule={(item) => { handleChooseClass(item) }}
+                onCancle={() => { setVisible({ ...visible, chooseClass: false }) }}
                 navigation={navigation}
             />
         </>
@@ -406,7 +375,8 @@ const styles = StyleSheet.create({
         height: 50,
         borderRightWidth: 1,
         borderColor: "#241468",
-        justifyContent: "center"
+        justifyContent: "center",
+        alignItems: "center"
     },
     courseName: {
         width: '28%'

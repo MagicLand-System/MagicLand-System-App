@@ -174,7 +174,7 @@ export default function CartScreen({ navigation }) {
             if (index !== -1) {
                 const updateArray = [...classCardDetail];
                 const classItem = updateArray[index];
-                
+
                 const defaultStatus = classItem && classItem?.choose ? classItem?.choose : false;
 
                 if (classItem) {
@@ -324,6 +324,7 @@ export default function CartScreen({ navigation }) {
     const filferClassList = (array) => {
         let updateArray = [...array]
         updateArray = updateArray.filter(item => item?.itemType === filterType)
+
         const amountLesson = filterValue.amountLesson.find(item => item.check === true)
         if (amountLesson.minValue && amountLesson.maxValue) {
             updateArray = updateArray.filter(item => item.class.schedules?.length >= amountLesson.minValue && item.class.schedules?.length <= amountLesson.maxValue)
@@ -332,6 +333,7 @@ export default function CartScreen({ navigation }) {
         } else if (amountLesson.maxValue) {
             updateArray = updateArray.filter(item => item.class.schedules?.length <= amountLesson.maxValue)
         }
+
         const amountRegister = filterValue.amountRegister.find(item => item.check === true)
         if (amountRegister.minValue && amountRegister.maxValue) {
             updateArray = updateArray.filter(item => item.class.limitNumberStudent >= amountRegister.minValue && item.class.limitNumberStudent <= amountRegister.maxValue)
@@ -340,18 +342,21 @@ export default function CartScreen({ navigation }) {
         } else if (amountRegister.maxValue) {
             updateArray = updateArray.filter(item => item.class.limitNumberStudent <= amountRegister.maxValue)
         }
-        const type = filterValue.type.find(item => item.check === true)
-        switch (type.name) {
-            case "Offline":
-                updateArray = updateArray.filter(item => item.class.method === "OFFLINE")
-                break;
 
-            case "Online":
-                updateArray = updateArray.filter(item => item.class.method === "ONLINE")
-                break;
+        if (filterType === "CLASS") {
+            const type = filterValue.type.find(item => item.check === true)
+            switch (type.name) {
+                case "Offline":
+                    updateArray = updateArray.filter(item => String(item.schedules[0].method).toLocaleLowerCase() === "offline")
+                    break;
 
-            default:
-                break;
+                case "Online":
+                    updateArray = updateArray.filter(item => String(item.schedules[0].method).toLocaleLowerCase() === "online")
+                    break;
+
+                default:
+                    break;
+            }
         }
         return updateArray
     }

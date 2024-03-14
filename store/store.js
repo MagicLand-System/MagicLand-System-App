@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "./features/authSlice";
 import courseReducer, { fetchCourseCategories } from "./features/courseSlice";
-import studentList from "./features/studentSlice"
+import studentList, { fetchStudentList } from "./features/studentSlice"
 
 export const store = configureStore({
     reducer: {
@@ -12,3 +12,4 @@ export const store = configureStore({
 });
 
 store.dispatch(fetchCourseCategories());
+store.dispatch(fetchStudentList());
