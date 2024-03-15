@@ -105,10 +105,10 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                             timeType === "onDate" ?
                                 <Text style={styles.cardDetailText}>{getVnDay(cardDetail?.dayOfWeeks ? cardDetail?.dayOfWeeks : "Monday")} ( {shortedTime(cardDetail?.slot ? cardDetail?.slot?.startTime : cardDetail?.startTime)} - {shortedTime(cardDetail?.slot ? cardDetail?.slot?.endTime : cardDetail?.endTime)} )</Text>
                                 :
-                                <Text style={styles.cardDetailText}>{getSchedule(cardDetail)}</Text>
+                                <Text style={styles.cardDetailText}>Thứ {cardDetail?.schedules.schedule} ({cardDetail?.schedules?.slot})</Text>
                         }
                     </View>
-                    <View style={styles.flexColumn}>
+                    <View style={{...styles.flexColumn, width: "92%"}}>
                         <Icon name={"map-marker-radius"} color={"#241468"} size={18} />
                         <Text style={styles.cardDetailText}>{cardDetail?.address}</Text>
                     </View>

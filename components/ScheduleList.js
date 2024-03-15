@@ -48,8 +48,8 @@ export default function ScheduleList({ cardList, onClick }) {
                                 }
                             </View>
                             <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
-                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>Thứ {item?.schedules.schedule} </Text>
-                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{item?.schedules?.slot} </Text>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", fontSize: 10 }}>Thứ {item?.schedules.schedule} </Text>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", fontSize: 10 }}>({item?.schedules?.slot})</Text>
                             </View>
                             <View style={{ ...styles.startDateColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
                                 <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{formatDate(item?.startDate)}</Text>
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     },
     tableColumn: {
         width: "100%",
-        flex:1
+        flex: 1
         // paddingVertical: 5,
     },
     checkColumn: {
