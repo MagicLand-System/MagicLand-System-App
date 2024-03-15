@@ -2,39 +2,54 @@ import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity, Image }
 import React, { useEffect, useState } from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
+import { useFocusEffect } from '@react-navigation/native';
+import { studentSelector } from '../../store/selector';
+import { useDispatch, useSelector } from 'react-redux';
+
 import { deleteStudent, getStudents } from '../../api/student';
 import FavoriteHeader from '../../components/header/FavoriteHeader';
 import SpinnerLoading from '../../components/SpinnerLoading';
 import { formatDate } from '../../util/util';
-import { useFocusEffect } from '@react-navigation/native';
+import { fetchStudentList } from '../../store/features/studentSlice';
+
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function StudentListScreen({ navigation }) {
 
+    const student = useSelector(studentSelector)
     const [studentList, setStudentList] = useState([])
     const [loading, setLoading] = useState(true)
     const [screenStatus, setScreenStatus] = useState({ edit: false })
+    const dispatch = useDispatch()
 
+    // useEffect(() => {
+    //     loadStudentData()
+    // }, [student])
     useFocusEffect(
         React.useCallback(() => {
             loadStudentData()
         }, [])
     );
-    
+
     const loadStudentData = async () => {
         setLoading(true)
-        const response = await getStudents()
-        if (response) {
-            setStudentList(response?.filter(item => item.isActive))
-           
-        } else {
+        const studentList = (await getStudents()).map((item, i) => ({ ...item, check: i === 0 ? true : false }));
+
+        if (studentList.length !== 0) {
+            setStudentList(studentList)
+            // setStudentList(student?.filter(item => item.isActive))
+        }
+        else {
             console.log("can not get student ");
         }
+        
+        // if (student[0]) {
+
+        // } 
         setLoading(false)
     }
-
     const handleOnpress = async (item, id) => {
         if (screenStatus.edit) {
             setStudentList((prevStudentList) => {
@@ -56,7 +71,9 @@ export default function StudentListScreen({ navigation }) {
                 studentList.map(async (item) => {
                     if (item?.check) {
                         const response = await deleteStudent(item?.id)
+                            .then(dispatch(fetchStudentList())).then(loadStudentData())
                         if (response.status === 200) {
+
                             flag = true
                         } else {
                             console.log(response.response.data);

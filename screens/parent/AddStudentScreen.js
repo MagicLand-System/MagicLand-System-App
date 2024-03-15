@@ -20,6 +20,7 @@ import { format } from 'date-fns';
 import LoadingModal from "../../components/LoadingModal"
 import { useNavigation } from "@react-navigation/native";
 import { callGoogleVisionAsync } from "../../api/google";
+import { fetchStudentList } from "../../store/features/studentSlice";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -103,8 +104,10 @@ export default function AddStudentScreen() {
                             const imageRef = ref(storage, `childrens/${filename}`)
                             uploadBytes(imageRef, blob).then(() => {
                                 getDownloadURL(imageRef).then((url) => {
+                                    console.log({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url });
                                     addStudent({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url })
                                         .then(dispatch(fetchUser()))
+                                        .then(dispatch(fetchStudentList()))
                                         .then(setLoading(false))
                                         .then(Alert.alert("Đăng kí thành công"))
                                         .then(navigation.goBack())

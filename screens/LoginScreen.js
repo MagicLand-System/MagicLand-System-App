@@ -92,6 +92,7 @@ export default function LoginScreen() {
       const accessToken = data.accessToken;
       await AsyncStorage.setItem('accessToken', accessToken)
         .then(dispatch(fetchUser()))
+        .then(dispatch(fetchStudentList()))
         .then(setLoading(false))
         .then(Alert.alert('Đăng nhập thành công'))
     } catch (error) {

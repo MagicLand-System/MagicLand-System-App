@@ -10,9 +10,9 @@ import StudentCard from '../StudentCard';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-export default function ChooseStudentModal({ visible, focusCourse, selectStudent, onCancle, navigation }) {
+export default function ChooseStudentModal({ visible, focusCourse, selectStudent, onCancle, navigation, student}) {
 
-    const student = useSelector(studentSelector)
+    // const student = useSelector(studentSelector)
 
     const chooseStudent = (student) => {
         selectStudent(focusCourse, student)
@@ -28,8 +28,8 @@ export default function ChooseStudentModal({ visible, focusCourse, selectStudent
             animationType="slide"
             transparent={true}
         >
+            <TouchableOpacity style={styles.safeArea} onPress={onCancle}/>
             <View style={styles.container}>
-                <View style={styles.safeArea} />
                 <Header navigation={navigation} goback={onCancle} title={"Học sinh đăng ký lớp"} />
                 <ScrollView showsVerticalScrollIndicator={false} style={styles.cardList}>
                     <View style={styles.srollHeader}></View>
@@ -47,14 +47,16 @@ export default function ChooseStudentModal({ visible, focusCourse, selectStudent
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white"
+    safeArea:{
+        height: HEIGHT * 0.15,
+        zIndex: 15,
     },
-    safeArea: {
-        width: WIDTH,
-        height: 50,
-        backgroundColor: "#241468"
+    container: {
+        height: HEIGHT * 0.85,
+        backgroundColor: "white",
+        position: "absolute",
+        bottom: 0,
+        zIndex: 11
     },
     cardList: {
         marginTop: 20,

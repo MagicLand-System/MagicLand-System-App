@@ -105,13 +105,27 @@ export default function MultiplePaymentScreen({ route, navigation }) {
         try {
             await Promise.all(courseList?.map(async (classItem) => {
                 await classItem?.student?.map(async (student) => {
-                    const response = await registerClass([student?.student], classItem?.classId ? classItem?.classId?.classId : classItem?.itemId);
-                    if (response?.status === 200) {
-                        showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
-                        setModalVisible({ ...modalVisible, otp: false, notifi: true });
+                    if (classItem?.itemType === "CLASS") {
+                        // console.log(classItem);
+                        const response = await registerClass([student?.student], classItem?.schedules[0]?.classId);
+                        if (response?.status === 200) {
+                            showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
+                            setModalVisible({ ...modalVisible, otp: false });
+                            handleCloseNotifiModal(response?.data)
+                        } else {
+                            showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+                            // console.log(response.response.data);
+                        }
                     } else {
-                        showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
-                        // console.log(response.response.data);
+                        const response = await registerClass([student?.student], student?.class?.classId);
+                        if (response?.status === 200) {
+                            showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
+                            setModalVisible({ ...modalVisible, otp: false });
+                            handleCloseNotifiModal(response?.data)
+                        } else {
+                            showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+                            // console.log(response.response.data);
+                        }
                     }
                 })
             }));
@@ -134,9 +148,12 @@ export default function MultiplePaymentScreen({ route, navigation }) {
         setModalVisible({ ...modalVisible, vourcher: false })
     }
 
-    const handleCloseNotifiModal = () => {
+    const handleCloseNotifiModal = async (transactionData) => {
         setModalVisible({ ...modalVisible, notifi: false })
-        navigation.push("TransactionDetailScreen", { total: totalPayment() })
+        navigation.push("TransactionDetailScreen", {
+            total: totalPayment(),
+            transactionData: transactionData,
+        })
     }
 
     const handleClosePaymentModal = () => {
@@ -225,13 +242,20 @@ export default function MultiplePaymentScreen({ route, navigation }) {
                     {
                         courseList.map((item, index) => (
                             <View style={{ ...styles.flexColumnBetween }} key={index}>
-                                <Text style={{ ...styles.boldText, marginTop: 5 }}>{item?.name}</Text>
-                                {
-                                    item?.itemType === "CLASS" ?
-                                        <Text style={{ ...styles.boldText, marginTop: 5 }}>{item?.schedules[0]?.schedule + "  (" + item?.schedules[0]?.slot})</Text>
-                                        :
-                                        <Text style={{ ...styles.boldText, marginTop: 5 }}>{findClassDetail(item?.schedules, item?.classId)}</Text>
-                                }
+                                <Text style={{ ...styles.boldText, marginTop: 5, width: "47%" }}>{item?.name}</Text>
+                                <View style={{ width: "53%" }}>
+                                    {
+                                        item?.itemType === "CLASS" ? (
+                                            <Text style={{ ...styles.boldText, marginTop: 5 }}>{item?.schedules[0]?.schedule + "  (" + item?.schedules[0]?.slot})</Text>
+                                        ) : (
+                                            item?.student?.map((classItem, index) => (
+
+                                                <Text key={index} style={{ ...styles.boldText, marginTop: 5 }}>{classItem?.class?.schedule + " " + classItem?.class?.slot}</Text>
+
+                                            ))
+                                        )
+                                    }
+                                </View>
                             </View>
                         ))
                     }
@@ -272,19 +296,6 @@ export default function MultiplePaymentScreen({ route, navigation }) {
                         <Text style={styles.detailViewTitle}>Học Phí:</Text>
                         <Text style={styles.boldText}>{formatPrice(totalPrice())}đ</Text>
                     </View>
-                    {/* <TouchableOpacity style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, height: 45, marginVertical: 5, borderBottomWidth: 1, paddingBottom: 10, borderColor: "#F9ACC0" }} onPress={handleChooseVourcherModal}>
-                        <Text style={{ ...styles.detailViewTitle, color: "#3AAC45" }}>Vourcher Giảm Giá</Text>
-                        {
-                            vourcherValue() ?
-                                <View style={styles.flexColumn}>
-                                    <Text style={{ color: "#3AAC45" }}>Giảm {formatPrice(vourcherDiscount())}đ</Text>
-                                    <Icon name={"chevron-right"} color={"#3AAC45"} size={18} />
-                                </View>
-                                :
-                                <Icon name={"chevron-right"} color={"#3AAC45"} size={28} />
-                        }
-
-                    </TouchableOpacity> */}
                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                         <Text style={styles.detailViewTitle}>Tổng tiền:</Text>
                         <Text style={{ ...styles.boldText }}>{formatPrice(totalPayment())}đ</Text>
@@ -337,7 +348,7 @@ const styles = StyleSheet.create({
     flexColumnBetween: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        // alignItems: "center"
     },
     flexColumn: {
         flexDirection: "row",

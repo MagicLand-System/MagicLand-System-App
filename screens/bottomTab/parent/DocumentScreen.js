@@ -427,16 +427,18 @@ const classListData = [
 export default function DocumentScreen({ navigation }) {
 
   const student = useSelector(studentSelector)
-  const [studentList, setStudentList] = useState(student)
+  const [studentList, setStudentList] = useState([])
   const [classList, setClassList] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingClassList, setLoadingClassList] = useState(true)
   const [type, setType] = useState("PROGRESSING")
   const [animation] = useState(new Animated.Value(0));
 
-  useEffect(() => {
-    loadStudentData()
-  }, [student])
+  useFocusEffect(
+    React.useCallback(() => {
+      loadStudentData()
+    }, [])
+  );
 
   useEffect(() => {
     switch (type) {
@@ -474,8 +476,8 @@ export default function DocumentScreen({ navigation }) {
 
   const loadStudentData = async () => {
     setLoading(true);
-    const studentListTmp = studentList.map((item, i) => ({ ...item, check: i === 0 ? true : false }));
-
+    // const studentListTmp = student.map((item, i) => ({ ...item, check: i === 0 ? true : false }));
+    const studentListTmp = (await getStudents()).map((item, i) => ({ ...item, check: i === 0 ? true : false }));
     if (studentListTmp?.length !== 0) {
       const scheduleData = await loadClassData(studentListTmp[0].id);
       setClassList(scheduleData);
