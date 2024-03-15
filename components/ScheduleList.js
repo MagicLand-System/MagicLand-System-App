@@ -62,7 +62,8 @@ export default function ScheduleList({ cardList, onClick }) {
                                 }
                             </View>
                             <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
-                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{item?.schedules.schedule} {item?.schedules?.slot}</Text>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{item?.schedules.schedule} </Text>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{item?.schedules?.slot} </Text>
                             </View>
                             <View style={{ ...styles.startDateColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
                                 <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{formatDate(item?.startDate)}</Text>
