@@ -48,11 +48,11 @@ export default function ChooseStudentModal({ visible, focusCourse, selectStudent
 
 const styles = StyleSheet.create({
     safeArea:{
-        height: HEIGHT * 0.15,
+        height: HEIGHT * 0.24,
         zIndex: 15,
     },
     container: {
-        height: HEIGHT * 0.85,
+        height: HEIGHT * 0.76,
         backgroundColor: "white",
         position: "absolute",
         bottom: 0,

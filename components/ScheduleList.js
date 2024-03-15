@@ -15,20 +15,6 @@ const colorList = [
 
 export default function ScheduleList({ cardList, onClick }) {
 
-    const getSchedule = (date) => {
-        switch (date) {
-            case "Monday":
-                return "Thứ 2 - 4 - 6"
-            case "Tuesday":
-                return "Thứ 3 - 5 - 7"
-            case "Saturday":
-                return "Thứ 7 - Cn"
-
-            default:
-                return "Thứ 2 - 4 - 6"
-        }
-    }
-
     return (
         <View style={styles.container}>
             <View style={[styles.tableColumn, styles.flexColumn]}>
@@ -62,7 +48,7 @@ export default function ScheduleList({ cardList, onClick }) {
                                 }
                             </View>
                             <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
-                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{item?.schedules.schedule} </Text>
+                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>Thứ {item?.schedules.schedule} </Text>
                                 <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{item?.schedules?.slot} </Text>
                             </View>
                             <View style={{ ...styles.startDateColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
@@ -91,7 +77,7 @@ const styles = StyleSheet.create({
     },
     tableColumn: {
         width: "100%",
-        height: 40,
+        flex:1
         // paddingVertical: 5,
     },
     checkColumn: {
