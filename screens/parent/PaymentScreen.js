@@ -11,7 +11,7 @@ import InputOtpModal from '../../components/modal/InputOtpModal';
 import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
 import CustomToast from "../../components/CustomToast";
 
-import { formatPrice } from '../../util/util';
+import { formatDate, formatPrice } from '../../util/util';
 import { modifyCart } from '../../api/cart';
 import ChoosePaymentMethod from '../../components/modal/ChoosePaymentMethod';
 import { registerClass } from '../../api/class';
@@ -258,11 +258,11 @@ export default function PaymentScreen({ route, navigation }) {
                                 </View>
                                 <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                     <Text style={styles.detailViewTitle}>Khai giảng ngày:</Text>
-                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>05/01/2024</Text>
+                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>{formatDate(cardDetail[0]?.startDate ? cardDetail[0]?.startDate : cardDetail[0]?.date)}</Text>
                                 </View>
                                 <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                     <Text style={styles.detailViewTitle}>Lịch Học:</Text>
-                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>Thứ 2-4-6 / tuần (7h30 - 9h)</Text>
+                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>Thứ {classDetail[0]?.schedules.schedule} ({classDetail[0]?.schedules?.slot})</Text>
                                 </View>
                             </View>
                         )
