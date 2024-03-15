@@ -12,6 +12,7 @@ import ChooseScheduleModal from '../../components/modal/ChooseScheduleModal';
 
 import CustomToast from "../../components/CustomToast";
 import { checkStudentCanRegis } from '../../api/class';
+import { getStudents } from '../../api/student';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -23,8 +24,18 @@ export default function RegisterClassScreen({ route, navigation }) {
     const [focusStudent, setFocusStudent] = useState({})
     const [courseList, setCourseList] = useState(route?.params?.courseList)
     const [visible, setVisible] = useState({ submit: true, chooseStudent: false, chooseClass: false })
-    const student = useSelector(studentSelector)
+    // const student = useSelector(studentSelector)
+    const [student, setStudent] = useState([])
     const showToast = CustomToast();
+
+    useEffect(() => {
+        loadStudentData()
+    }, [])
+
+    const loadStudentData = async () => {
+        const response = await getStudents()
+        setStudent(response ? response : [])
+    }
 
     const handleNavigate = () => {
         if (totalComplete() === getTotalClass()) {
@@ -32,21 +43,43 @@ export default function RegisterClassScreen({ route, navigation }) {
         }
     }
 
-    const handleChooseStudent = (item, student) => {
-        const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
-        const updateArray = [...courseList];
-        if (updateArray[index].student) {
-            const studentIndex = updateArray[index].student.findIndex(obj => obj?.student === student?.id);
-            if (studentIndex !== -1) {
-                updateArray[index].student.splice(studentIndex, 1);
+    const handleChooseStudent = async (item, student) => {
+        if (item?.itemType === "CLASS") {
+            const response = await checkStudentCanRegis(focusCourse.schedules[0].classId, [student?.id])
+            if (response?.status === 200) {
+                const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
+                const updateArray = [...courseList];
+                if (updateArray[index].student) {
+                    const studentIndex = updateArray[index].student.findIndex(obj => obj?.student === student?.id);
+                    if (studentIndex !== -1) {
+                        updateArray[index].student.splice(studentIndex, 1);
+                    } else {
+                        updateArray[index].student.push({ student: student?.id });
+                    }
+                } else {
+                    updateArray[index].student = []
+                    updateArray[index].student.push({ student: student?.id });
+                }
+                setCourseList(updateArray);
             } else {
-                updateArray[index].student.push({ student: student?.id });
+                showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
             }
         } else {
-            updateArray[index].student = []
-            updateArray[index].student.push({ student: student?.id });
+            const index = courseList.findIndex(obj => obj?.itemId === item?.itemId);
+            const updateArray = [...courseList];
+            if (updateArray[index].student) {
+                const studentIndex = updateArray[index].student.findIndex(obj => obj?.student === student?.id);
+                if (studentIndex !== -1) {
+                    updateArray[index].student.splice(studentIndex, 1);
+                } else {
+                    updateArray[index].student.push({ student: student?.id });
+                }
+            } else {
+                updateArray[index].student = []
+                updateArray[index].student.push({ student: student?.id });
+            }
+            setCourseList(updateArray);
         }
-        setCourseList(updateArray);
     }
 
     const handleChooseClass = async (item) => {
@@ -314,6 +347,7 @@ export default function RegisterClassScreen({ route, navigation }) {
                 visible={visible.chooseStudent}
                 onCancle={() => { setVisible({ ...visible, chooseStudent: false }) }}
                 navigation={navigation}
+                student={student}
             />
             <ChooseScheduleModal
                 visible={visible.chooseClass}

@@ -19,25 +19,37 @@ const HEIGHT = Dimensions.get('window').height;
 export default function StudentListScreen({ navigation }) {
 
     const student = useSelector(studentSelector)
-    const [studentList, setStudentList] = useState(student)
+    const [studentList, setStudentList] = useState([])
     const [loading, setLoading] = useState(true)
     const [screenStatus, setScreenStatus] = useState({ edit: false })
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        loadStudentData()
-    }, [student])
+    // useEffect(() => {
+    //     loadStudentData()
+    // }, [student])
+    useFocusEffect(
+        React.useCallback(() => {
+            loadStudentData()
+        }, [])
+    );
 
     const loadStudentData = async () => {
         setLoading(true)
-        if (student[0]) {
-            setStudentList(student?.filter(item => item.isActive))
-        } else {
+        const studentList = (await getStudents()).map((item, i) => ({ ...item, check: i === 0 ? true : false }));
+
+        if (studentList.length !== 0) {
+            setStudentList(studentList)
+            // setStudentList(student?.filter(item => item.isActive))
+        }
+        else {
             console.log("can not get student ");
         }
+        
+        // if (student[0]) {
+
+        // } 
         setLoading(false)
     }
-    
     const handleOnpress = async (item, id) => {
         if (screenStatus.edit) {
             setStudentList((prevStudentList) => {
@@ -59,7 +71,7 @@ export default function StudentListScreen({ navigation }) {
                 studentList.map(async (item) => {
                     if (item?.check) {
                         const response = await deleteStudent(item?.id)
-                            .then(dispatch(fetchStudentList()))
+                            .then(dispatch(fetchStudentList())).then(loadStudentData())
                         if (response.status === 200) {
 
                             flag = true

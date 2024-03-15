@@ -105,13 +105,27 @@ export default function MultiplePaymentScreen({ route, navigation }) {
         try {
             await Promise.all(courseList?.map(async (classItem) => {
                 await classItem?.student?.map(async (student) => {
-                    const response = await registerClass([student?.student], classItem?.classId ? classItem?.classId?.classId : classItem?.itemId);
-                    if (response?.status === 200) {
-                        showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
-                        setModalVisible({ ...modalVisible, otp: false, notifi: true });
+                    if (classItem?.itemType === "CLASS") {
+                        // console.log(classItem);
+                        const response = await registerClass([student?.student], classItem?.schedules[0]?.classId);
+                        if (response?.status === 200) {
+                            showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
+                            setModalVisible({ ...modalVisible, otp: false });
+                            handleCloseNotifiModal(response?.data)
+                        } else {
+                            showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+                            // console.log(response.response.data);
+                        }
                     } else {
-                        showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
-                        // console.log(response.response.data);
+                        const response = await registerClass([student?.student], student?.class?.classId);
+                        if (response?.status === 200) {
+                            showToast("Thành công", `Đã đăng ký ${classItem?.student?.fullName} vào lớp ${classItem?.name}`, "success");
+                            setModalVisible({ ...modalVisible, otp: false });
+                            handleCloseNotifiModal(response?.data)
+                        } else {
+                            showToast("Thất bại", `${response?.response?.data?.Error}`, "error");
+                            // console.log(response.response.data);
+                        }
                     }
                 })
             }));
@@ -134,9 +148,12 @@ export default function MultiplePaymentScreen({ route, navigation }) {
         setModalVisible({ ...modalVisible, vourcher: false })
     }
 
-    const handleCloseNotifiModal = () => {
+    const handleCloseNotifiModal = async (transactionData) => {
         setModalVisible({ ...modalVisible, notifi: false })
-        navigation.push("TransactionDetailScreen", { total: totalPayment() })
+        navigation.push("TransactionDetailScreen", {
+            total: totalPayment(),
+            transactionData: transactionData,
+        })
     }
 
     const handleClosePaymentModal = () => {
