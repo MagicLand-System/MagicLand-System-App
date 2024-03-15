@@ -18,10 +18,10 @@ export default function TransactionDetailScreen({ route, navigation }) {
     let total = route?.params?.total ? route?.params?.total : 0
     let lable = route?.params?.lable ? route?.params?.lable : "-"
     let transactionData = route?.params?.transactionData
-    let classDetail = route?.params?.classDetail[0] ? route?.params?.classDetail[0] : route?.params?.classDetail
-    let handleClose = route?.params?.handleClose ? () => navigation.pop(route?.params?.handleClose) : () => navigation.navigate("Document")
+    let classDetail = route?.params?.classDetail
+    let handleClose = route?.params?.classDetail ? () => navigation.pop(route?.params?.handleClose) : () => navigation.navigate("Document")
     const user = useSelector(userSelector);
- 
+
     return (
         <>
             <Header navigation={navigation} goback={() => navigation.pop(route?.params?.handleClose)} title={"Chi tiết giao dịch"} />
@@ -60,14 +60,23 @@ export default function TransactionDetailScreen({ route, navigation }) {
                     <Text style={{ ...styles.boldText }}>Tên Người Thanh Toán:</Text>
                     <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{transactionData?.payer}</Text>
                 </View>
-                <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
-                    <Text style={{ ...styles.boldText }}>Lớp học: </Text>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{classDetail?.className}</Text>
-                </View>
-                <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
-                    <Text style={{ ...styles.boldText }}>Lịch học: </Text>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Thứ {classDetail?.schedules?.schedule}  {classDetail?.schedules?.slot}</Text>
-                </View>
+                {
+                    classDetail?.map((classItem, key) => {
+                        return (
+                            <React.Fragment key={key}>
+                                <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
+                                    <Text style={{ ...styles.boldText }}>Lớp học: </Text>
+                                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{classItem?.className}</Text>
+                                </View>
+                                <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
+                                    <Text style={{ ...styles.boldText }}>Lịch học: </Text>
+                                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Thứ {classItem?.schedules?.schedule}  {classItem?.schedules?.slot}</Text>
+                                </View>
+
+                            </React.Fragment>
+                        )
+                    })
+                }
                 <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
                     <Text style={{ ...styles.boldText }}>Nội dung: </Text>
                     <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{transactionData?.message}</Text>
