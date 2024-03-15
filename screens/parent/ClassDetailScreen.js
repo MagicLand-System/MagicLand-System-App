@@ -389,7 +389,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                                                 :
                                                 item.sessions.map((element, key) => {
                                                     return (
-                                                        <>
+                                                        <React.Fragment key={key}>
                                                             {
                                                                 item.expand === true &&
                                                                 <Text style={{ ...styles.childText, fontWeight: "700" }} key={key}>Buổi {element?.orderSession} ({formatDate(element?.date)})</Text>
@@ -403,7 +403,7 @@ export default function ClassDetailScreen({ route, navigation }) {
                                                                         element?.contents?.map((content, key) => {
                                                                             count += 1
                                                                             return (
-                                                                                <>
+                                                                                <React.Fragment key={key}>
                                                                                     {
                                                                                         item.expand === true &&
                                                                                         <Text style={{ ...styles.childText, marginLeft: 7, fontWeight: "400" }} key={key}>{count}. {content.content}</Text>
@@ -416,12 +416,12 @@ export default function ClassDetailScreen({ route, navigation }) {
                                                                                             )
                                                                                         })
                                                                                     }
-                                                                                </>
+                                                                                </React.Fragment>
                                                                             )
                                                                         })
                                                                 )
                                                             }
-                                                        </>
+                                                        </React.Fragment>
                                                     )
                                                 })
                                         )

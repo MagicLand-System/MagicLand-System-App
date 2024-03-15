@@ -231,7 +231,10 @@ export default function RegisterClassScreen({ route, navigation }) {
                                                         <Text >
                                                             {
                                                                 item?.itemType === "CLASS" ?
-                                                                    <Text style={styles.tableText}>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
+                                                                    <>
+                                                                        <Text style={{ ...styles.tableText, padding: 0, paddingVertical: 0 }}>Thứ{item?.schedules[0].schedule}</Text>
+                                                                        <Text style={{ ...styles.tableText, padding: 0, paddingVertical: 0 }}>{item?.schedules[0]?.slot}</Text>
+                                                                    </>
                                                                     :
                                                                     element?.class ?
                                                                         <Text style={styles.tableText}>
@@ -282,7 +285,10 @@ export default function RegisterClassScreen({ route, navigation }) {
                                         >
                                             {
                                                 item?.itemType === "CLASS" ?
-                                                    <Text style={styles.tableText}>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
+                                                    <>
+                                                        <Text style={{ ...styles.tableText, padding: 0, paddingVertical: 0 }}>Thứ{item?.schedules[0].schedule}</Text>
+                                                        <Text style={{ ...styles.tableText, padding: 0, paddingVertical: 0 }}>{item?.schedules[0]?.slot}</Text>
+                                                    </>
                                                     :
                                                     <TouchableOpacity
                                                         onPress={() => {

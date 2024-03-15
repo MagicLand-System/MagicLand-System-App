@@ -60,8 +60,9 @@ export default function ClassRegisterScreen({ route, navigation }) {
 
     const selectStudent = async (id) => {
         const index = studentList.findIndex(obj => obj.id === id);
-        if ((index !== -1) && (!studentList[index]?.check)) {
-            const response = await checkStudentCanRegis(classList[0]?.classId, [id])
+
+        if (index !== -1) {
+            const response = await checkStudentCanRegis(classList[0]?.classId, [id]);
             if (response?.status === 200) {
                 setStudentList((prevStudentList) => {
                     return prevStudentList.map((item, i) => ({
