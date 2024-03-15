@@ -212,7 +212,7 @@ export default function RegisterClassScreen({ route, navigation }) {
                                                         setFocusCourse(item)
                                                     }}
                                                 >
-                                                    <Text>
+                                                    <Text style={styles.tableText}>
                                                         {studentFouned?.fullName}
                                                     </Text>
                                                 </TouchableOpacity>
@@ -238,7 +238,7 @@ export default function RegisterClassScreen({ route, navigation }) {
                                                                             {element?.class?.schedule + " " + element?.class?.slot}
                                                                         </Text>
                                                                         :
-                                                                        <Text numberOfLines={1}>Chọn Lớp</Text>
+                                                                        <Text style={styles.tableText} numberOfLines={1}>Chọn Lớp</Text>
                                                             }
                                                         </Text>
                                                     </TouchableOpacity>
@@ -270,10 +270,10 @@ export default function RegisterClassScreen({ route, navigation }) {
                                                 setVisible({ ...visible, chooseStudent: true })
                                             }}
                                         >
-                                            <Text>
+                                            <Text style={styles.tableText}>
                                                 Thêm Học sinh
                                                 {/* <View style={{ backgroundColor: "rgba(126, 134, 158, 0.25)", borderRadius: 50 }}> */}
-                                                <Icon name={"plus"} color={"#241468"} size={22} />
+                                                <Icon name={"plus"} color={"#241468"} size={18} />
                                                 {/* </View> */}
                                             </Text>
                                         </TouchableOpacity>
@@ -282,14 +282,14 @@ export default function RegisterClassScreen({ route, navigation }) {
                                         >
                                             {
                                                 item?.itemType === "CLASS" ?
-                                                    <Text>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
+                                                    <Text style={styles.tableText}>{item?.schedules[0].schedule} {item?.schedules[0]?.slot}</Text>
                                                     :
                                                     <TouchableOpacity
                                                         onPress={() => {
                                                             showToast("Thông báo", `Xin hay chọn học sinh trước`, "warning");
                                                         }}
                                                     >
-                                                        <Text>Chọn Lớp</Text>
+                                                        <Text style={styles.tableText}>Chọn Lớp</Text>
                                                     </TouchableOpacity>
                                             }
                                         </View>
