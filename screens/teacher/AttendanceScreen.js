@@ -29,14 +29,17 @@ export default function AttendanceScreen({ route, navigation }) {
     const loadStudentData = async () => {
         const response = await getAttendanceList(classDetail.classId)
         if (response?.status === 200) {
-            const data = response?.data?.map((item) => {
-                return {
-                    ...item,
-                    isPresent: item?.isPresent ? item?.isPresent : false
-                }
-            })
-            setStudentList(data)
-            setStudentTmpList(data)
+            // const data = response?.data?.map((item) => {
+            //     return {
+            //         ...item,
+            //         isPresent: item?.isPresent ? item?.isPresent : false
+            //     }
+            // })
+            // setStudentList(data)
+            // setStudentTmpList(data)
+
+            setStudentList(response?.data)
+            setStudentTmpList(response?.data)
         }
     }
 
@@ -55,7 +58,7 @@ export default function AttendanceScreen({ route, navigation }) {
     }
 
     const handleCompleteAttend = async () => {
-        const response = await takeAttendance(classDetail?.classId, studentTmpList, String(slot).replace(/\s/g, ''))
+        const response = await takeAttendance(classDetail?.classId, convertNullToFalse(studentTmpList), String(slot).replace(/\s/g, ''))
         console.log(classDetail?.classId, studentTmpList, String(slot).replace(/\s/g, ''));
         if (response?.status === 200) {
             setStudentList(JSON.parse(JSON.stringify(studentTmpList)))
@@ -74,6 +77,15 @@ export default function AttendanceScreen({ route, navigation }) {
     const handleSetEditing = () => {
         setStudentTmpList(JSON.parse(JSON.stringify(studentList)))
         setEdittingMode(true)
+    }
+
+    function convertNullToFalse(studentTmpList) {
+        return studentTmpList.map(student => {
+            if (student.isPresent === null) {
+                student.isPresent = false;
+            }
+            return student;
+        });
     }
 
     const getAttendList = () => {

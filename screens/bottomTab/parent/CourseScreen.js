@@ -12,10 +12,10 @@ import StarChoose from '../../../components/StarChoose';
 import { getAllCourse, getValidCourse } from '../../../api/course';
 import SpinnerLoading from '../../../components/SpinnerLoading';
 import { userSelector, courseSelector } from '../../../store/selector';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getMinMaxPrice } from '../../../util/util';
 import { constants } from '../../../constants/constants';
-
+import { updateStudentList } from "../../../store/features/studentSlice";
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 console.log("asdas");
@@ -62,9 +62,10 @@ export default function CourseScreen({ navigation }) {
             ...course
         ]
     }
-
+    // const dispatch = useDispatch()
     useEffect(() => {
         loadFilterData()
+        // dispatch(updateStudentList())
     }, [])
 
     useEffect(() => {

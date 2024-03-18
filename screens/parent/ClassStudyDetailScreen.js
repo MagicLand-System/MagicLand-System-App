@@ -4,12 +4,13 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import Header from '../../components/header/Header';
 import NotificationModal from '../../components/modal/NotificationModal';
-import { formatDate } from '../../util/util';
+import { formatDate, getSessionInfoByDate } from '../../util/util';
 
 // import ThuyTienAvt from "../assets/images/ThuyTienAvt.png"
 import ProcessBar from '../../components/ProcessBar';
 import CircularProgressBar from '../../components/CircularProgressBar';
 import { getSyllabus } from '../../api/course';
+import { getLearningProgress } from '../../api/student';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -17,21 +18,42 @@ const HEIGHT = Dimensions.get('window').height;
 export default function ClassStudyDetailScreen({ route, navigation }) {
 
     let classDetail = route?.params?.classDetail
+    let student = route?.params?.student
     const [programEducation, setProgramEducation] = useState([])
+    const [currentLesson, setCurrentLesson] = useState({})
+    const [courseProgress, setCourseProgress] = useState([{ progressName: "Learning", percentageProgress: 0 }]);
+    const [loading, setLoading] = useState({ currentLesson: true, percentageProgress: 0 });
     let count = 0
 
     useEffect(() => {
         classDetail = route?.params?.classDetail
         loadSyllabusData()
+        loadProgressData()
     }, [route?.params?.classDetail])
 
     const loadSyllabusData = async () => {
         const response = await getSyllabus(classDetail?.courseId, classDetail?.classId)
         if (response?.status === 200) {
             setProgramEducation(response?.data)
+            loadCurrentLesson(response?.data?.syllabusInformations)
         } else {
             console.log("getSyllabus fail : ", response.response?.data);
         }
+    }
+
+    const loadProgressData = async () => {
+        const response = await getLearningProgress(classDetail?.classId, student?.id)
+        if (response.status === 200) {
+            setCourseProgress(response?.data)
+        } else {
+            console.log("loadProgressData fail : ", response.response?.data);
+        }
+    }
+
+    const loadCurrentLesson = (syllabusInformations) => {
+        setLoading({ ...loading, currentLesson: true })
+        setCurrentLesson(getSessionInfoByDate(syllabusInformations))
+        setLoading({ ...loading, currentLesson: false })
     }
 
     const handleViewDetail = () => {
@@ -78,7 +100,7 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                             {
                                 String(classDetail?.method)?.toLocaleLowerCase() === "online" &&
                                 <TouchableOpacity style={{ transform: [{ translateY: 2.5 }] }}>
-                                    <Text style={{...styles.classValue, color: "#000"}}> {" meet > "}</Text>
+                                    <Text style={{ ...styles.classValue, color: "#000" }}> {" meet > "}</Text>
                                 </TouchableOpacity>
                             }
                         </Text>
@@ -105,23 +127,33 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Nội dung buổi học:</Text>
                 </View>
-                <View style={styles.programcontent}>
-                    <Text style={styles.boldText}>Buổi 7: {formatDate("2024-01-11T00:00:00")}</Text>
-                    <Text style={styles.boldText} numberOfLines={1}>Chủ đề 3 - Làm quen các số từ 0 đến 10, tập đếm đến 20, ... </Text>
-                    <Text style={{ marginLeft: 10 }} >Bài 10: Số nào ở đâu?</Text>
-                    <Text style={{ marginLeft: 10 }}>Bài 11:  Que tính kỳ diệu</Text>
-                    <TouchableOpacity style={styles.startProgram} onPress={handleViewDetail}>
-                        <Text style={{ ...styles.boldText, color: "#4582E6" }}>Xem Chi Tiết</Text>
-                    </TouchableOpacity>
-                </View>
+                {
+                    !loading?.currentLesson &&
+                    <View style={styles.programcontent}>
+                        <Text style={styles.boldText} numberOfLines={1}>Chủ đề {currentLesson?.orderTopic} - {currentLesson?.topicName} </Text>
+                        <Text style={styles.boldText}>Buổi 7: {currentLesson?.sessions[0] && formatDate(currentLesson?.sessions[0].date)}</Text>
+                        {
+                            currentLesson?.sessions[0] &&
+                            currentLesson?.sessions[0].contents?.map((item, key) => {
+                                return (
+                                    <Text style={{ marginLeft: 10 }} key={key}>Bài {key + 1} : {item?.content}</Text>
+                                )
+                            })
+                        }
 
+                        {/* <Text style={{ marginLeft: 10 }}>Bài 11:  Que tính kỳ diệu</Text> */}
+                        <TouchableOpacity style={styles.startProgram} onPress={handleViewDetail}>
+                            <Text style={{ ...styles.boldText, color: "#4582E6" }}>Xem Chi Tiết</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Mức độ hoàn thành khóa học:</Text>
                 </View>
 
                 <View style={styles.processBar}>
                     <CircularProgressBar
-                        value={100}
+                        value={courseProgress.find(obj => obj?.progressName === "Learning")?.percentageProgress}
                         inActiveStrokeColor={"#7388A95A"}
                         activeStrokeColor={"#5BBF4A"}
                     />
@@ -185,10 +217,10 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                                                 :
                                                 item.sessions.map((element, key) => {
                                                     return (
-                                                        <>
+                                                        <React.Fragment key={key}>
                                                             {
                                                                 item.expand === true &&
-                                                                <Text style={styles.childText} key={key}>Buổi {element?.orderSession} ({formatDate(element?.date)})</Text>
+                                                                <Text style={{ ...styles.childText, fontWeight: "700" }} key={key}>Buổi {element?.orderSession} ({formatDate(element?.date)})</Text>
                                                             }
                                                             {
                                                                 (
@@ -199,25 +231,25 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                                                                         element?.contents?.map((content, key) => {
                                                                             count += 1
                                                                             return (
-                                                                                <>
+                                                                                <React.Fragment key={key}>
                                                                                     {
                                                                                         item.expand === true &&
-                                                                                        <Text style={{ ...styles.childText, marginLeft: 7 }} key={key}>{count}. {content.content}</Text>
+                                                                                        <Text style={{ ...styles.childText, marginLeft: 7, fontWeight: "400" }} key={key}>{count}. {content.content}</Text>
                                                                                     }
                                                                                     {
                                                                                         item.expand === true &&
                                                                                         content?.details?.map((detail, index) => {
                                                                                             return (
-                                                                                                <Text style={{ ...styles.childText, marginLeft: 15 }} key={index}>{count}.{index + 1} {detail}</Text>
+                                                                                                <Text style={{ ...styles.childText, marginLeft: 15, fontWeight: "300" }} key={index}>{count}.{index + 1} {detail}</Text>
                                                                                             )
                                                                                         })
                                                                                     }
-                                                                                </>
+                                                                                </React.Fragment>
                                                                             )
                                                                         })
                                                                 )
                                                             }
-                                                        </>
+                                                        </React.Fragment>
                                                     )
                                                 })
                                         )

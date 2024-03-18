@@ -98,3 +98,13 @@ export const getCurrentQuiz = async (numberOfDay) => {
         return error;
     }
 };
+
+export const getLearningProgress = async (classId, studentId) => {
+    try {
+        const response = await api.post(`api/v1/student/learning/progress?studentId=${studentId}&classId=${classId}`);
+        return response;
+    } catch (error) {
+        console.log("getLearningProgress in api/student.js error : ", error);
+        return error;
+    }
+};
