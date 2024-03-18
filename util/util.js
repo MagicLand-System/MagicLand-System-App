@@ -152,3 +152,66 @@ export const getVnDay = (day) => {
 export const checkIsLink = (string) => {
     return string?.startsWith("http");
 }
+
+export function convertSchedulesToString(schedules) {
+    // Group schedules by time slot
+    const scheduleGroups = schedules?.reduce((groups, schedule) => {
+        const slot = schedule?.slot;
+        if (!groups[slot]) {
+            groups[slot] = [];
+        }
+        groups[slot].push(schedule?.schedule === "Sunday" ? "CN" : schedule?.schedule);
+        return groups;
+    }, {});
+
+    // Format the grouped schedules
+    const formattedSchedules = Object.entries(scheduleGroups).map(([slot, schedules]) => {
+        const scheduleString = schedules?.sort((a, b) => {
+            if (a === 'Sunday') return 7;
+            if (b === 'Sunday') return -7;
+            return parseInt(a) - parseInt(b);
+        }).join('-');
+        const formattedSlot = slot === 'Sunday' ? 'CN' : slot;
+        return `${scheduleString} ( ${formattedSlot} )`;
+    });
+
+    // Sort the formatted schedules by time slot
+    formattedSchedules.sort((a, b) => {
+        const slotA = a?.match(/\d+:\d+/)[0];
+        const slotB = b?.match(/\d+:\d+/)[0];
+        if (slotA === slotB) {
+            const dayA = a?.includes('CN') ? 7 : parseInt(a?.match(/\d+/)[0]);
+            const dayB = b?.includes('CN') ? 7 : parseInt(b?.match(/\d+/)[0]);
+            return dayA - dayB;
+        }
+        return new Date(`1970/01/01 ${slotA}`) - new Date(`1970/01/01 ${slotB}`);
+    });
+
+    return formattedSchedules;
+}
+
+export function getSessionInfoByDate(syllabusInformations) {
+    const syllabus = syllabusInformations;
+    const currentDate = new Date();
+
+    // Iterate through topics
+    for (const topic of syllabus?.topics) {
+        // Iterate through sessions
+        for (const session of topic.sessions) {
+            const sessionDate = new Date(session.date);
+
+            // Check if current date falls within session date
+            if (
+                currentDate.toDateString() === sessionDate.toDateString() &&
+                currentDate.getTime() >= sessionDate.getTime()
+            ) {
+                // Return session info
+                return {
+                    orderTopic: topic.orderTopic,
+                    topicName: topic.topicName,
+                    sessions: [session]
+                };
+            }
+        }
+    }
+}

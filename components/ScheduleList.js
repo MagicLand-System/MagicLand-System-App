@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import React from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { formatDate } from '../util/util';
+import { convertSchedulesToString, formatDate } from '../util/util';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -47,9 +47,15 @@ export default function ScheduleList({ cardList, onClick }) {
                                         <Icon name={"circle-outline"} color={"#888888"} size={35} />
                                 }
                             </View>
+
                             <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
-                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", fontSize: 10 }}>Thứ {item?.schedules.schedule} </Text>
-                                <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", fontSize: 10 }}>({item?.schedules?.slot})</Text>
+                                {
+                                    convertSchedulesToString(item?.schedules)?.map((item, key) => {
+                                        return (
+                                            <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", fontSize: 10 }} key={key}>Thứ {item}</Text>
+                                        )
+                                    })
+                                }
                             </View>
                             <View style={{ ...styles.startDateColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
                                 <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6" }}>{formatDate(item?.startDate)}</Text>

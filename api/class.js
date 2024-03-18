@@ -30,6 +30,16 @@ export const getClassByCourseId = async (courseID) => {
     }
 };
 
+export const getClassByCourseIdNotInCart = async (courseID) => {
+    try {
+        const response = await api.get(`/api/v1/classes/notInCart?courseId=${courseID}`);
+        return response;
+    } catch (error) {
+        console.log("getClassByCourseIdNotInCart in api/class.js error : ", error);
+        return error;
+    }
+};
+
 export const registerClass = async (studentsIdList, classId) => {
 
     const data = [{

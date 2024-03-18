@@ -65,6 +65,7 @@ export default function ScheduleScreen({ navigation }) {
     if (!updateStudentList[index]?.schedule) {
       const response = await getschedule(id);
       if (response.status === 200) {
+        console.log(response.data);
         return response.data
       } else {
         console.log("Tải thông tin lớp học thất bại");
@@ -75,7 +76,8 @@ export default function ScheduleScreen({ navigation }) {
   }
 
   const handleClassNavigate = (classDetail) => {
-    navigation.push("ClassStudyDetailScreen", { classDetail: classDetail })
+    const student = studentList?.find(student => student.check === true)
+    navigation.push("ClassStudyDetailScreen", { classDetail: classDetail, student: student })
   }
 
   const hanldeAddStudent = () => {
@@ -138,9 +140,9 @@ export default function ScheduleScreen({ navigation }) {
   const renderAttendanceStatus = (attendanceStatus) => {
     // switch (attendanceStatus) {
     //   case value:
-        
+
     //     break;
-    
+
     //   default:
     //     break;
     // }
@@ -198,8 +200,6 @@ export default function ScheduleScreen({ navigation }) {
 
           {
             !calendarLoading &&
-            // <SpinnerLoading />
-            // :
             <>
               {
                 calendarType === "month" &&
@@ -246,11 +246,15 @@ export default function ScheduleScreen({ navigation }) {
               }
               {
                 calendarType === "day" &&
-                getCurrentDate({ dateString: dateSelected }).map((item, index) => {
-                  return (
-                    <ClassCartCard cardDetail={item} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
-                  )
-                })
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  {
+                    getCurrentDate({ dateString: dateSelected }).map((item, index) => {
+                      return (
+                        <ClassCartCard cardDetail={item} timeType={"onDate"} priceHidden={true} check={false} index={index} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
+                      )
+                    })
+                  }
+                </ScrollView>
               }
             </>
           }

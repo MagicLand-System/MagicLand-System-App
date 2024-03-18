@@ -28,6 +28,7 @@ export default function DocumentScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       loadStudentData()
+      console.log(student.length);
     }, [])
   );
 
@@ -111,7 +112,8 @@ export default function DocumentScreen({ navigation }) {
 
 
   const handleClassNavigate = (classDetail) => {
-    navigation.push("ClassDetailScreen", { classDetail: classDetail })
+    const student = studentList?.find(student => student.check === true)
+    navigation.push("ClassDetailScreen", { classDetail: classDetail, student: student })
   }
 
   const hanldeAddStudent = () => {
@@ -133,7 +135,6 @@ export default function DocumentScreen({ navigation }) {
   }
 
   const renderClassCard = (type, item, index) => {
-    console.log(item);
     switch (type) {
       case "UPCOMING":
         return (

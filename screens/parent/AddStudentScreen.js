@@ -104,10 +104,10 @@ export default function AddStudentScreen() {
                             const imageRef = ref(storage, `childrens/${filename}`)
                             uploadBytes(imageRef, blob).then(() => {
                                 getDownloadURL(imageRef).then((url) => {
-                                    console.log({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url });
+                                    // console.log({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url });
                                     addStudent({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url })
                                         .then(dispatch(fetchUser()))
-                                        .then(dispatch(fetchStudentList()))
+                                        // .then(dispatch(fetchStudentList()))
                                         .then(setLoading(false))
                                         .then(Alert.alert("Đăng kí thành công"))
                                         .then(navigation.goBack())

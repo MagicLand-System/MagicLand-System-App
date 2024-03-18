@@ -258,7 +258,7 @@ export default function PaymentScreen({ route, navigation }) {
                                 </View>
                                 <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                     <Text style={styles.detailViewTitle}>Khai giảng ngày:</Text>
-                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>{formatDate(cardDetail[0]?.startDate ? cardDetail[0]?.startDate : cardDetail[0]?.date)}</Text>
+                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>{formatDate(classDetail[0]?.startDate ? classDetail[0]?.startDate : classDetail[0]?.date)}</Text>
                                 </View>
                                 <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                     <Text style={styles.detailViewTitle}>Lịch Học:</Text>

@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import React from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { formatDate, formatPrice, getVnDay, shortedTime } from '../util/util';
+import { convertSchedulesToString, formatDate, formatPrice, getVnDay, shortedTime } from '../util/util';
 import defaultImage from "../assets/classCard/classicMath.png"
 import { courseSelector } from '../store/selector';
 import { useSelector } from 'react-redux';
@@ -17,25 +17,6 @@ const colorList = [
 ]
 
 export default function ClassCartCard({ cardDetail, check, index, onClick, background, priceHidden, timeType }) {
-
-    const getSchedule = (item) => {
-        if (item?.schedules) {
-            switch (item?.schedules[0]?.dayOfWeeks) {
-                case "Monday":
-                    return "Thứ 2 - 4 - 6 (7h30 - 9h)"
-                case "Tuesday":
-                    return "Thứ 3 - 5 - 7 (7h30 - 9h)"
-                case "Saturday":
-                    return "Thứ 7 - Cn (7h30 - 9h)"
-
-                default:
-                    return "Thứ 2 - 4 - 6 (7h30 - 9h)"
-            }
-        } else {
-            return "Thứ 2 - 4 - 6 (7h30 - 9h)"
-        }
-
-    }
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail?.classId) }}>
@@ -82,8 +63,8 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                 <View style={styles.cardDetail}>
                     <View style={{ ...styles.flexColumnBetween, marginTop: 5, paddingRight: 10 }}>
                         <Text style={{ ...styles.cardName, maxWidth: "70%" }} numberOfLines={1}>{
-                            cardDetail?.name ?
-                                cardDetail?.name
+                            cardDetail?.courseName ?
+                                cardDetail?.courseName
                                 :
                                 cardDetail?.className ?
                                     cardDetail?.className
@@ -105,10 +86,18 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                             timeType === "onDate" ?
                                 <Text style={styles.cardDetailText}>{getVnDay(cardDetail?.dayOfWeeks ? cardDetail?.dayOfWeeks : "Monday")} ( {shortedTime(cardDetail?.slot ? cardDetail?.slot?.startTime : cardDetail?.startTime)} - {shortedTime(cardDetail?.slot ? cardDetail?.slot?.endTime : cardDetail?.endTime)} )</Text>
                                 :
-                                <Text style={styles.cardDetailText}>Thứ {cardDetail?.schedules.schedule} ({cardDetail?.schedules?.slot})</Text>
+                                <View>
+                                    {
+                                        convertSchedulesToString(cardDetail?.schedules)?.map((item, key) => {
+                                            return (
+                                                <Text style={styles.cardDetailText} key={key}>Thứ {item} </Text>
+                                            )
+                                        })
+                                    }
+                                </View>
                         }
                     </View>
-                    <View style={{...styles.flexColumn, width: "92%"}}>
+                    <View style={{ ...styles.flexColumn, width: "92%" }}>
                         <Icon name={"map-marker-radius"} color={"#241468"} size={18} />
                         <Text style={styles.cardDetailText}>{cardDetail?.address}</Text>
                     </View>

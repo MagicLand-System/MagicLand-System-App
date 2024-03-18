@@ -2,7 +2,7 @@ import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, ScrollView,
 import React, { useState, useEffect, useContext } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { getClassByCourseId } from '../../api/class';
+import { getClassByCourseIdNotInCart } from '../../api/class';
 
 import ClassCard from '../../components/ClassCard';
 import FilterCustomModal from '../../components/modal/FilterCustomModal';
@@ -125,8 +125,6 @@ const defaultData = {
     ],
 }
 
-const introduceDefault = "Khóa học Toán Tư Duy Cho Bé được thiết kế dành cho các  bé từ 3 tuổi đến 15 tuổi nhằm giúp phát triển trí não, nâng cao độ hiểu biết của trẻ về môn toán. Từ đó, giúp các bé mở rộng thêm tiềm năng phát triển trong tương lai"
-
 export default function CourseDetailScreen({ route, navigation }) {
 
     const [viewDetail, setViewDetail] = useState({ detail: false, course: false })
@@ -145,7 +143,7 @@ export default function CourseDetailScreen({ route, navigation }) {
 
     const loadClassData = async () => {
         setDataLoading(true)
-        const response = await getClassByCourseId(course?.courseId)
+        const response = await getClassByCourseIdNotInCart(course?.courseId)
         if (response?.status === 200) {
             setClassCardDetail(response?.data)
         }
@@ -175,7 +173,7 @@ export default function CourseDetailScreen({ route, navigation }) {
         const checkChoosed = classCardDetail.filter((item) => item.choose)
         if (checkChoosed[0]) {
             navigation.push("ClassRegisterScreen", { course: course, classList: classCardDetail })
-        }else{
+        } else {
             showToast("Thông Báo", `Chưa Chọn lớp`, "warning");
         }
     }
