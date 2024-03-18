@@ -5,13 +5,13 @@ import { auth, firebaseConfig } from "../firebase.config"
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import MainButton from "../components/MainButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import PhoneInput from 'react-native-phone-input'
 import OTPTextInput from 'react-native-otp-textinput'
 import { checkExist } from "../api/auth";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts, Inter_400Regular } from '@expo-google-fonts/inter';
 import { Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
 import LoadingModal from "../components/LoadingModal";
+import PhoneInput from "react-native-phone-number-input";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -55,7 +55,7 @@ export default function RegisterScreen() {
       if (error.response?.status === 404) {
         const phoneProvider = new PhoneAuthProvider(auth);
         const verificationId = await phoneProvider.verifyPhoneNumber(
-          phoneNumber,
+          phoneNumber.split('_')[0],
           recaptchaVerifier.current
         );
         setVerificationId(verificationId)
@@ -97,14 +97,26 @@ export default function RegisterScreen() {
         <>
           <Text style={styles.title}>Đăng kí</Text>
           <PhoneInput
-            initialCountry={'vn'}
-            style={styles.textInput}
-            onChangePhoneNumber={setPhoneNumber}
-            textProps={{
-              placeholder: 'Nhập số điện thoại'
+            containerStyle={styles.textInput}
+            textInputStyle={styles.textInputStyle}
+            codeTextStyle={styles.codeTextStyle}
+            defaultValue={phoneNumber}
+            defaultCode="VN"
+            layout="first"
+            onChangeFormattedText={(text) => {
+              setPhoneNumber(text);
             }}
-            textStyle={styles.textInputStyle}
-            flagStyle={{ width: 50, height: 30 }}
+            withShadow
+            textInputProps={{
+              maxLength: 9,
+              keyboardType: 'numbers-and-punctuation'
+            }}
+            countryPickerProps={{
+              disableNativeModal: true,
+            }}
+            disableArrowIcon={true}
+            placeholder="Nhập số điện thoại"
+            disabled={loading}
           />
           <View style={styles.buttonView}>
             {phoneNumber === '' ? (
@@ -186,7 +198,6 @@ const styles = StyleSheet.create({
     marginTop: 80,
   },
   textInput: {
-    padding: 5,
     borderColor: '#3A0CA3',
     borderStyle: 'solid',
     borderWidth: 0.5,
@@ -196,6 +207,11 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 18,
+    fontFamily: 'Inter_400Regular',
+  },
+  codeTextStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
     fontFamily: 'Inter_400Regular',
   },
   buttonView: {
