@@ -77,11 +77,11 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                     </View>
                     <Text style={{ fontSize: 10, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>
                     <View style={styles.flexColumn}>
-                        <Icon name={"calendar-check"} color={"#241468"} size={16} />
+                        <Icon name={"calendar-check"} color={"#241468"} size={15} />
                         <Text style={styles.cardDetailText}>{formatDate(cardDetail?.startDate ? cardDetail?.startDate : cardDetail?.date)}</Text>
                     </View>
                     <View style={{ ...styles.flexColumn, marginVertical: 5 }}>
-                        <Icon name={"clock-time-three-outline"} color={"#241468"} size={16} />
+                        <Icon name={"clock-time-three-outline"} color={"#241468"} size={15} />
                         {
                             timeType === "onDate" ?
                                 <Text style={styles.cardDetailText}>{getVnDay(cardDetail?.dayOfWeeks ? cardDetail?.dayOfWeeks : "Monday")} ( {shortedTime(cardDetail?.slot ? cardDetail?.slot?.startTime : cardDetail?.startTime)} - {shortedTime(cardDetail?.slot ? cardDetail?.slot?.endTime : cardDetail?.endTime)} )</Text>
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     cardName: {
         // color: "#241468",
         fontWeight: "700",
-        fontSize: 13,
+        fontSize: 12,
     },
     cardDetailText: {
         color: "#4F4F4F",
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         position: "absolute",
-        bottom: "5%",
+        bottom: "2%",
         right: "10%",
         left: "10%",
         flexDirection: "row",
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     cardButton: {
-        padding: 5,
+        padding: 3,
         width: "50%",
         justifyContent: "center",
         alignItems: "center"
