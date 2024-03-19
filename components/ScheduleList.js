@@ -47,14 +47,14 @@ export default function ScheduleList({ cardList, onClick }) {
                                         <Icon name={"circle-outline"} color={"#888888"} size={35} />
                                 }
                             </View>
-                            <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6", flexDirection: "row", flexWrap: "wrap" }}>
+                            <View style={{ ...styles.scheduleColumn, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: "#4582E6" }}>
                                 {
                                     convertSchedulesToString(item?.schedules)?.map((item, key) => {
                                         return (
-                                            <React.Fragment key={key}>
+                                            <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", }} key={key}>
                                                 <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", fontSize: 10 }}>Thứ {item?.dates}</Text>
                                                 <Text style={{ textAlign: "center", fontWeight: "700", color: "#4582E6", fontSize: 10 }}> ({item?.time})</Text>
-                                            </React.Fragment>
+                                            </View>
                                         )
                                     })
                                 }

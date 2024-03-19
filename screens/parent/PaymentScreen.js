@@ -262,7 +262,15 @@ export default function PaymentScreen({ route, navigation }) {
                                 </View>
                                 <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                     <Text style={styles.detailViewTitle}>Lịch Học:</Text>
-                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>Thứ {classDetail[0]?.schedules.schedule} ({classDetail[0]?.schedules?.slot})</Text>
+                                    {
+                                        convertSchedulesToString(classDetail?.schedules)?.map((item, key) => {
+                                            return (
+                                                <React.Fragment key={key}>
+                                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>Thứ {item?.dates} ({item?.time})</Text>
+                                                </React.Fragment>
+                                            )
+                                        })
+                                    }
                                 </View>
                             </View>
                         )
