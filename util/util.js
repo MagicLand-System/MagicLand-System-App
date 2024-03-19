@@ -164,7 +164,7 @@ export function convertSchedulesToString(schedules) {
         return groups;
     }, {});
 
-    // Format the grouped schedules
+    // Format the grouped schedules into an array of objects
     const formattedSchedules = Object.entries(scheduleGroups).map(([slot, schedules]) => {
         const scheduleString = schedules?.sort((a, b) => {
             if (a === 'Sunday') return 7;
@@ -172,16 +172,19 @@ export function convertSchedulesToString(schedules) {
             return parseInt(a) - parseInt(b);
         }).join('-');
         const formattedSlot = slot === 'Sunday' ? 'CN' : slot;
-        return `${scheduleString} ( ${formattedSlot} )`;
+        return {
+            dates: scheduleString,
+            time: formattedSlot
+        };
     });
 
     // Sort the formatted schedules by time slot
     formattedSchedules.sort((a, b) => {
-        const slotA = a?.match(/\d+:\d+/)[0];
-        const slotB = b?.match(/\d+:\d+/)[0];
+        const slotA = a.time;
+        const slotB = b.time;
         if (slotA === slotB) {
-            const dayA = a?.includes('CN') ? 7 : parseInt(a?.match(/\d+/)[0]);
-            const dayB = b?.includes('CN') ? 7 : parseInt(b?.match(/\d+/)[0]);
+            const dayA = a.dates.includes('CN') ? 7 : parseInt(a.dates.split('-')[0]);
+            const dayB = b.dates.includes('CN') ? 7 : parseInt(b.dates.split('-')[0]);
             return dayA - dayB;
         }
         return new Date(`1970/01/01 ${slotA}`) - new Date(`1970/01/01 ${slotB}`);

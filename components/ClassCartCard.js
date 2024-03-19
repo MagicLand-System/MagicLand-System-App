@@ -43,7 +43,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                         {
                             cardDetail?.choose &&
                             <View style={styles.checkBox}>
-                                <Icon name={"check"} color={"#C2D9FF"} size={20} />
+                                <Icon name={"check"} color={"#C2D9FF"} size={16} />
                             </View>
                         }
 
@@ -57,7 +57,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                         style={styles.cardImageValue}
                     />
                     <View style={styles.classType}>
-                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600" }}>{cardDetail?.classSubject ? cardDetail?.classSubject : "Khoá Học"}</Text>
+                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600", fontSize: 12 }}>{cardDetail?.classSubject ? cardDetail?.classSubject : "Khoá Học"}</Text>
                     </View>
                 </View>
                 <View style={styles.cardDetail}>
@@ -72,25 +72,29 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                                     "Lớp học"}</Text>
                         {
                             !priceHidden &&
-                            <Text style={{ ...styles.cardName, color: "#241468", fontSize: 11 }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
+                            <Text style={{ ...styles.cardName, color: "#241468", fontSize: 10 }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
                         }
                     </View>
-                    <Text style={{ fontSize: 12, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>
+                    <Text style={{ fontSize: 10, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>
                     <View style={styles.flexColumn}>
-                        <Icon name={"calendar-check"} color={"#241468"} size={18} />
+                        <Icon name={"calendar-check"} color={"#241468"} size={16} />
                         <Text style={styles.cardDetailText}>{formatDate(cardDetail?.startDate ? cardDetail?.startDate : cardDetail?.date)}</Text>
                     </View>
                     <View style={{ ...styles.flexColumn, marginVertical: 5 }}>
-                        <Icon name={"clock-time-three-outline"} color={"#241468"} size={18} />
+                        <Icon name={"clock-time-three-outline"} color={"#241468"} size={16} />
                         {
                             timeType === "onDate" ?
                                 <Text style={styles.cardDetailText}>{getVnDay(cardDetail?.dayOfWeeks ? cardDetail?.dayOfWeeks : "Monday")} ( {shortedTime(cardDetail?.slot ? cardDetail?.slot?.startTime : cardDetail?.startTime)} - {shortedTime(cardDetail?.slot ? cardDetail?.slot?.endTime : cardDetail?.endTime)} )</Text>
                                 :
-                                <View>
+                                <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                                     {
                                         convertSchedulesToString(cardDetail?.schedules)?.map((item, key) => {
                                             return (
-                                                <Text style={styles.cardDetailText} key={key}>Thứ {item} </Text>
+                                                <React.Fragment key={key}>
+                                                    <Text style={styles.cardDetailText}>Thứ {item?.dates}</Text>
+                                                    <Text style={styles.cardDetailText}> ({item?.time})</Text>
+                                                </React.Fragment>
+
                                             )
                                         })
                                     }
@@ -98,7 +102,7 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                         }
                     </View>
                     <View style={{ ...styles.flexColumn, width: "92%" }}>
-                        <Icon name={"map-marker-radius"} color={"#241468"} size={18} />
+                        <Icon name={"map-marker-radius"} color={"#241468"} size={16} />
                         <Text style={styles.cardDetailText}>{cardDetail?.room ? "Phòng " + cardDetail?.room?.name + " - Tầng " + cardDetail?.room?.floor : cardDetail?.address}</Text>
                         {/*+ " - " {cardDetail?.address} */}
                     </View>
@@ -110,14 +114,14 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                                     if (key === 0) {
                                         return (
                                             < TouchableOpacity onPress={() => item.onPress(cardDetail)} style={{ ...styles.cardButton, borderRightWidth: 1 }}>
-                                                <Text>{item?.label}</Text>
+                                                <Text style={{ fontSize: 10 }}>{item?.label}</Text>
                                             </TouchableOpacity>
                                         )
 
                                     } else {
                                         return (
                                             <TouchableOpacity onPress={() => item.onPress(cardDetail)} style={styles.cardButton}>
-                                                <Text>{item?.label}</Text>
+                                                <Text style={{ fontSize: 10 }}>{item?.label}</Text>
                                             </TouchableOpacity>
                                         )
                                     }
@@ -200,7 +204,7 @@ const styles = StyleSheet.create({
     },
     cardDetailText: {
         color: "#4F4F4F",
-        fontSize: 12,
+        fontSize: 10,
         marginLeft: 3
     },
     buttonContainer: {
