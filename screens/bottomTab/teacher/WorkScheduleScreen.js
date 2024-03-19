@@ -268,8 +268,8 @@ const styles = StyleSheet.create({
   },
   studentImage: {
     position: "relative",
-    width: WIDTH * 0.2,
-    height: WIDTH * 0.2,
+    width: WIDTH * 0.15,
+    height: WIDTH * 0.15,
     borderWidth: 3,
     borderRadius: 150,
     borderColor: "#888888",
