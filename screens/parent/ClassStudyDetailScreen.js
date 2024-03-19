@@ -142,22 +142,11 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                         }
 
                         {/* <Text style={{ marginLeft: 10 }}>Bài 11:  Que tính kỳ diệu</Text> */}
-                        <TouchableOpacity style={styles.startProgram} onPress={handleViewDetail}>
+                        {/* <TouchableOpacity style={styles.startProgram} onPress={handleViewDetail}>
                             <Text style={{ ...styles.boldText, color: "#4582E6" }}>Xem Chi Tiết</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                 }
-                <View style={styles.titleView}>
-                    <Text style={styles.title}>Mức độ hoàn thành khóa học:</Text>
-                </View>
-
-                <View style={styles.processBar}>
-                    <CircularProgressBar
-                        value={courseProgress.find(obj => obj?.progressName === "Learning")?.percentageProgress}
-                        inActiveStrokeColor={"#7388A95A"}
-                        activeStrokeColor={"#5BBF4A"}
-                    />
-                </View>
 
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Đánh giá của giáo viên:</Text>
@@ -167,113 +156,6 @@ export default function ClassStudyDetailScreen({ route, navigation }) {
                     <Text> Đánh giá của giáo viên:</Text>
                     <Text style={{ ...styles.boldText, color: "#2C8535" }}> Tốt</Text>
                 </View>
-
-
-                <View style={styles.titleView}>
-                    <Text style={styles.title}>Nội dung buổi học:</Text>
-                </View>
-
-                <ScrollView nestedScrollEnabled={true} style={styles.program}>
-                    {
-                        programEducation?.syllabusInformations?.topics?.map((item, index) => {
-                            return (
-                                <View
-                                    style={{
-                                        ...styles.mainTab,
-                                        backgroundColor: index % 2 === 1 ? "#C2D9FF" : "white"
-                                    }}
-                                    key={index}
-                                >
-                                    <TouchableOpacity
-                                        style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
-                                        onPress={() => {
-                                            setProgramEducation(prevProgramEducation => {
-                                                const updatedTopics = [...prevProgramEducation.syllabusInformations?.topics];
-                                                updatedTopics[index] = { ...updatedTopics[index], expand: !updatedTopics[index].expand };
-                                                return {
-                                                    ...prevProgramEducation,
-                                                    syllabusInformations: { ...prevProgramEducation.syllabusInformations, topics: updatedTopics }
-                                                };
-                                            });
-                                        }}
-                                    >
-                                        <Text style={styles.mainText}>
-                                            <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}  </Text>
-
-                                        </Text>
-
-                                        {
-                                            !item.expand ?
-                                                <Icon name={"plus"} color={"#241468"} size={25} />
-                                                :
-                                                <Icon name={"minus"} color={"#241468"} size={25} />
-                                        }
-                                    </TouchableOpacity>
-                                    {
-                                        (
-                                            !item.sessions[0] ?
-                                                item.expand === true &&
-                                                <Text style={styles.childText}>Không có buổi học</Text>
-                                                :
-                                                item.sessions.map((element, key) => {
-                                                    return (
-                                                        <React.Fragment key={key}>
-                                                            {
-                                                                item.expand === true &&
-                                                                <Text style={{ ...styles.childText, fontWeight: "700" }} key={key}>Buổi {element?.orderSession} ({formatDate(element?.date)})</Text>
-                                                            }
-                                                            {
-                                                                (
-                                                                    !element.contents[0] ?
-                                                                        item.expand === true &&
-                                                                        <Text style={styles.childText}>Không có chủ đề</Text>
-                                                                        :
-                                                                        element?.contents?.map((content, key) => {
-                                                                            count += 1
-                                                                            return (
-                                                                                <React.Fragment key={key}>
-                                                                                    {
-                                                                                        item.expand === true &&
-                                                                                        <Text style={{ ...styles.childText, marginLeft: 7, fontWeight: "400" }} key={key}>{count}. {content.content}</Text>
-                                                                                    }
-                                                                                    {
-                                                                                        item.expand === true &&
-                                                                                        content?.details?.map((detail, index) => {
-                                                                                            return (
-                                                                                                <Text style={{ ...styles.childText, marginLeft: 15, fontWeight: "300" }} key={index}>{count}.{index + 1} {detail}</Text>
-                                                                                            )
-                                                                                        })
-                                                                                    }
-                                                                                </React.Fragment>
-                                                                            )
-                                                                        })
-                                                                )
-                                                            }
-                                                        </React.Fragment>
-                                                    )
-                                                })
-                                        )
-                                    }
-                                    {/* {
-                                        (
-                                            !item.contents[0] ?
-                                                item.expand === true &&
-                                                <Text style={styles.childText}>Không có chủ đề</Text>
-                                                :
-                                                item.contents.map((element, key) => {
-                                                    count += 1
-                                                    return (
-                                                        item.expand === true &&
-                                                        <Text style={styles.childText} key={key}>{count}. {element.content}</Text>
-                                                    )
-                                                })
-                                        )
-                                    } */}
-                                </View>
-                            )
-                        })
-                    }
-                </ScrollView>
             </ScrollView>
         </>
     )
