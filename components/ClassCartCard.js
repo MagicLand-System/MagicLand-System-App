@@ -99,7 +99,8 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                     </View>
                     <View style={{ ...styles.flexColumn, width: "92%" }}>
                         <Icon name={"map-marker-radius"} color={"#241468"} size={18} />
-                        <Text style={styles.cardDetailText}>{cardDetail?.address}</Text>
+                        <Text style={styles.cardDetailText}>{cardDetail?.room ? "Phòng " + cardDetail?.room?.name + " - Tầng " + cardDetail?.room?.floor : cardDetail?.address}</Text>
+                        {/*+ " - " {cardDetail?.address} */}
                     </View>
                     {
                         buttonList &&
