@@ -16,7 +16,7 @@ const colorList = [
     "#DE9E71"
 ]
 
-export default function ClassCartCard({ cardDetail, check, index, onClick, background, priceHidden, timeType }) {
+export default function ClassCartCard({ cardDetail, check, index, onClick, background, priceHidden, timeType, buttonList }) {
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail?.classId) }}>
@@ -101,9 +101,34 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                         <Icon name={"map-marker-radius"} color={"#241468"} size={18} />
                         <Text style={styles.cardDetailText}>{cardDetail?.address}</Text>
                     </View>
+                    {
+                        buttonList &&
+                        <View style={styles.buttonContainer}>
+                            {
+                                buttonList?.map((item, key) => {
+                                    if (key === 0) {
+                                        return (
+                                            < TouchableOpacity onPress={() => item.onPress(cardDetail)} style={{ ...styles.cardButton, borderRightWidth: 1 }}>
+                                                <Text>{item?.label}</Text>
+                                            </TouchableOpacity>
+                                        )
+
+                                    } else {
+                                        return (
+                                            <TouchableOpacity onPress={() => item.onPress(cardDetail)} style={styles.cardButton}>
+                                                <Text>{item?.label}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    }
+                                })
+                            }
+
+
+                        </View>
+                    }
                 </View>
             </View>
-        </TouchableOpacity>
+        </TouchableOpacity >
     )
 }
 
@@ -163,6 +188,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     },
     cardDetail: {
+        position: "relative",
         width: "60%",
         paddingLeft: "5%"
     },
@@ -175,6 +201,22 @@ const styles = StyleSheet.create({
         color: "#4F4F4F",
         fontSize: 12,
         marginLeft: 3
+    },
+    buttonContainer: {
+        position: "absolute",
+        bottom: "5%",
+        right: "10%",
+        left: "10%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        borderWidth: 1,
+        borderRadius: 10
+    },
+    cardButton: {
+        padding: 5,
+        width: "50%",
+        justifyContent: "center",
+        alignItems: "center"
     },
 
     flexColumn: {
