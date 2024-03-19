@@ -134,6 +134,21 @@ export default function WorkScheduleScreen({ navigation }) {
     );
   };
 
+  const optionList = [
+    {
+      label: "Điểm danh",
+      onPress: (item) => {
+        navigation.push("AttendanceScreen", { classDetail: item, date: item?.date, slot: item?.slotOrder })
+      }
+    },
+    {
+      label: "Đánh giá",
+      onPress: (item) => {
+        navigation.push("RateStudentScreen", { classDetail: item, date: item?.date, noSession: item?.noSession })
+      }
+    },
+  ]
+
   return (
     <>
       <Header navigation={navigation} title={"Lich Làm Việc"} goback={() => navigation.navigate("Root")} />
@@ -201,7 +216,17 @@ export default function WorkScheduleScreen({ navigation }) {
             calendarType === "day" &&
             getCurrentDate({ dateString: dateSelected }).map((item, index) => {
               return (
-                <ClassCartCard cardDetail={item} check={false} index={index} priceHidden={true} timeType={"onDate"} onClick={() => handleClassNavigate(item)} background={"#C8A9F1"} key={index} />
+                <ClassCartCard
+                  cardDetail={item}
+                  check={false}
+                  index={index}
+                  priceHidden={true}
+                  timeType={"onDate"}
+                  onClick={() => handleClassNavigate(item)}
+                  background={"#C8A9F1"}
+                  buttonList={optionList}
+                  key={index}
+                />
               )
             })
           }

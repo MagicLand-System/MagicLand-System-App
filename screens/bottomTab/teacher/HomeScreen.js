@@ -56,6 +56,21 @@ export default function HomeScreen({ navigation }) {
     navigation.push("ClassOptionScreen", { classId: item?.classId, date: new Date(), slot: item?.slotOrder, noSession: item?.noSession })
   }
 
+  const optionList = [
+    {
+      label: "Điểm danh",
+      onPress: (item) => {
+        navigation.push("AttendanceScreen", { classDetail: item, date: item?.date, slot: item?.slotOrder })
+      }
+    },
+    {
+      label: "Đánh giá",
+      onPress: (item) => {
+        navigation.push("RateStudentScreen", { classDetail: item, date: item?.date, noSession: item?.noSession })
+      }
+    },
+  ]
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -83,7 +98,16 @@ export default function HomeScreen({ navigation }) {
         <ScrollView style={styles.classList}>
           {
             classList.map((item, key) => (
-              <ClassCartCard cardDetail={item} index={item?.id} check={false} priceHidden={true} timeType={"onDate"} onClick={() => hanldeViewWorkSchedule(item)} key={key} />
+              <ClassCartCard
+                cardDetail={item}
+                index={item?.id}
+                check={false}
+                priceHidden={true}
+                timeType={"onDate"}
+                onClick={() => hanldeViewWorkSchedule(item)}
+                buttonList={optionList}
+                key={key}
+              />
             ))
           }
         </ScrollView>
