@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import StudentView from '../../../components/StudentView';
-import ClassCard from '../../../components/ClassCard';
 import { getClassesByStudentId, getStudents, getschedule } from '../../../api/student';
 import ClassCartCard from '../../../components/ClassCartCard';
 import { useFocusEffect } from '@react-navigation/native';

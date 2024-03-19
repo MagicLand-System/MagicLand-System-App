@@ -161,7 +161,7 @@ export default function ClassRegisterScreen({ route, navigation }) {
                                 <View style={[index !== 0 ? styles.classDetail : ""]} key={index}>
                                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                         <Text style={styles.detailViewTitle}>Tên Khóa Học:</Text>
-                                        <Text style={styles.boldText}>{item?.className} </Text>
+                                        <Text style={styles.boldText}>{item?.courseName} </Text>
                                     </View>
                                     <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                         <Text style={styles.detailViewTitle}>Số Lượng Đăng Ký:</Text>

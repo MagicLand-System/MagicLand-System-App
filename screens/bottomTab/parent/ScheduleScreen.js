@@ -65,7 +65,6 @@ export default function ScheduleScreen({ navigation }) {
     if (!updateStudentList[index]?.schedule) {
       const response = await getschedule(id);
       if (response.status === 200) {
-        console.log(response.data);
         return response.data
       } else {
         console.log("Tải thông tin lớp học thất bại");
@@ -276,7 +275,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderLeftWidth: 5,
     borderLeftColor: "#4582E6",
-    marginVertical: 15,
+    marginVertical: HEIGHT * 0.01,
     alignItems: "center"
   },
   title: {

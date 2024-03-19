@@ -341,11 +341,14 @@ export default function ClassDetailScreen({ route, navigation }) {
                                 <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                                     Lịch học
                                 </Text>
-                                <View style={{ ...styles.classValue, width: "58%" }}>
+                                <View style={{ ...styles.classValue, width: "58%", flexDirection: "row" }}>
                                     {
                                         convertSchedulesToString(classDetail?.schedules)?.map((item, key) => {
                                             return (
-                                                <Text style={{ ...styles.classValue, width: "100%", textAlign: "left", color: "#3AA6B9" }} key={key}>Thứ {item}</Text>
+                                                <React.Fragment key={key}>
+                                                    <Text style={{ ...styles.classValue, width: "100%", textAlign: "left", color: "#3AA6B9" }}>Thứ {item?.dates}</Text>
+                                                    <Text style={{ ...styles.classValue, width: "100%", textAlign: "left", color: "#3AA6B9" }}> ({item?.time})</Text>
+                                                </React.Fragment>
                                             )
                                         })
                                     }
