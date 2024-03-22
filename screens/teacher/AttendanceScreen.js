@@ -28,6 +28,7 @@ export default function AttendanceScreen({ route, navigation }) {
 
     const loadStudentData = async () => {
         const response = await getAttendanceList(classDetail.classId)
+        console.log(classDetail.classId);
         if (response?.status === 200) {
             // const data = response?.data?.map((item) => {
             //     return {
@@ -40,6 +41,8 @@ export default function AttendanceScreen({ route, navigation }) {
 
             setStudentList(response?.data)
             setStudentTmpList(response?.data)
+        }else{
+
         }
     }
 

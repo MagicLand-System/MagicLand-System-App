@@ -8,8 +8,8 @@ import { constants } from '../../../constants/constants';
 
 import { getCourseRegisted, getCurrentQuiz } from "../../../api/student"
 
-import CartCard from '../../../components/CartCard';
 import SearchBar from '../../../components/SearchBar';
+import CourseDetailClassViewCard from '../../../components/CourseDetailClassViewCard';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -50,7 +50,7 @@ export default function StudentHomeScreen({ navigation }) {
         setSearchValue(value)
     }
     const handlePressCourse = (item) => {
-        console.log(item);
+        navigation.push("CourseSyllabus", { courseDetail: item })
     }
 
     return (
@@ -76,11 +76,13 @@ export default function StudentHomeScreen({ navigation }) {
             <View style={styles.titleView}>
                 <Text style={styles.title}>Các khóa học của bạn:</Text>
             </View>
-            {
-                resgistedCourse?.map((item, index) => {
-                    return <CartCard cardDetail={item} type={"COURSE"} check={false} index={index} onClick={() => handlePressCourse(item)} key={index} />
-                })
-            }
+            <ScrollView style={styles.courseList}>
+                {
+                    resgistedCourse?.map((item, index) => {
+                        return <CourseDetailClassViewCard cardDetail={item} type={"COURSE"} check={false} index={index} onClick={() => handlePressCourse(item)} key={index} />
+                    })
+                }
+            </ScrollView>
             <View style={styles.titleView}>
                 <Text style={styles.title}>Bài tập sắp đến hạn:</Text>
             </View>
@@ -124,11 +126,13 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         fontSize: 18,
     },
-
     searchBar: {
         width: WIDTH * 0.9,
         marginHorizontal: WIDTH * 0.05,
         marginTop: 20,
+    },
+    courseList: {
+        maxHeight: HEIGHT * 0.5
     },
 
     flexColumn: {

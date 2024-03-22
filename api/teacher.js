@@ -21,6 +21,17 @@ export const getAttendanceList = async (classId) => {
     }
 };
 
+export const getAttendanceListByDate = async (classId, date) => {
+
+    try {
+        const response = await api.get(`/api/v1/lectures/student/attendance?classId=${classId}&date=${date}`);
+        return response;
+    } catch (error) {
+        console.log("getAttendanceList in api/teacher.js error : ", error);
+        return error;
+    }
+};
+
 export const getEvaluatesList = async (classId, noSession) => {
     try {
         const response = await api.get(`/api/v1/lectures/students/get/evaluates?classId=${classId}&noSession=${noSession}`);

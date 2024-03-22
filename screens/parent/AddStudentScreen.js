@@ -7,11 +7,11 @@ import * as Yup from 'yup';
 import { CheckBox } from "@rneui/themed";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MainButton from "../../components/MainButton";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as ImagePicker from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
-import { addStudent } from "../../api/student";
+import { addStudent, getStudents } from "../../api/student";
 import { fetchUser } from "../../store/features/authSlice";
 import { Icon, Button } from "@rneui/themed";
 import { storage } from "../../firebase.config";
@@ -20,12 +20,14 @@ import { format } from 'date-fns';
 import LoadingModal from "../../components/LoadingModal"
 import { useNavigation } from "@react-navigation/native";
 import { callGoogleVisionAsync } from "../../api/google";
-import { fetchStudentList } from "../../store/features/studentSlice";
+import { fetchStudentList, updateStudentList } from "../../store/features/studentSlice";
+import { studentSelector } from "../../store/selector";
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export default function AddStudentScreen() {
+    const student = useSelector(studentSelector)
     const navigation = useNavigation()
     const [image, setImage] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -104,10 +106,8 @@ export default function AddStudentScreen() {
                             const imageRef = ref(storage, `childrens/${filename}`)
                             uploadBytes(imageRef, blob).then(() => {
                                 getDownloadURL(imageRef).then((url) => {
-                                    // console.log({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url });
                                     addStudent({ ...values, gender, dateOfBirth: dateOfBirth.toISOString(), avatarImage: url })
                                         .then(dispatch(fetchUser()))
-                                        // .then(dispatch(fetchStudentList()))
                                         .then(setLoading(false))
                                         .then(Alert.alert("Đăng kí thành công"))
                                         .then(navigation.goBack())
@@ -220,7 +220,7 @@ export default function AddStudentScreen() {
                     </>
                 )}
             </Formik>
-        </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView >
     )
 }
 const styles = StyleSheet.create({

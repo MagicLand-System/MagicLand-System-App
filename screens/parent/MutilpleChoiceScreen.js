@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Header from '../../components/header/Header'
 import CorrentAnswerModal from '../../components/modal/CorrentAnswerModal';
 import IncorrentAnswerModal from '../../components/modal/IncorrentAnswerModal';
-import { getQuizById } from '../../api/quiz';
+import { getQuizById, saveMultipleChoiceScore } from '../../api/quiz';
 import SpinnerLoading from "../../components/SpinnerLoading"
 
 import background1 from "../../assets/quiz/quizBackground1.jpg"
@@ -15,9 +15,11 @@ const HEIGHT = Dimensions.get('window').height;
 export default function MutilpleChoiceScreen({ route, navigation }) {
 
     const quizData = route?.params?.homework
+    const classDetail = route?.params?.homework
     const [totalMark, setTotalMark] = useState(0)
     const [homeworkData, setHomeworkData] = useState([])
     const [homeworkListIndex, setHomeworkListIndex] = useState(0)
+    const [answerList, setAnswerList] = useState([])
     const [loading, setLoading] = useState(true)
     const [modalVisible, setModalVisible] = useState({ correct: false, incorrect: false, chooseValue: "", score: 0, complete: false })
 
@@ -38,10 +40,10 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
     }
 
     const handleChooseAnswer = (item) => {
-        console.log(item);
         if (item?.score !== 0) {
             setTotalMark(totalMark + item?.score)
             setModalVisible({ ...modalVisible, correct: true, chooseValue: item?.answerDescription, score: item?.score })
+            saveAnswer(item)
         } else {
             setModalVisible({ ...modalVisible, incorrect: true, chooseValue: item?.answerDescription })
         }
@@ -50,10 +52,29 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
             if (homeworkListIndex !== homeworkData.length - 1) {
                 setHomeworkListIndex(homeworkListIndex + 1)
             } else {
-                setModalVisible({ ...modalVisible, complete: true });
+                handleSaveScore()
             }
             setModalVisible({ ...modalVisible, correct: false, incorrect: false, chooseValue: "" });
         }, 2000);
+    }
+
+    const saveAnswer = (item) => {
+        setAnswerList([
+            ...answerList,
+            {
+                questionId: homeworkData[homeworkListIndex].questionId,
+                answerId: item?.answerId
+            }
+        ])
+    }
+
+    const handleSaveScore = async () => {
+        const response = await saveMultipleChoiceScore(classDetail?.classId, quizData?.examId, answerList)
+        if (response?.status === 200) {
+            setModalVisible({ ...modalVisible, complete: true });
+        }else{
+            console.log("lưu bài làm thất bại");
+        }
     }
 
     return (
@@ -84,7 +105,7 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
                                     />
                                 </View>
                             }
-                            <View style={{...styles.flexColumnCenter, marginTop: 10}}>
+                            <View style={{ ...styles.flexColumnCenter, marginTop: 10 }}>
                                 {
                                     homeworkData[homeworkListIndex].answersMutipleChoicesInfor?.map((item, index) => {
                                         return (

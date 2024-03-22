@@ -3,8 +3,6 @@ import React from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { convertSchedulesToString, formatDate, formatPrice, getVnDay, shortedTime } from '../util/util';
 import defaultImage from "../assets/classCard/classicMath.png"
-import { courseSelector } from '../store/selector';
-import { useSelector } from 'react-redux';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -16,7 +14,7 @@ const colorList = [
     "#DE9E71"
 ]
 
-export default function ClassCartCard({ cardDetail, check, index, onClick, background, priceHidden, timeType, buttonList }) {
+export default function CourseDetailClassViewCard({ cardDetail, check, index, onClick, background, priceHidden, timeType, buttonList }) {
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => { onClick(cardDetail?.classId) }}>
@@ -57,14 +55,14 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                         style={styles.cardImageValue}
                     />
                     <View style={styles.classType}>
-                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600", fontSize: 12 }}>{cardDetail?.classSubject ? cardDetail?.classSubject : "Khoá Học"}</Text>
+                        <Text style={{ textTransform: "capitalize", color: "#4C6ED7", fontWeight: "600", fontSize: 12 }}>{cardDetail?.courseDetail?.subject ? cardDetail?.courseDetail?.subject : "Khoá Học"}</Text>
                     </View>
                 </View>
                 <View style={styles.cardDetail}>
                     <View style={{ ...styles.flexColumnBetween, marginTop: 5, paddingRight: 10 }}>
                         <Text style={{ ...styles.cardName, maxWidth: "75%" }} numberOfLines={1}>{
-                            cardDetail?.courseName ?
-                                cardDetail?.courseName
+                            cardDetail?.courseDetail?.courseName ?
+                                cardDetail?.courseDetail?.courseName
                                 :
                                 cardDetail?.className ?
                                     cardDetail?.className
@@ -75,14 +73,14 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                             <Text style={{ ...styles.cardName, color: "#241468", fontSize: 10 }}>{cardDetail?.coursePrice ? formatPrice(cardDetail?.coursePrice) : formatPrice(0)}đ</Text>
                         }
                     </View>
-                    <Text style={{ fontSize: 10, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.classCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.method}</Text></Text>
-                    <View style={styles.flexColumn}>
+                    <Text style={{ fontSize: 10, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.courseDetail?.subjectCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.courseDetail?.method}</Text></Text>
+                    <View style={{ ...styles.flexColumn, marginTop: 5 }}>
                         <Icon name={"calendar-check"} color={"#241468"} size={15} />
                         <Text style={styles.cardDetailText}>{formatDate(cardDetail?.startDate ? cardDetail?.startDate : cardDetail?.date)}</Text>
                     </View>
                     <View style={{ ...styles.flexColumn, marginVertical: 5 }}>
                         <Icon name={"clock-time-three-outline"} color={"#241468"} size={15} />
-                        {
+                        {/* {
                             timeType === "onDate" ?
                                 <Text style={styles.cardDetailText}>{getVnDay(cardDetail?.dayOfWeeks ? cardDetail?.dayOfWeeks : "Monday")} ( {shortedTime(cardDetail?.slot ? cardDetail?.slot?.startTime : cardDetail?.startTime)} - {shortedTime(cardDetail?.slot ? cardDetail?.slot?.endTime : cardDetail?.endTime)} )</Text>
                                 :
@@ -99,11 +97,11 @@ export default function ClassCartCard({ cardDetail, check, index, onClick, backg
                                         })
                                     }
                                 </View>
-                        }
+                        } */}
                     </View>
                     <View style={{ ...styles.flexColumn, width: "92%" }}>
-                        <Icon name={"map-marker-radius"} color={"#241468"} size={16} />
-                        <Text style={styles.cardDetailText}>{cardDetail?.room ? "Phòng " + cardDetail?.room?.name + " - Tầng " + cardDetail?.room?.floor : cardDetail?.address}</Text>
+                        {/* <Icon name={"map-marker-radius"} color={"#241468"} size={16} /> */}
+                        {/* <Text style={styles.cardDetailText}>{cardDetail?.room ? "Phòng " + cardDetail?.room?.name + " - Tầng " + cardDetail?.room?.floor : cardDetail?.address}</Text> */}
                         {/*+ " - " {cardDetail?.address} */}
                     </View>
                     {

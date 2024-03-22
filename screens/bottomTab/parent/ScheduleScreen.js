@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import StudentView from '../../../components/StudentView';
 import { CalendarProvider, Calendar, WeekCalendar, Agenda, LocaleConfig } from 'react-native-calendars';
 import { useSelector } from 'react-redux';
-import { userSelector } from '../../../store/selector';
+import { studentSelector, userSelector } from '../../../store/selector';
 import Header from '../../../components/header/Header';
 import { formatDefaultSelectedDate } from '../../../util/util';
 import { getStudents, getschedule } from '../../../api/student';
@@ -27,7 +27,8 @@ export default function ScheduleScreen({ navigation }) {
   const [calendarType, setCalendarType] = useState("month")
 
   const user = useSelector(userSelector);
-
+  const student = useSelector(studentSelector);
+  console.log(student?.length);
   LocaleConfig.locales['fr'] = {
     // 'Tháng 1','Tháng 2','Tháng 3','Tháng 5','Tháng 7','Tháng 9','Tháng 11','Tháng 12'
     monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 5', 'Tháng 7', 'Tháng 9', 'Tháng 11', 'Tháng 12'],
@@ -170,7 +171,7 @@ export default function ScheduleScreen({ navigation }) {
           }
           <View style={styles.studentView}>
             <TouchableOpacity style={styles.studentImage} onPress={hanldeAddStudent}>
-              <Icon name={"account-plus"} color={"#5A5A5A"} size={50} />
+              <Icon name={"account-plus"} color={"#5A5A5A"} size={30} />
             </TouchableOpacity>
             <View style={styles.studentNameView}>
               <Text style={styles.studentName}>
@@ -184,7 +185,7 @@ export default function ScheduleScreen({ navigation }) {
         </View>
 
         <View style={styles.calendarView}>
-          <View style={{ ...styles.flexColumnBetween, marginVertical: 20 }}>
+          <View style={{ ...styles.flexColumnBetween, marginVertical: 5 }}>
             <Text style={{ ...styles.boldText, fontSize: 10 }}>{formatScheduleDate(dateSelected)}</Text>
             <View style={{ ...styles.flexColumn, borderWidth: 1, borderRadius: 10, overflow: "hidden" }}>
               <TouchableOpacity style={{ ...styles.changeTypeButton, backgroundColor: calendarType === "month" ? "#241468" : "white" }} onPress={() => { setCalendarType("month") }}>
@@ -401,13 +402,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   noteTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "600",
     marginBottom: 10,
   },
   exampleView: {
-    width: "8%",
-    height: 10,
+    width: 7,
+    height: 7,
     borderRadius: 15,
     marginRight: 10
   },

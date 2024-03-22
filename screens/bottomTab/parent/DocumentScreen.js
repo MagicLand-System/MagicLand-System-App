@@ -7,9 +7,9 @@ import { getClassesByStudentId, getStudents, getschedule } from '../../../api/st
 import ClassCartCard from '../../../components/ClassCartCard';
 import { useFocusEffect } from '@react-navigation/native';
 import { studentSelector, userSelector } from '../../../store/selector';
-import { useSelector } from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
 import SpinnerLoading from '../../../components/SpinnerLoading';
+import { fetchStudentList } from '../../../store/features/studentSlice';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -24,10 +24,12 @@ export default function DocumentScreen({ navigation }) {
   const [type, setType] = useState("PROGRESSING")
   const [animation] = useState(new Animated.Value(0));
 
+  const dispatch = useDispatch()
+
   useFocusEffect(
     React.useCallback(() => {
       loadStudentData()
-      console.log(student.length);
+      console.log("document Student length ", student?.length);
     }, [])
   );
 
@@ -109,7 +111,6 @@ export default function DocumentScreen({ navigation }) {
     setClassList(scheduleData)
   };
 
-
   const handleClassNavigate = (classDetail) => {
     const student = studentList?.find(student => student.check === true)
     navigation.push("ClassDetailScreen", { classDetail: classDetail, student: student })
@@ -117,15 +118,6 @@ export default function DocumentScreen({ navigation }) {
 
   const hanldeAddStudent = () => {
     navigation.push("AddStudent")
-  }
-
-  const getClassList = () => {
-    const updateArray = studentList?.filter(item => item.check === true)
-    if (!updateArray[0]) {
-      selectStudent(studentList[0].id)
-      return studentList[0].schedule
-    }
-    return updateArray[0] ? updateArray[0].schedule ? updateArray[0].schedule : [] : []
   }
 
   const filterClassList = (array) => {
@@ -172,7 +164,7 @@ export default function DocumentScreen({ navigation }) {
         }
         <View style={styles.studentView}>
           <TouchableOpacity style={styles.studentImage} onPress={hanldeAddStudent}>
-            <Icon name={"account-plus"} color={"#5A5A5A"} size={50} />
+            <Icon name={"account-plus"} color={"#5A5A5A"} size={30} />
           </TouchableOpacity>
           <View style={styles.studentNameView}>
             <Text style={styles.studentName}>
@@ -363,14 +355,10 @@ const styles = StyleSheet.create({
   classItemList: {
     maxHeight: HEIGHT * 0.42,
     padding: 10,
-    // paddingHorizontal: 10,
     borderWidth: 1,
     borderRadius: 10,
     marginTop: 10,
-    // justifyContent: "center",
-    // alignItems: "center",
     zIndex: 99,
-    // borderTopWidth: 0,
   },
 
   flexColumnAround: {
