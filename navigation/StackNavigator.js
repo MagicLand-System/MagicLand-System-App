@@ -47,9 +47,11 @@ import ChoosePairScreen from '../screens/parent/ChoosePairScreen';
 
 import AttendanceScreen from '../screens/teacher/AttendanceScreen';
 import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
+import TeacherCourseSyllabus from '../screens/teacher/TeacherCourseSyllabus';
 
 import StudentHomeScreen from '../screens/bottomTab/student/StudentHomeScreen';
 import StudentScoreScreen from '../screens/bottomTab/student/StudentScoreScreen';
+import CourseSyllabus from '../screens/student/CourseSyllabus';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
@@ -151,6 +153,7 @@ const StackNavigator = () => {
                     />
                     <Stack.Screen name="StudentHomeScreen" component={StudentHomeScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="StudentScoreScreen" component={StudentScoreScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CourseSyllabus" component={CourseSyllabus} options={{ headerShown: false }} />
                 </>
 
             ) : (

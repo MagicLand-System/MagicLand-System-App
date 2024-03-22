@@ -8,7 +8,7 @@ const initialState = {
 };
 
 export const fetchStudentList = createAsyncThunk(
-    'auth/fetch_student_list',
+    'student/fetch_student_list',
     async (_, thunkAPI) => {
         try {
             const response = await getStudents();
@@ -21,21 +21,15 @@ export const fetchStudentList = createAsyncThunk(
 );
 
 const studentSlice = createSlice({
-    name: 'auth',
+    name: 'student',
     initialState: initialState,
     reducers: {
-        updateStudentList: async (state, action) => {
-            try {
-                console.log(action.payload)
-                state.loading = true
-                const students = fetchStudentList()
-                state.studentList = students;
-                state.loading = false
-            } catch (error) {
-                state.loading = false
-                console.log("fail to update student list");
-            }
-        },
+        updateStudentList: (state, action) => {
+            state.studentList = action.payload;
+            console.log("state : ", state);
+            console.log("action : ", action);
+            console.log("state Length : ", state.studentList.length);
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(fetchStudentList.pending, (state) => {
@@ -45,6 +39,7 @@ const studentSlice = createSlice({
         builder.addCase(fetchStudentList.fulfilled, (state, action) => {
             state.loading = false;
             state.studentList = action.payload;
+
         });
 
         builder.addCase(fetchStudentList.rejected, (state, action) => {

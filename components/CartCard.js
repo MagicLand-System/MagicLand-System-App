@@ -106,7 +106,7 @@ export default function CartCard({ cardDetail, type, check, index, onClick, back
 
 const styles = StyleSheet.create({
     container: {
-        width: WIDTH * 0.8,
+        width: WIDTH * 0.9,
         maxHeight: HEIGHT * 0.2,
         position: "relative",
         flexDirection: "row",

@@ -78,7 +78,9 @@ export default function WorkScheduleScreen({ navigation }) {
 
   const handleClassNavigate = (classDetail) => {
     // console.log(classDetail);
-    navigation.push("ClassOptionScreen", { classId: classDetail?.classId, date: dateSelected, slot: classDetail?.slot?.slotOrder })
+    // navigation.push("ClassOptionScreen", { classId: classDetail?.classId, date: dateSelected, slot: classDetail?.slot?.slotOrder })
+    // navigation.push("TeacherCourseSyllabus", { classId: classDetail?.classId, date: dateSelected, slot: classDetail?.slot?.slotOrder })
+    console.log(classDetail);
   }
 
   const getCurrentDate = (date) => {

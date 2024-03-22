@@ -230,7 +230,6 @@ export default function ClassDetailScreen({ route, navigation }) {
 
     const loadSyllabusData = async () => {
         const response = await getSyllabus(classDetail?.courseId, classDetail?.classId)
-        console.log(classDetail?.courseId, classDetail?.classId);
         if (response.status === 200) {
             setProgramEducation(response?.data)
         } else {
@@ -239,11 +238,11 @@ export default function ClassDetailScreen({ route, navigation }) {
     }
 
     const loadQuizData = async () => {
-        const response = await getQuizByClassid(classDetail?.classId)
+        const response = await getQuizByClassid(classDetail?.classId, student?.id)
         if (response.status === 200) {
             setQuizList(response?.data)
         } else {
-            console.log("getSyllabus fail : ", response.response?.data);
+            console.log("getQuiz data fail : ", response.response?.data);
         }
     }
 
@@ -341,14 +340,14 @@ export default function ClassDetailScreen({ route, navigation }) {
                                 <Text style={{ ...styles.boldText, width: "38%", textAlign: "right", color: "#707070" }}>
                                     Lịch học
                                 </Text>
-                                <View style={{ ...styles.classValue, width: "58%", flexDirection: "row" }}>
+                                <View style={{ ...styles.classValue, width: "58%" }}>
                                     {
                                         convertSchedulesToString(classDetail?.schedules)?.map((item, key) => {
                                             return (
-                                                <React.Fragment key={key}>
-                                                    <Text style={{ ...styles.classValue, width: "100%", textAlign: "left", color: "#3AA6B9" }}>Thứ {item?.dates}</Text>
-                                                    <Text style={{ ...styles.classValue, width: "100%", textAlign: "left", color: "#3AA6B9" }}> ({item?.time})</Text>
-                                                </React.Fragment>
+                                                <View style={{ width: "100%", flexDirection: "row" }} key={key}>
+                                                    <Text style={{ ...styles.classValue, textAlign: "left", color: "#3AA6B9" }}>Thứ {item?.dates}</Text>
+                                                    <Text style={{ ...styles.classValue, textAlign: "left", color: "#3AA6B9" }}> ({item?.time})</Text>
+                                                </View>
                                             )
                                         })
                                     }
@@ -673,7 +672,8 @@ const styles = StyleSheet.create({
     },
     classValue: {
         color: "#000000",
-        fontWeight: "600"
+        fontWeight: "600",
+        fontSize: 12
     },
     program: {
         width: WIDTH * 0.9,

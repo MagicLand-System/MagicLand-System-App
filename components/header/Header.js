@@ -22,7 +22,7 @@ export default function Header({ goback, navigation, background, title }) {
                     goback ? goback() : navigation?.pop();
                 }}
             >
-                <Icon name={"close"} color={"white"} size={28} />
+                <Icon name={"arrow-back-ios"} color={"white"} size={28} />
             </TouchableOpacity>
             <Text style={styles.headerTitle} numberOfLines={1}>
                 {title}
@@ -39,13 +39,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         padding: 5,
+        paddingTop: HEIGHT * 0.03
     },
     backButton: {
         position: "absolute",
         width: 70,
         height: 50,
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-end",
         left: 0,
     },
     headerTitle: {
