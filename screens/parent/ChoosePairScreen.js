@@ -18,6 +18,7 @@ const HEIGHT = Dimensions.get('window').height;
 export default function ChoosePairScreen({ route, navigation }) {
 
     const quizData = route?.params?.homework
+    const classDetail = route?.params?.classDetail
     const [totalMark, setTotalMark] = useState(0)
     const [homeworkData, setHomeworkData] = useState([])
     const [homeworkListIndex, setHomeworkListIndex] = useState(0)

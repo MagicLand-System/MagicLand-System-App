@@ -43,13 +43,12 @@ export default function CourseSyllabus({ route, navigation }) {
         }
     }
 
-    const mergeData = (quizData) => {
-        const mergedData = addExamsToSessions(courseSyllabus?.syllabusInformations, quizData)
-        console.log(mergedData?.topics[mergedData.topics.length - 1]);
-    }
-
     const findQuizByDate = (date) => {
         return quizList.find(obj => compareDates(obj.date, date))
+    }
+
+    const handleDoExam = (exam) => {
+        navigation.push("QuizDetailScreen", { quizData: exam, classInfor: courseItem?.classOpeningInfors[0] })
     }
 
     return (
@@ -135,12 +134,10 @@ export default function CourseSyllabus({ route, navigation }) {
                                                             }
                                                             {
                                                                 item.expand === true && findQuizByDate(element?.date) &&
-                                                                <>
-                                                                    <Text style={{ ...styles.childText, fontWeight: "400", marginLeft: 7, marginVertical: 7 }} >Bài Tập</Text>
-                                                                    {
-                                                                        console.log(findQuizByDate(element?.date))
-                                                                    }
-                                                                </>
+                                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => { handleDoExam(findQuizByDate(element?.date)) }}>
+                                                                    <Icon name={"folder"} color={"#241468"} size={25} />
+                                                                    <Text style={{ ...styles.childText, fontWeight: "400", marginLeft: 7, marginVertical: 7, color: "#241468" }} >{findQuizByDate(element?.date).examName} ({formatDate(element?.date)})</Text>
+                                                                </TouchableOpacity>
                                                             }
                                                         </React.Fragment>
                                                     )

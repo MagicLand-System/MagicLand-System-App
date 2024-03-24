@@ -8,6 +8,7 @@ import SpinnerLoading from "../../components/SpinnerLoading"
 
 import background1 from "../../assets/quiz/quizBackground1.jpg"
 import background2 from "../../assets/quiz/quizBackground2.jpg"
+import ProcessBar from '../../components/ProcessBar';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -15,7 +16,7 @@ const HEIGHT = Dimensions.get('window').height;
 export default function MutilpleChoiceScreen({ route, navigation }) {
 
     const quizData = route?.params?.homework
-    const classDetail = route?.params?.homework
+    const classDetail = route?.params?.classDetail
     const [totalMark, setTotalMark] = useState(0)
     const [homeworkData, setHomeworkData] = useState([])
     const [homeworkListIndex, setHomeworkListIndex] = useState(0)
@@ -26,6 +27,12 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
     useEffect(() => {
         loadQuizData()
     }, [route?.params?.homework])
+
+    useEffect(() => {
+        if (!loading && answerList.length === homeworkData.length) {
+            handleSaveScore()
+        }
+    }, [answerList])
 
     const loadQuizData = async () => {
         setLoading(true)
@@ -51,8 +58,6 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
         setTimeout(() => {
             if (homeworkListIndex !== homeworkData.length - 1) {
                 setHomeworkListIndex(homeworkListIndex + 1)
-            } else {
-                handleSaveScore()
             }
             setModalVisible({ ...modalVisible, correct: false, incorrect: false, chooseValue: "" });
         }, 2000);
@@ -70,9 +75,11 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
 
     const handleSaveScore = async () => {
         const response = await saveMultipleChoiceScore(classDetail?.classId, quizData?.examId, answerList)
+        console.log(classDetail?.classId, quizData?.examId, answerList);
         if (response?.status === 200) {
             setModalVisible({ ...modalVisible, complete: true });
-        }else{
+            navigation.pop()
+        } else {
             console.log("lưu bài làm thất bại");
         }
     }
@@ -138,6 +145,15 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
                                 }
                             </View>
                         </View>
+                        <View style={styles.processBar}>
+                            <ProcessBar
+                                leftLable={homeworkListIndex}
+                                leftWidth={WIDTH * (homeworkListIndex / homeworkData?.length)}
+                                rightLabel={homeworkData?.length - homeworkListIndex}
+                                rightWidth={WIDTH * ((homeworkData?.length - homeworkListIndex + 1) / homeworkData?.length)}
+                                mainLabel={homeworkData?.length}
+                            />
+                        </View>
                     </ImageBackground>
             }
             <CorrentAnswerModal visible={modalVisible.correct} score={modalVisible?.score} />
@@ -183,7 +199,13 @@ const styles = StyleSheet.create({
         marginHorizontal: WIDTH * 0.15,
         marginVertical: WIDTH * 0.05
     },
-
+    processBar: {
+        position: "absolute",
+        paddingBottom: WIDTH * 0.15,
+        paddingTop: 20,
+        bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.5)",
+    },
 
     flexColumnAround: {
         width: WIDTH,
