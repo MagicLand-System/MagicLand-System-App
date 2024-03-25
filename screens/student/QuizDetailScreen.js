@@ -30,9 +30,10 @@ export default function QuizDetailScreen({ route, navigation }) {
     }
 
     const handleDoExam = (exam) => {
-        if (!checkDoExamTimeValid(exam?.examStartTime, exam?.examEndTime)) {
-            showToast("Thông báo", `Bài tập đang đóng`, "warning");
-        } else if (exam?.attemptLeft === 0) {
+        // if (!checkDoExamTimeValid(exam?.examStartTime, exam?.examEndTime)) {
+        //     showToast("Thông báo", `Bài tập đang đóng`, "warning");
+        // } else 
+        if (exam?.attemptLeft === 0) {
             showToast("Thông báo", `Bạn đã hết lượt làm bài`, "warning");
         } else {
             if (exam?.quizType === "multiple-choice") {
