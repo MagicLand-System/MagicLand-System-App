@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -62,7 +62,18 @@ export default function ExamHistoryScreen({ route, navigation }) {
                                             <Text style={styles.boldText}>1</Text>
                                         </View>
                                         <View style={[styles.contentTable, styles.flexColumnBetween]}>
-                                            <Text style={{ ...styles.boldText, width: "80%", color: getColumnColor(item) ? "#2C8535" : "#EA6D6D" }}>{item?.questionDescription}</Text>
+                                            <View width style={{ width: "80%" }}>
+                                                <Text style={{ ...styles.boldText, color: getColumnColor(item) ? "#2C8535" : "#EA6D6D" }}>{item?.questionDescription}</Text>
+                                                {
+                                                    item?.questionImage &&
+                                                    <Image
+                                                        source={{ uri: item?.questionImage }}
+                                                        resizeMode="cover"
+                                                        style={{ width: WIDTH * 0.4, height: WIDTH * 0.4 }}
+                                                    />
+                                                }
+                                            </View>
+
                                             {/* close-box-outline checkbox-marked-outline*/}
                                             {
                                                 getColumnColor(item) ?
@@ -160,7 +171,7 @@ const styles = StyleSheet.create({
     flexColumnBetween: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        // alignItems: "center"
     },
     flexColumnAround: {
         flexDirection: "row",
