@@ -141,8 +141,9 @@ export default function CourseSyllabus({ route, navigation }) {
                                                                     {
                                                                         item.expand === true && findQuizByDate(element?.date) &&
                                                                         <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => { handleDoExam(findQuizByDate(element?.date)) }}>
+                                                                            
                                                                             <Icon name={"folder"} color={"#241468"} size={25} />
-                                                                            <Text style={{ ...styles.childText, fontWeight: "400", marginLeft: 7, marginVertical: 7, color: "#241468" }} >{findQuizByDate(element?.date).examName} ({formatDate(element?.date)})</Text>
+                                                                            <Text style={{ ...styles.childText, fontWeight: "400", marginLeft: 7, marginVertical: 7, color: "#241468" }} >{findQuizByDate(element?.date).examName} {findQuizByDate(element?.date)?.score && "(Hoàn Thành)"}</Text>
                                                                         </TouchableOpacity>
                                                                     }
                                                                 </React.Fragment>

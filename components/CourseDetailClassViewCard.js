@@ -76,28 +76,26 @@ export default function CourseDetailClassViewCard({ cardDetail, check, index, on
                     <Text style={{ fontSize: 10, color: "#4F4F4F", marginVertical: 5 }}>Lớp: {cardDetail?.courseDetail?.subjectCode} - <Text style={{ fontSize: 12, color: "#4F4F4F", textTransform: "capitalize" }}>{cardDetail?.courseDetail?.method}</Text></Text>
                     <View style={{ ...styles.flexColumn, marginTop: 5 }}>
                         <Icon name={"calendar-check"} color={"#241468"} size={15} />
-                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.startDate ? cardDetail?.startDate : cardDetail?.date)}</Text>
+                        <Text style={styles.cardDetailText}>{formatDate(cardDetail?.classOpeningInfors[0]?.openingDay)}</Text>
                     </View>
                     <View style={{ ...styles.flexColumn, marginVertical: 5 }}>
                         <Icon name={"clock-time-three-outline"} color={"#241468"} size={15} />
-                        {/* {
-                            timeType === "onDate" ?
-                                <Text style={styles.cardDetailText}>{getVnDay(cardDetail?.dayOfWeeks ? cardDetail?.dayOfWeeks : "Monday")} ( {shortedTime(cardDetail?.slot ? cardDetail?.slot?.startTime : cardDetail?.startTime)} - {shortedTime(cardDetail?.slot ? cardDetail?.slot?.endTime : cardDetail?.endTime)} )</Text>
-                                :
-                                <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                                    {
-                                        convertSchedulesToString(cardDetail?.schedules)?.map((item, key) => {
-                                            return (
-                                                <React.Fragment key={key}>
-                                                    <Text style={styles.cardDetailText}>Thứ {item?.dates}</Text>
-                                                    <Text style={styles.cardDetailText}> ({item?.time})</Text>
-                                                </React.Fragment>
+                        {/* {console.log(cardDetail?.classOpeningInfors[0]?.schedules)} */}
+                        {
+                            <View style={{ flexDirection: "column" }}>
+                                {
+                                    convertSchedulesToString(cardDetail?.classOpeningInfors[0]?.schedules)?.map((item, key) => {
+                                        return (
+                                            <View style={{ flexDirection: "row", flexWrap: "wrap" }} key={key}>
+                                                <Text style={styles.cardDetailText}>Thứ {item?.dates}</Text>
+                                                <Text style={styles.cardDetailText}> ({item?.time})</Text>
+                                            </View>
 
-                                            )
-                                        })
-                                    }
-                                </View>
-                        } */}
+                                        )
+                                    })
+                                }
+                            </View>
+                        }
                     </View>
                     <View style={{ ...styles.flexColumn, width: "92%" }}>
                         {/* <Icon name={"map-marker-radius"} color={"#241468"} size={16} /> */}
