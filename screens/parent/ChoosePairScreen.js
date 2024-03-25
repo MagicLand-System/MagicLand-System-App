@@ -49,7 +49,6 @@ export default function ChoosePairScreen({ route, navigation }) {
     const loadQuizData = async () => {
         setLoading(true)
         const response = await getQuizById(quizData?.examId, quizData?.examPart)
-
         if (response.status === 200) {
             setHomeworkData(response?.data)
             setLoading(false)
@@ -84,6 +83,7 @@ export default function ChoosePairScreen({ route, navigation }) {
 
     const checkMatch = () => {
         if (choosedCardIdList[0]?.numberCoupleIdentify === choosedCardIdList[1]?.numberCoupleIdentify) {
+            console.log(choosedCardIdList[0]?.numberCoupleIdentify, choosedCardIdList[1]?.numberCoupleIdentify);
             const index1 = homeworkData[homeworkListIndex].anwserFlashCarsInfor?.findIndex(obj => obj?.cardId === choosedCardIdList[0]?.cardId);
             const index2 = homeworkData[homeworkListIndex].anwserFlashCarsInfor?.findIndex(obj => obj?.cardId === choosedCardIdList[1]?.cardId);
             if (index1 !== -1 && index2 !== -1) {
@@ -99,6 +99,7 @@ export default function ChoosePairScreen({ route, navigation }) {
                     console.log(homeworkData[homeworkListIndex + 1]);
                     console.log(homeworkListIndex);
                     console.log("complete quiz");
+                    handleSaveScore()
                 }
             }
         } else {
@@ -120,12 +121,11 @@ export default function ChoosePairScreen({ route, navigation }) {
                 <Icon key={i} name={"heart-outline"} color={"black"} size={28} />
             );
         }
-        return hearts.reverse();
+        return hearts;
     };
 
     const handleSaveScore = async () => {
         const response = await saveChoosePairScore(classDetail?.classId, quizData?.examId, totalMark)
-        console.log(classDetail?.classId, quizData?.examId, totalMark);
         if (response?.status === 200) {
             setModalVisible({ ...modalVisible, complete: true });
             navigation.pop()
@@ -155,13 +155,13 @@ export default function ChoosePairScreen({ route, navigation }) {
                         <Text style={styles.correctAnswer}>{homeworkData[homeworkListIndex].questionDescription}</Text>
                         <View style={styles.cardList}>
                             {
-                                homeworkData[homeworkListIndex].anwserFlashCarsInfor?.map((item, index) => {
+                                homeworkData[homeworkListIndex].anwserFlashCarsInfor?.map((item, key) => {
                                     return (
                                         <TouchableOpacity
                                             style={[styles.card, choosedCardIdList.includes(item) && styles.choosedCard, item?.choosed && styles.correctedCard]}
                                             onPress={() => { !item?.choosed && handleChooseCard(item) }}
                                             activeOpacity={item?.choosed ? 0 : 0.5}
-                                            key={index}
+                                            key={key}
                                         >
                                             {
                                                 checkIsLink(item?.cardImage) ?
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     },
     correctAnswer: {
         width: WIDTH * 0.9,
-        fontSize: 25,
+        fontSize: 20,
         fontWeight: "600",
         padding: 20,
         textAlign: "center",

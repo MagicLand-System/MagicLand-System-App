@@ -98,7 +98,7 @@ export default function ExamHistoryScreen({ route, navigation }) {
                 </View>
                 <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.8, marginHorizontal: WIDTH * 0.1, marginVertical: 10 }}>
                     <Text style={styles.boldText}>Tổng điểm:</Text>
-                    <Text style={styles.boldText}>{quizData?.totalScore}  điểm</Text>
+                    <Text style={styles.boldText}>{quizData?.score}  điểm</Text>
                 </View>
                 <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.8, marginHorizontal: WIDTH * 0.1, marginVertical: 10 }}>
                     <Text style={styles.boldText}>Số lần làm:</Text>
