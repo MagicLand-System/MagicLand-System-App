@@ -34,6 +34,7 @@ import StudentHomeScreen from '../screens/bottomTab/student/StudentHomeScreen';
 import StudentScoreScreen from '../screens/bottomTab/student/StudentScoreScreen';
 import CourseSyllabus from '../screens/student/CourseSyllabus';
 import QuizDetailScreen from '../screens/student/QuizDetailScreen';
+import ExamHistoryScreen from '../screens/student/ExamHistoryScreen';
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { constants } from '../constants/constants';
@@ -132,6 +133,7 @@ const BottomTabNavigator = () => {
 
             <Tab.Screen name="CourseSyllabus" component={CourseSyllabus} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="QuizDetailScreen" component={QuizDetailScreen} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="ExamHistoryScreen" component={ExamHistoryScreen} options={{ tabBarButton: () => null }} />
 
         </Tab.Navigator>
     )

@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Header from '../../components/header/Header'
 import CorrentAnswerModal from '../../components/modal/CorrentAnswerModal';
 import IncorrentAnswerModal from '../../components/modal/IncorrentAnswerModal';
-import { getQuizById } from '../../api/quiz';
+import { getQuizById, saveChoosePairScore } from '../../api/quiz';
 import SpinnerLoading from "../../components/SpinnerLoading"
 import CustomToast from "../../components/CustomToast";
 
@@ -38,6 +38,13 @@ export default function ChoosePairScreen({ route, navigation }) {
         }
     }, [choosedCardIdList])
 
+    useEffect(() => {
+        if (wrongAmount === 0) {
+            setLoading(true)
+            handleSaveScore()
+            setLoading(false)
+        }
+    }, [wrongAmount])
 
     const loadQuizData = async () => {
         setLoading(true)
@@ -55,14 +62,23 @@ export default function ChoosePairScreen({ route, navigation }) {
         if (wrongAmount === 0) {
             showToast("Thông báo", `Bạn đã hết lượt làm bài`, "warning");
         } else {
-            setChoosedCardIdList((prevChoosedCardIdList) => {
-                const index = prevChoosedCardIdList.indexOf(card?.cardId);
-                if (index !== -1) {
-                    return prevChoosedCardIdList.filter((card) => card?.cardId !== card?.cardId);
-                } else {
-                    return [...prevChoosedCardIdList, card];
-                }
-            });
+            if (!choosedCardIdList.includes(card)) {
+                setChoosedCardIdList(prevChoosedCardIdList => {
+                    const index = prevChoosedCardIdList.findIndex(item => item.cardId === card?.cardId);
+                    if (index !== -1) {
+                        // Card already exists, so remove it
+                        const updatedList = [...prevChoosedCardIdList];
+                        updatedList.splice(index, 1);
+                        return updatedList;
+                    } else {
+                        // Card doesn't exist, so add it
+                        return [...prevChoosedCardIdList, card];
+                    }
+                });
+            } else {
+                // Remove card from choosedCardIdList
+                setChoosedCardIdList(prevChoosedCardIdList => prevChoosedCardIdList.filter(item => item.cardId !== card?.cardId));
+            }
         }
     };
 
@@ -99,17 +115,24 @@ export default function ChoosePairScreen({ route, navigation }) {
         const hearts = [];
         for (let i = 0; i < 3; i++) {
             hearts.push((i + 1) <= amount ?
-                <View style={{ marginRight: 10 }}>
-                    <Icon key={i} name={"cards-heart"} color={"red"} size={28} />
-                </View>
+                <Icon key={i} name={"cards-heart"} color={"red"} size={28} />
                 :
-                <View style={{ marginRight: 10 }}>
-                    <Icon key={i} name={"heart-outline"} color={"black"} size={28} />
-                </View>
+                <Icon key={i} name={"heart-outline"} color={"black"} size={28} />
             );
         }
         return hearts.reverse();
     };
+
+    const handleSaveScore = async () => {
+        const response = await saveChoosePairScore(classDetail?.classId, quizData?.examId, totalMark)
+        console.log(classDetail?.classId, quizData?.examId, totalMark);
+        if (response?.status === 200) {
+            setModalVisible({ ...modalVisible, complete: true });
+            navigation.pop()
+        } else {
+            console.log("lưu bài làm thất bại");
+        }
+    }
 
     return (
         <>
@@ -121,10 +144,12 @@ export default function ChoosePairScreen({ route, navigation }) {
                     <ImageBackground
                         showsVerticalScrollIndicator={false}
                         style={styles.container}
-                        source={background1}
+                        source={Math.random() % 2 === 0 ? background1 : background2}
                     >
-                        <View style={{ ...styles.flexColumnAround, marginHorizontal: WIDTH * 0.22, width: WIDTH * 0.7 }}>
-                            {getHeartLeft(wrongAmount)}
+                        <View style={{ ...styles.flexColumnBetween, marginHorizontal: WIDTH * 0.05, width: WIDTH * 0.9 }}>
+                            <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.2 }}>
+                                {getHeartLeft(wrongAmount)}
+                            </View>
                             <Text style={styles.questionMark}>{totalMark} Điểm</Text>
                         </View>
                         <Text style={styles.correctAnswer}>{homeworkData[homeworkListIndex].questionDescription}</Text>
@@ -163,7 +188,6 @@ const styles = StyleSheet.create({
         flex: 1
     },
     questionMark: {
-        width: WIDTH,
         padding: 20,
         textAlign: "right",
         fontWeight: "600",
@@ -215,7 +239,6 @@ const styles = StyleSheet.create({
     },
 
     flexColumnAround: {
-        width: WIDTH,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-around",

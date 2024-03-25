@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { userSelector } from '../../store/selector';
 import { getQuizByClassid } from '../../api/quiz';
 import { compareDates, formatDate } from '../../util/util';
+import SpinnerLoading from '../../components/SpinnerLoading';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -23,21 +24,22 @@ export default function CourseSyllabus({ route, navigation }) {
     let count = 0
 
     useEffect(() => {
-        setLoading(true)
         loadCourseSyllabus()
-        setLoading(false)
     }, [route?.params?.courseDetail])
 
     const loadCourseSyllabus = async () => {
+        setLoading(true)
         const response = await getSyllabus(courseItem?.courseId, courseItem?.classOpeningInfors[0]?.classId)
         if (response?.status === 200) {
             setCourseSyllabus(response?.data)
         }
         await loadQuizList()
+        setLoading(false)
     }
 
     const loadQuizList = async () => {
         const response = await getQuizByClassid(courseItem?.classOpeningInfors[0]?.classId, user?.studentIdAccount)
+        // console.log(courseItem?.classOpeningInfors[0]?.classId, user?.studentIdAccount);
         if (response?.status === 200) {
             setQuizList(response?.data)
         }
@@ -54,102 +56,107 @@ export default function CourseSyllabus({ route, navigation }) {
     return (
         <>
             <Header navigation={navigation} goback={navigation.pop} title={courseDetail?.courseName} />
-            <ScrollView style={styles.container}>
-                <ScrollView nestedScrollEnabled={true} style={styles.program}>
-                    {
-                        !loading &&
-                        courseSyllabus?.syllabusInformations?.topics?.map((item, index) => {
-                            return (
-                                <View
-                                    style={{
-                                        ...styles.mainTab,
-                                        backgroundColor: index % 2 === 0 ? "#C2D9FF" : "white"
-                                    }}
-                                    key={index}
-                                >
-                                    <TouchableOpacity
-                                        style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
-                                        onPress={() => {
-                                            setCourseSyllabus(prevcourseSyllabus => {
-                                                const updatedTopics = [...prevcourseSyllabus.syllabusInformations?.topics];
-                                                updatedTopics[index] = { ...updatedTopics[index], expand: !updatedTopics[index].expand };
-                                                return {
-                                                    ...prevcourseSyllabus,
-                                                    syllabusInformations: { ...prevcourseSyllabus.syllabusInformations, topics: updatedTopics }
-                                                };
-                                            });
-                                        }}
-                                    >
-                                        <Text style={styles.mainText}>
-                                            <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}  </Text>
+            {
+                loading ?
+                    <SpinnerLoading />
+                    :
+                    <ScrollView style={styles.container}>
+                        <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false} style={styles.program}>
+                            {
+                                !loading &&
+                                courseSyllabus?.syllabusInformations?.topics?.map((item, index) => {
+                                    return (
+                                        <View
+                                            style={{
+                                                ...styles.mainTab,
+                                                backgroundColor: index % 2 === 0 ? "#C2D9FF" : "white"
+                                            }}
+                                            key={index}
+                                        >
+                                            <TouchableOpacity
+                                                style={{ ...styles.flexColumnBetween, paddingVertical: 8 }}
+                                                onPress={() => {
+                                                    setCourseSyllabus(prevcourseSyllabus => {
+                                                        const updatedTopics = [...prevcourseSyllabus.syllabusInformations?.topics];
+                                                        updatedTopics[index] = { ...updatedTopics[index], expand: !updatedTopics[index].expand };
+                                                        return {
+                                                            ...prevcourseSyllabus,
+                                                            syllabusInformations: { ...prevcourseSyllabus.syllabusInformations, topics: updatedTopics }
+                                                        };
+                                                    });
+                                                }}
+                                            >
+                                                <Text style={styles.mainText}>
+                                                    <Text numberOfLines={1}>{"Chủ đề " + (index + 1) + " - " + item.topicName}  </Text>
 
-                                        </Text>
+                                                </Text>
 
-                                        {
-                                            !item.expand ?
-                                                <Icon name={"plus"} color={"#241468"} size={25} />
-                                                :
-                                                <Icon name={"minus"} color={"#241468"} size={25} />
-                                        }
-                                    </TouchableOpacity>
-                                    {
-                                        (
-                                            !item.sessions[0] ?
-                                                item.expand === true &&
-                                                <Text style={styles.childText}>Không có buổi học</Text>
-                                                :
-                                                item.sessions.map((element, key) => {
-                                                    return (
-                                                        <React.Fragment key={key}>
-                                                            {
-                                                                item.expand === true &&
-                                                                <Text style={{ ...styles.childText, fontWeight: "700" }}>Buổi {element?.orderSession} ({formatDate(element?.date)})</Text>
-                                                            }
-                                                            {
-                                                                (
-                                                                    !element.contents[0] ?
+                                                {
+                                                    !item.expand ?
+                                                        <Icon name={"plus"} color={"#241468"} size={25} />
+                                                        :
+                                                        <Icon name={"minus"} color={"#241468"} size={25} />
+                                                }
+                                            </TouchableOpacity>
+                                            {
+                                                (
+                                                    !item.sessions[0] ?
+                                                        item.expand === true &&
+                                                        <Text style={styles.childText}>Không có buổi học</Text>
+                                                        :
+                                                        item.sessions.map((element, key) => {
+                                                            return (
+                                                                <React.Fragment key={key}>
+                                                                    {
                                                                         item.expand === true &&
-                                                                        <Text style={styles.childText}>Không có chủ đề</Text>
-                                                                        :
-                                                                        element?.contents?.map((content, key) => {
-                                                                            count += 1
-                                                                            return (
-                                                                                <React.Fragment key={key}>
-                                                                                    {
-                                                                                        item.expand === true &&
-                                                                                        <Text style={{ ...styles.childText, marginLeft: 7, fontWeight: "400" }} key={key}>{count}. {content.content}</Text>
-                                                                                    }
-                                                                                    {
-                                                                                        item.expand === true &&
-                                                                                        content?.details?.map((detail, index) => {
-                                                                                            return (
-                                                                                                <Text style={{ ...styles.childText, marginLeft: 15, fontWeight: "300" }} key={index}>{count}.{index + 1} {detail}</Text>
-                                                                                            )
-                                                                                        })
-                                                                                    }
-                                                                                </React.Fragment>
-                                                                            )
-                                                                        })
-                                                                )
-                                                            }
-                                                            {
-                                                                item.expand === true && findQuizByDate(element?.date) &&
-                                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => { handleDoExam(findQuizByDate(element?.date)) }}>
-                                                                    <Icon name={"folder"} color={"#241468"} size={25} />
-                                                                    <Text style={{ ...styles.childText, fontWeight: "400", marginLeft: 7, marginVertical: 7, color: "#241468" }} >{findQuizByDate(element?.date).examName} ({formatDate(element?.date)})</Text>
-                                                                </TouchableOpacity>
-                                                            }
-                                                        </React.Fragment>
-                                                    )
-                                                })
-                                        )
-                                    }
-                                </View>
-                            )
-                        })
-                    }
-                </ScrollView>
-            </ScrollView >
+                                                                        <Text style={{ ...styles.childText, fontWeight: "700" }}>Buổi {element?.orderSession} ({formatDate(element?.date)})</Text>
+                                                                    }
+                                                                    {
+                                                                        (
+                                                                            !element.contents[0] ?
+                                                                                item.expand === true &&
+                                                                                <Text style={styles.childText}>Không có chủ đề</Text>
+                                                                                :
+                                                                                element?.contents?.map((content, key) => {
+                                                                                    count += 1
+                                                                                    return (
+                                                                                        <React.Fragment key={key}>
+                                                                                            {
+                                                                                                item.expand === true &&
+                                                                                                <Text style={{ ...styles.childText, marginLeft: 7, fontWeight: "400" }} key={key}>{count}. {content.content}</Text>
+                                                                                            }
+                                                                                            {
+                                                                                                item.expand === true &&
+                                                                                                content?.details?.map((detail, index) => {
+                                                                                                    return (
+                                                                                                        <Text style={{ ...styles.childText, marginLeft: 15, fontWeight: "300" }} key={index}>{count}.{index + 1} {detail}</Text>
+                                                                                                    )
+                                                                                                })
+                                                                                            }
+                                                                                        </React.Fragment>
+                                                                                    )
+                                                                                })
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        item.expand === true && findQuizByDate(element?.date) &&
+                                                                        <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => { handleDoExam(findQuizByDate(element?.date)) }}>
+                                                                            <Icon name={"folder"} color={"#241468"} size={25} />
+                                                                            <Text style={{ ...styles.childText, fontWeight: "400", marginLeft: 7, marginVertical: 7, color: "#241468" }} >{findQuizByDate(element?.date).examName} ({formatDate(element?.date)})</Text>
+                                                                        </TouchableOpacity>
+                                                                    }
+                                                                </React.Fragment>
+                                                            )
+                                                        })
+                                                )
+                                            }
+                                        </View>
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                    </ScrollView >
+            }
         </>
     )
 }

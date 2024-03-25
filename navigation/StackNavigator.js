@@ -49,6 +49,7 @@ import StudentHomeScreen from '../screens/bottomTab/student/StudentHomeScreen';
 import StudentScoreScreen from '../screens/bottomTab/student/StudentScoreScreen';
 import CourseSyllabus from '../screens/student/CourseSyllabus';
 import QuizDetailScreen from '../screens/student/QuizDetailScreen';
+import ExamHistoryScreen from '../screens/student/ExamHistoryScreen';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
@@ -136,6 +137,7 @@ const StackNavigator = () => {
                     <Stack.Screen name="QuizDetailScreen" component={QuizDetailScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="ChoosePairScreen" component={ChoosePairScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ExamHistoryScreen" component={ExamHistoryScreen} options={{ headerShown: false }} />
                 </>
 
             ) : (

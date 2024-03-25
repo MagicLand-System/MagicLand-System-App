@@ -219,3 +219,15 @@ export function getSessionInfoByDate(syllabusInformations) {
     }
 }
 
+
+export function checkDoExamTimeValid(start_time, end_time) {
+    var current_time = new Date().getTime();
+    var start = new Date(start_time).getTime();
+    var end = new Date(end_time).getTime();
+
+    if (current_time > start && current_time < end) {
+        return true;
+    } else {
+        return false;
+    }
+}
