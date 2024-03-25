@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 
 import Header from '../../components/header/Header';
 import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
-import { formatDate, formatPrice, formatTime } from '../../util/util';
+import { convertSchedulesToString, formatDate, formatPrice, formatTime } from '../../util/util';
 
 import monneyIcon from "../../assets/images/money-send.png"
 import { useSelector } from 'react-redux';
@@ -70,7 +70,15 @@ export default function TransactionDetailScreen({ route, navigation }) {
                                 </View>
                                 <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
                                     <Text style={{ ...styles.boldText }}>Lịch học: </Text>
-                                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>Thứ {classItem?.schedules?.schedule}  {classItem?.schedules?.slot}</Text>
+                                    {
+                                        convertSchedulesToString(classDetail[0]?.schedules)?.map((item, key) => {
+                                            return (
+                                                <React.Fragment key={key}>
+                                                    <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>Thứ {item?.dates} ({item?.time})</Text>
+                                                </React.Fragment>
+                                            )
+                                        })
+                                    }
                                 </View>
 
                             </React.Fragment>
@@ -79,7 +87,7 @@ export default function TransactionDetailScreen({ route, navigation }) {
                 }
                 <View style={{ ...styles.flexColumnBetween, marginVertical: 10 }}>
                     <Text style={{ ...styles.boldText }}>Nội dung: </Text>
-                    <Text style={{ ...styles.boldText, color: "#3A0CA3" }}>{transactionData?.message}</Text>
+                    <Text style={{ ...styles.boldText, color: "#3A0CA3", width: "60%" }}>{transactionData?.message}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={{ ...styles.button, backgroundColor: "#4582E6" }} onPress={() => { navigation.navigate("Document") }}>

@@ -28,7 +28,7 @@ export default function ScheduleScreen({ navigation }) {
 
   const user = useSelector(userSelector);
   const student = useSelector(studentSelector);
-  console.log(student?.length);
+
   LocaleConfig.locales['fr'] = {
     // 'Tháng 1','Tháng 2','Tháng 3','Tháng 5','Tháng 7','Tháng 9','Tháng 11','Tháng 12'
     monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 5', 'Tháng 7', 'Tháng 9', 'Tháng 11', 'Tháng 12'],
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   },
   studentList: {
     // maxHeight: HEIGHT * 0.2,
-    padding: 20,
+    // padding: 20,
     paddingLeft: 20,
   },
   studentView: {

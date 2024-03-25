@@ -2,8 +2,6 @@ import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, ScrollView,
 import React, { useState, useEffect, useContext } from "react";
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { auth } from "../../firebase.config"
-import { PhoneAuthProvider, signInWithCredential, } from "firebase/auth";
 
 import Header from '../../components/header/Header';
 import ChooseVourcherModal from '../../components/modal/ChooseVourcherModal';
@@ -263,7 +261,7 @@ export default function PaymentScreen({ route, navigation }) {
                                 <View style={{ ...styles.flexColumnBetween, width: WIDTH * 0.75, marginVertical: 5 }}>
                                     <Text style={styles.detailViewTitle}>Lịch Học:</Text>
                                     {
-                                        convertSchedulesToString(classDetail?.schedules)?.map((item, key) => {
+                                        convertSchedulesToString(classDetail[0]?.schedules)?.map((item, key) => {
                                             return (
                                                 <React.Fragment key={key}>
                                                     <Text style={{ ...styles.boldText, color: "#2ECFFB" }}>Thứ {item?.dates} ({item?.time})</Text>
