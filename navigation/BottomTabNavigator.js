@@ -30,13 +30,11 @@ import ClassContentScreen from '../screens/parent/ClassContentScreen';
 import MutilpleChoiceScreen from '../screens/parent/MutilpleChoiceScreen';
 import ChoosePairScreen from '../screens/parent/ChoosePairScreen';
 
-import AttendanceScreen from '../screens/teacher/AttendanceScreen';
-import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
-import TeacherCourseSyllabus from '../screens/teacher/TeacherCourseSyllabus';
-
 import StudentHomeScreen from '../screens/bottomTab/student/StudentHomeScreen';
 import StudentScoreScreen from '../screens/bottomTab/student/StudentScoreScreen';
 import CourseSyllabus from '../screens/student/CourseSyllabus';
+import QuizDetailScreen from '../screens/student/QuizDetailScreen';
+import ExamHistoryScreen from '../screens/student/ExamHistoryScreen';
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { constants } from '../constants/constants';
@@ -133,11 +131,9 @@ const BottomTabNavigator = () => {
             <Tab.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="ChoosePairScreen" component={ChoosePairScreen} options={{ tabBarButton: () => null }} />
 
-            <Tab.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="ClassOptionScreen" component={ClassOptionScreen} options={{ tabBarButton: () => null }} />
-            <Tab.Screen name="TeacherCourseSyllabus" component={TeacherCourseSyllabus} options={{ tabBarButton: () => null }} />
-
             <Tab.Screen name="CourseSyllabus" component={CourseSyllabus} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="QuizDetailScreen" component={QuizDetailScreen} options={{ tabBarButton: () => null }} />
+            <Tab.Screen name="ExamHistoryScreen" component={ExamHistoryScreen} options={{ tabBarButton: () => null }} />
 
         </Tab.Navigator>
     )

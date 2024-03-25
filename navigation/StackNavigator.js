@@ -45,13 +45,11 @@ import StudentDetailScreen from '../screens/parent/StudentDetailScreen';
 import EditStudentScreen from '../screens/parent/EditStudentScreen';
 import ChoosePairScreen from '../screens/parent/ChoosePairScreen';
 
-import AttendanceScreen from '../screens/teacher/AttendanceScreen';
-import ClassOptionScreen from '../screens/teacher/ClassOptionScreen';
-import TeacherCourseSyllabus from '../screens/teacher/TeacherCourseSyllabus';
-
 import StudentHomeScreen from '../screens/bottomTab/student/StudentHomeScreen';
 import StudentScoreScreen from '../screens/bottomTab/student/StudentScoreScreen';
 import CourseSyllabus from '../screens/student/CourseSyllabus';
+import QuizDetailScreen from '../screens/student/QuizDetailScreen';
+import ExamHistoryScreen from '../screens/student/ExamHistoryScreen';
 
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
@@ -117,7 +115,6 @@ const StackNavigator = () => {
                     <Stack.Screen name="MultiplePaymentScreen" component={MultiplePaymentScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="ClassStudyDetailScreen" component={ClassStudyDetailScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="ClassContentScreen" component={ClassContentScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="RechargeScreen" component={RechargeScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="TransactionWalletScreen" component={TransactionWalletScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="TransactionHistoryScreen" component={TransactionHistoryScreen} options={{ headerShown: false }} />
@@ -126,26 +123,9 @@ const StackNavigator = () => {
                     <Stack.Screen name="StudentListScreen" component={StudentListScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="StudentDetailScreen" component={StudentDetailScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="EditStudentScreen" component={EditStudentScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="ChoosePairScreen" component={ChoosePairScreen} options={{ headerShown: false }} />
                 </>
-            ) : user?.role?.name === 'LECTURER' ? (
-                <>
-                    {/* Teacher */}
-                    <Stack.Screen
-                        name="Root"
-                        component={BottomTabNavigator}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="WorkScheduleScreen" component={WorkScheduleScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="RateStudentScreen" component={RateStudentScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="AttendanceScreen" component={AttendanceScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="ClassOptionScreen" component={ClassOptionScreen} options={{ headerShown: false }} />
-                </>
-
             ) : user?.role?.name === 'STUDENT' ? (
                 <>
-                    {/* Teacher */}
                     <Stack.Screen
                         name="Root"
                         component={BottomTabNavigator}
@@ -154,6 +134,10 @@ const StackNavigator = () => {
                     <Stack.Screen name="StudentHomeScreen" component={StudentHomeScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="StudentScoreScreen" component={StudentScoreScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="CourseSyllabus" component={CourseSyllabus} options={{ headerShown: false }} />
+                    <Stack.Screen name="QuizDetailScreen" component={QuizDetailScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="MutilpleChoiceScreen" component={MutilpleChoiceScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ChoosePairScreen" component={ChoosePairScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ExamHistoryScreen" component={ExamHistoryScreen} options={{ headerShown: false }} />
                 </>
 
             ) : (

@@ -11,7 +11,7 @@ import InputOtpModal from '../../components/modal/InputOtpModal';
 import PaymentSuccessModal from '../../components/modal/PaymentSuccessModal';
 import CustomToast from "../../components/CustomToast";
 
-import { formatDate, formatPrice } from '../../util/util';
+import { convertSchedulesToString, formatDate, formatPrice } from '../../util/util';
 import { modifyCart } from '../../api/cart';
 import ChoosePaymentMethod from '../../components/modal/ChoosePaymentMethod';
 import { registerClass } from '../../api/class';

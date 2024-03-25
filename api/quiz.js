@@ -12,7 +12,7 @@ export const getQuizByCourseid = async (id) => {
 
 export const getQuizByClassid = async (id, studentId) => {
 
-    const path = studentId ? `id=${id}` : `id=${id}&studentId=${studentId}`
+    const path = !studentId ? `id=${id}` : `id=${id}&studentId=${studentId}`
 
     try {
         const response = await api.get(`/api/v1/exams/class?${path}`);
@@ -39,6 +39,26 @@ export const saveMultipleChoiceScore = async (ClassId, ExamId, answerList) => {
         return response;
     } catch (error) {
         console.log("saveMultipleChoiceScore in api/quiz.js error : " + error + ", data : " + error?.response?.data);
+        return error;
+    }
+};
+
+export const saveChoosePairScore = async (ClassId, ExamId, score) => {
+    try {
+        const response = await api.post(`/api/v1/exam/quiz/flashCard/grade?classId=${ClassId}&examId=${ExamId}&scoreEarned=${score}`);
+        return response;
+    } catch (error) {
+        console.log("saveChoosePairScore in api/quiz.js error : " + error + ", data : " + error?.response?.data);
+        return error;
+    }
+};
+
+export const getQuizHistory = async (examId) => {
+    try {
+        const response = await api.get(`/api/v1/exams/quiz/current/work?examId=${examId}`);
+        return response;
+    } catch (error) {
+        console.log("getQuizHistory in api/quiz.js error : " + error + ", data : " + error?.response?.data);
         return error;
     }
 };
