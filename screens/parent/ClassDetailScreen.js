@@ -548,8 +548,8 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         <View style={{ ...styles.flexColumn, width: "70%", paddingVertical: 20, borderRightWidth: 1 }}>
                                             <View style={styles.tabletIcon}>
                                                 {
-                                                    item.mark ?
-                                                        item.mark > 5 ?
+                                                    item.score ?
+                                                        item.score / item.totalScore > 0.5 ?
                                                             <Icon name={"checkbox-marked-circle"} color={"#2C8535"} size={28} />
                                                             :
                                                             <Icon name={"close-circle"} color={"#F4A120"} size={28} />
@@ -567,8 +567,8 @@ export default function ClassDetailScreen({ route, navigation }) {
                                         </View>
                                         <View style={styles.scoreValue}>
                                             {
-                                                item.mark ?
-                                                    <Text style={styles.boldText}>{item.mark}/{item.total}</Text>
+                                                item.score ?
+                                                    <Text style={styles.boldText}>{item.score}/{item.totalScore}</Text>
                                                     :
                                                     ""
                                             }

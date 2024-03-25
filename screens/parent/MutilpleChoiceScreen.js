@@ -104,64 +104,69 @@ export default function MutilpleChoiceScreen({ route, navigation }) {
                 source={background2}
             >
                 {loading && <SpinnerLoading />}
-                <View>
-                    <Text style={styles.questionMark}>{totalMark} Điểm</Text>
-                    <Text style={styles.correctAnswer}>{homeworkData[homeworkListIndex].questionDescription}</Text>
-                    {
-                        homeworkData[homeworkListIndex].questionImage &&
-                        <View style={styles.questionImage}>
-                            <Image
-                                style={{
-                                    height: WIDTH * 0.7,
-                                    width: WIDTH * 0.7
-                                }}
-                                source={{ uri: homeworkData[homeworkListIndex].questionImage }}
-                                resizeMode="cover"
+                {
+                    homeworkData[homeworkListIndex] &&
+                    <>
+                        <View>
+                            <Text style={styles.questionMark}>{totalMark} Điểm</Text>
+                            <Text style={styles.correctAnswer}>{homeworkData[homeworkListIndex].questionDescription}</Text>
+                            {
+                                homeworkData[homeworkListIndex].questionImage &&
+                                <View style={styles.questionImage}>
+                                    <Image
+                                        style={{
+                                            height: WIDTH * 0.7,
+                                            width: WIDTH * 0.7
+                                        }}
+                                        source={{ uri: homeworkData[homeworkListIndex].questionImage }}
+                                        resizeMode="cover"
+                                    />
+                                </View>
+                            }
+                            <View style={{ ...styles.flexColumnCenter, marginTop: 10 }}>
+                                {
+                                    homeworkData[homeworkListIndex].answersMutipleChoicesInfor?.map((item, index) => {
+                                        return (
+                                            <TouchableOpacity
+                                                style={{
+                                                    ...styles.answerButton,
+                                                    backgroundColor:
+                                                        modalVisible.chooseValue === item.answerDescription ?
+                                                            modalVisible.correct ?
+                                                                "#3AAC45"
+                                                                :
+                                                                "#F8935B"
+                                                            :
+                                                            "white"
+                                                }}
+                                                onPress={() => { !modalVisible.complete && handleChooseAnswer(item) }}
+                                                key={index}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        ...styles.boldText,
+                                                        fontSize: 25,
+                                                        color: modalVisible.chooseValue === item.answerDescription && (modalVisible.correct || modalVisible.incorrect) ? "white" : "black"
+                                                    }}>
+                                                    {item?.answerDescription}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        )
+                                    })
+                                }
+                            </View>
+                        </View>
+                        <View style={styles.processBar}>
+                            <ProcessBar
+                                leftLable={homeworkListIndex}
+                                leftWidth={WIDTH * (homeworkListIndex / homeworkData?.length)}
+                                rightLabel={homeworkData?.length - homeworkListIndex}
+                                rightWidth={WIDTH * ((homeworkData?.length - homeworkListIndex + 1) / homeworkData?.length)}
+                                mainLabel={homeworkData?.length}
                             />
                         </View>
-                    }
-                    <View style={{ ...styles.flexColumnCenter, marginTop: 10 }}>
-                        {
-                            homeworkData[homeworkListIndex].answersMutipleChoicesInfor?.map((item, index) => {
-                                return (
-                                    <TouchableOpacity
-                                        style={{
-                                            ...styles.answerButton,
-                                            backgroundColor:
-                                                modalVisible.chooseValue === item.answerDescription ?
-                                                    modalVisible.correct ?
-                                                        "#3AAC45"
-                                                        :
-                                                        "#F8935B"
-                                                    :
-                                                    "white"
-                                        }}
-                                        onPress={() => { !modalVisible.complete && handleChooseAnswer(item) }}
-                                        key={index}
-                                    >
-                                        <Text
-                                            style={{
-                                                ...styles.boldText,
-                                                fontSize: 25,
-                                                color: modalVisible.chooseValue === item.answerDescription && (modalVisible.correct || modalVisible.incorrect) ? "white" : "black"
-                                            }}>
-                                            {item?.answerDescription}
-                                        </Text>
-                                    </TouchableOpacity>
-                                )
-                            })
-                        }
-                    </View>
-                </View>
-                <View style={styles.processBar}>
-                    <ProcessBar
-                        leftLable={homeworkListIndex}
-                        leftWidth={WIDTH * (homeworkListIndex / homeworkData?.length)}
-                        rightLabel={homeworkData?.length - homeworkListIndex}
-                        rightWidth={WIDTH * ((homeworkData?.length - homeworkListIndex + 1) / homeworkData?.length)}
-                        mainLabel={homeworkData?.length}
-                    />
-                </View>
+                    </>
+                }
             </ImageBackground>
             <CorrentAnswerModal visible={modalVisible.correct} score={modalVisible?.score} />
             <IncorrentAnswerModal visible={modalVisible.incorrect} />
@@ -208,7 +213,7 @@ const styles = StyleSheet.create({
     },
     processBar: {
         position: "absolute",
-        paddingBottom: WIDTH * 0.15,
+        paddingBottom: WIDTH * 0.1,
         paddingTop: 20,
         bottom: 0,
         backgroundColor: "rgba(0,0,0,0.5)",
